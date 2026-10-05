@@ -80,6 +80,19 @@ describe('configured wheelchair', () => {
     close(config.backrestAngle, 100)
   })
 
+  it('keeps the backrest tip above the seat plane throughout folding at extreme settings', () => {
+    for (const config of [
+      { ...DEFAULT_CONFIG, seatDepth: 36, backrestHeight: 45, backrestAngle: 110, seatAngle: 12 },
+      { ...DEFAULT_CONFIG, seatDepth: 46, backrestHeight: 10, backrestAngle: 80, seatAngle: 0 },
+    ]) {
+      for (let step = 0; step <= 10; step++) {
+        const { backrest, seat } = deriveGeometry(config, step / 10)
+        const seatPlaneAtTip = seat.rear[1] + (backrest.top[2] - seat.rear[2]) * Math.tan(seat.tilt)
+        expect(backrest.top[1] - seatPlaneAtTip).toBeGreaterThan(0)
+      }
+    }
+  })
+
   it('carries the backrest with the tilted seat while retaining its selected length and relative angle', () => {
     const chair = deriveGeometry({ ...DEFAULT_CONFIG, backrestHeight: 35, backrestAngle: 95 })
     close(chair.backrest.top[1], 0.80176)

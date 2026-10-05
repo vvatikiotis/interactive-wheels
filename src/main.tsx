@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type ComponentRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei/core/OrbitControls.js'
@@ -6,7 +6,11 @@ import { Wheelchair } from './Wheelchair'
 import { DEFAULT_CONFIG, type WheelchairConfig } from './geometry'
 import './style.css'
 
+const INITIAL_CAMERA_POSITION = [0.9, 0.8, 1.55] as const
+const INITIAL_CAMERA_TARGET = [0, 0.35, 0] as const
+
 function App() {
+  const orbitControls = useRef<ComponentRef<typeof OrbitControls>>(null)
   const [configuration, setConfiguration] = useState<WheelchairConfig>({ ...DEFAULT_CONFIG })
   const [foldPhase, setFoldPhase] = useState<'unfolded' | 'folding' | 'folded' | 'unfolding'>('unfolded')
   const [foldProgress, setFoldProgress] = useState(0)
@@ -45,7 +49,7 @@ function App() {
     </header>
     <section className="workspace">
       <section className="viewport" aria-label="3D wheelchair viewer">
-        <Canvas shadows camera={{ position: [0.9, 0.8, 1.55], fov: 40 }}>
+        <Canvas shadows camera={{ position: INITIAL_CAMERA_POSITION, fov: 40 }}>
           <color attach="background" args={['#edf2f3']} />
           <ambientLight intensity={1.6} />
           <directionalLight position={[1.5, 2.5, 2]} intensity={2.3} castShadow shadow-mapSize={[1024, 1024]} />
@@ -54,7 +58,7 @@ function App() {
             <planeGeometry args={[200, 200]} />
             <meshStandardMaterial color="#dce6e7" roughness={1} />
           </mesh>
-          <OrbitControls target={[0, 0.35, 0]} enablePan={false} minDistance={0.85} maxDistance={3} maxPolarAngle={Math.PI / 2 - 0.03} />
+          <OrbitControls ref={orbitControls} target={[...INITIAL_CAMERA_TARGET]} enablePan={false} minDistance={0.85} maxDistance={3} maxPolarAngle={Math.PI / 2 - 0.03} />
         </Canvas>
       </section>
       <aside className="controls" aria-label="Wheelchair adjustments">
@@ -73,6 +77,24 @@ function App() {
           onClick={() => setFoldPhase(foldPhase === 'folded' ? 'unfolding' : 'folding')}>
           {foldPhase === 'folding' ? 'Folding…' : foldPhase === 'unfolding' ? 'Unfolding…' : foldPhase === 'folded' ? 'Unfold' : 'Fold'}
         </button>
+        <div className="reset-actions">
+          <button type="button" onClick={() => {
+            setFoldPhase('unfolded')
+            setFoldProgress(0)
+            setConfiguration({ ...DEFAULT_CONFIG })
+          }}>Reset configuration</button>
+          <button type="button" onClick={() => {
+            const controls = orbitControls.current
+            if (!controls) return
+            const damping = controls.enableDamping
+            controls.enableDamping = false
+            controls.update()
+            controls.target.set(...INITIAL_CAMERA_TARGET)
+            controls.object.position.set(...INITIAL_CAMERA_POSITION)
+            controls.update()
+            controls.enableDamping = damping
+          }}>Reset view</button>
+        </div>
       </aside>
     </section>
   </main>

@@ -25,7 +25,6 @@ function App() {
         <h1>Rigid-frame wheelchair</h1>
         <p>Drag to rotate · Scroll to zoom</p>
       </div>
-      <p className="note">Use the slider to move both rear wheels and the axle tube.</p>
     </header>
     <section className="workspace">
       <section className="viewport" aria-label="3D wheelchair viewer">

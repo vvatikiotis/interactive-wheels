@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-test('all seven adjustment sliders update their displayed measurements', async ({ page }) => {
+test('all eight adjustment sliders update their displayed measurements', async ({ page }) => {
   await page.goto('/')
   const cases = [
     ['Seat width', '46', '46 cm'],
@@ -10,6 +10,7 @@ test('all seven adjustment sliders update their displayed measurements', async (
     ['Backrest height', '20', '20 cm'],
     ['Backrest angle to seat', '85', '85 °'],
     ['Seat angle to ground', '12', '12 °'],
+    ['Footplate slope', '10', '10 °'],
   ]
   for (const [label, value, displayed] of cases) {
     const slider = page.getByLabel(label)
@@ -18,6 +19,8 @@ test('all seven adjustment sliders update their displayed measurements', async (
   }
   await expect(page.getByLabel('Rear-wheel camber')).toHaveAttribute('min', '-4')
   await expect(page.getByLabel('Backrest height')).toHaveAttribute('min', '10')
+  await expect(page.getByLabel('Footplate slope')).toHaveAttribute('min', '0')
+  await expect(page.getByLabel('Footplate slope')).toHaveAttribute('max', '15')
 })
 
 test('minimum and maximum dimensions and angles keep the generated chair renderable', async ({ page }) => {
@@ -33,6 +36,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Backrest height', '10'],
     ['Backrest angle to seat', '80'],
     ['Seat angle to ground', '0'],
+    ['Footplate slope', '0'],
   ]) await page.getByLabel(label).fill(value)
   expect((await viewer.screenshot()).equals(before)).toBe(false)
   for (const [label, value] of [
@@ -43,6 +47,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Backrest height', '45'],
     ['Backrest angle to seat', '110'],
     ['Seat angle to ground', '12'],
+    ['Footplate slope', '15'],
   ]) await page.getByLabel(label).fill(value)
   await expect(page.getByText('12 °', { exact: true })).toBeVisible()
   expect((await viewer.screenshot()).equals(before)).toBe(false)

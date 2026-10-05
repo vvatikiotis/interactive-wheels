@@ -115,7 +115,7 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
     })}
     {frontFrame.seatRods.map((rod, index) => <BentTube key={index} from={rod.start} control={rod.control} to={rod.end} radius={rod.radius} />)}
     <Tube from={frontFrame.crossbar.start} to={frontFrame.crossbar.end} radius={frontFrame.crossbar.radius} />
-    <mesh position={footrest.center} castShadow receiveShadow>
+    <mesh position={footrest.center} rotation={[-footrest.angle, 0, 0]} castShadow receiveShadow>
       <boxGeometry args={[footrest.width, footrest.thickness, footrest.depth]} />
       <meshStandardMaterial color="#516978" roughness={0.72} />
     </mesh>

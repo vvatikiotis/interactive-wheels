@@ -5,13 +5,13 @@ See [prototype-scope.md](prototype-scope.md) for the current behavior, ranges, a
 ## Implemented
 
 - React, TypeScript, Vite, React Three Fiber, and Drei render a generated chair and a mouse-controlled 3D view.
-- `src/geometry.ts` derives seat, frame, backrest, footplate, axle, and wheel positions from eight configuration values. Internal distances are in metres; slider dimensions are in centimetres and angles in degrees. Caster centre height follows the tyre radius so thicker tyres remain grounded.
-- `src/Wheelchair.tsx` renders those shapes; `src/main.tsx` owns slider state and the viewer.
-- `src/geometry.test.ts` covers key derived measurements and connections. `tests/viewer.spec.ts` covers slider values, two extreme configurations, camera orbit, and zoom.
+- `src/geometry.ts` derives seat, frame, backrest, footplate, axle, and wheel positions from eight configuration values. A separate fold progress moves the backrest without changing its configured angle. Internal distances are in metres; slider dimensions are in centimetres and angles in degrees. Caster centre height follows the tyre radius so thicker tyres remain grounded.
+- `src/Wheelchair.tsx` renders those shapes; `src/main.tsx` owns slider state, the 0.4-second Fold / Unfold animation, and the viewer.
+- `src/geometry.test.ts` covers key derived measurements, connections, and backrest fold poses. `tests/viewer.spec.ts` covers slider values, two extreme configurations, folding and unfolding, camera orbit, and zoom.
 
 ## Remaining work, if completing the earlier scope
 
-1. **Folding:** Add a separate Fold / Unfold action that animates the backrest forward over about 0.4 seconds without replacing the configured backrest angle. Disable all eight sliders until unfolding finishes, but retain orbit and zoom. Check the full motion path at different backrest heights and seat depths; endpoints alone cannot reveal collisions.
+1. **Folding clearance:** Inspect the full backrest motion path at different backrest heights and seat depths; endpoints alone cannot reveal collisions.
 2. **Resets:** Reset configuration should cancel any fold animation, restore the eight defaults, and unfold without moving the camera. Reset view should restore the initial camera without changing configuration.
 3. **Visual limits:** Inspect problematic combinations, including intermediate values and footplate slopes. Add targeted clearance rules only where geometry cannot remain coherent. Stop at the last valid slider step and explain the limit, without changing other settings. Tube joints may intentionally overlap; do not treat them as collisions.
 4. **Verification:** Extend geometry tests for those rules and browser tests for folding, resets, and blocked settings. Inspect the chair from multiple angles in Chrome. Sampling extremes or combinations is not proof of collision-free behavior or engineering safety.

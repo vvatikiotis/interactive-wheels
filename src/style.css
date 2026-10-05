@@ -14,6 +14,8 @@ p { margin: .2rem 0; }
 .controls output { white-space: nowrap; color: #527784; }
 .controls input { width: 100%; margin: 1rem 0 .25rem; accent-color: #527784; }
 .range-labels { display: flex; justify-content: space-between; color: #637882; font-size: .85rem; }
+.fold-button { margin-top: 1rem; width: 100%; padding: .65rem; border: 1px solid #527784; border-radius: 8px; background: #527784; color: white; font: inherit; cursor: pointer; }
+.fold-button:disabled { opacity: .6; cursor: default; }
 .explanation { margin-top: 1rem; color: #637882; font-size: .9rem; }
 @media (max-width: 850px) { .workspace { grid-template-columns: 1fr; } .controls { order: -1; } }
 @media (max-width: 700px) { header { align-items: start; flex-direction: column; } .note { text-align: left; } }

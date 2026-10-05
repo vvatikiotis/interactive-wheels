@@ -76,6 +76,7 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
       </group>
     })}
     <Tube from={frontFrame.upperLeft} to={frontFrame.upperRight} radius={0.008} />
+    <Tube from={frontFrame.crossbar.start} to={frontFrame.crossbar.end} radius={frontFrame.crossbar.radius} />
     <mesh position={footrest.center} castShadow receiveShadow>
       <boxGeometry args={[footrest.width, 0.018, footrest.depth]} />
       <meshStandardMaterial color="#516978" roughness={0.72} />

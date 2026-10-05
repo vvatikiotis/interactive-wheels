@@ -15,8 +15,8 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
   seatDepth: 40,
   wheelCamber: 2,
   rearAxlePosition: 8,
-  backrestHeight: 10,
-  backrestAngle: 95,
+  backrestHeight: 20,
+  backrestAngle: 85,
   seatAngle: 6,
 }
 
@@ -49,9 +49,10 @@ export function deriveGeometry(config: WheelchairConfig) {
     upperRight,
     lowerLeft,
     lowerRight,
+    crossbar: { start: lowerLeft, end: lowerRight, radius: 0.009 },
   }
   const footrest = {
-    center: [0, frontFrame.lowerLeft[1] + 0.011, frontFrame.lowerLeft[2] - 0.03] as Point,
+    center: [0, frontFrame.lowerLeft[1] + frontFrame.crossbar.radius + 0.009, frontFrame.lowerLeft[2]] as Point,
     width: lowerSpacing - 0.07,
     depth: 0.12,
   }

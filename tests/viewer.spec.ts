@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('default wheelchair is visible and drag/scroll change the view', async ({ page }) => {
-  await page.goto('http://127.0.0.1:4173/')
+  await page.goto(process.env.VIEWER_URL ?? 'http://127.0.0.1:4173/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
   await expect(viewer.locator('canvas')).toBeVisible()
   const box = await viewer.locator('canvas').boundingBox()

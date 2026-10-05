@@ -79,13 +79,13 @@ describe('configured wheelchair', () => {
     close(chair.backrest.height, 0.1)
   })
 
-  it('supports two degrees of negative camber with both rear tires grounded and outward tilt', () => {
-    const chair = deriveGeometry({ ...DEFAULT_CONFIG, wheelCamber: -2 })
-    close(chair.rearWheels[0].center[1], 0.3048142)
-    close(chair.rearWheels[1].center[1], 0.3048142)
-    close(chair.rearWheels[0].camber, 2 * Math.PI / 180)
-    close(chair.rearWheels[1].camber, -2 * Math.PI / 180)
-    close(chair.rearWheels[0].center[1] - (0.295 + 0.01) * Math.cos(2 * Math.PI / 180), 0)
-    close(chair.rearWheels[1].center[1] - (0.295 + 0.01) * Math.cos(2 * Math.PI / 180), 0)
+  it('supports four degrees of negative camber with both rear tires grounded and outward tilt', () => {
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, wheelCamber: -4 })
+    close(chair.rearWheels[0].center[1], 0.304257035)
+    close(chair.rearWheels[1].center[1], 0.304257035)
+    close(chair.rearWheels[0].camber, 4 * Math.PI / 180)
+    close(chair.rearWheels[1].camber, -4 * Math.PI / 180)
+    close(chair.rearWheels[0].center[1] - (0.295 + 0.01) * Math.cos(4 * Math.PI / 180), 0)
+    close(chair.rearWheels[1].center[1] - (0.295 + 0.01) * Math.cos(4 * Math.PI / 180), 0)
   })
 })

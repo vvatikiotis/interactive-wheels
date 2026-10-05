@@ -32,23 +32,23 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPus
       <group rotation={[0, 0, camber]}>
       <mesh rotation={[0, Math.PI / 2, 0]} castShadow>
         <torusGeometry args={[radius, tire, 12, 64]} />
-        <meshStandardMaterial color="#202832" roughness={0.9} />
+        <meshStandardMaterial color="#414141" roughness={0.9} />
       </mesh>
       <mesh rotation={[0, Math.PI / 2, 0]}>
         <torusGeometry args={[radius * 0.94, 0.004, 8, 48]} />
-        <meshStandardMaterial color="#9baeb8" metalness={0.7} roughness={0.3} />
+        <meshStandardMaterial color="#111111" metalness={0.45} roughness={0.4} />
       </mesh>
       {hasPushRim && <mesh position={[side * 0.04, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-        <torusGeometry args={[radius * 0.85, 0.004, 8, 48]} />
+        <torusGeometry args={[radius * 0.85, 0.006, 8, 48]} />
         <meshStandardMaterial color="#9baeb8" metalness={0.7} roughness={0.3} />
       </mesh>}
       {Array.from({ length: spokes }, (_, index) => {
         const angle = index * Math.PI * 2 / spokes
-        return <Tube key={index} from={[0, 0, 0]} to={[0, Math.cos(angle) * radius * 0.94, Math.sin(angle) * radius * 0.94]} radius={0.002} color="#b9c8cc" />
+        return <Tube key={index} from={[0, 0, 0]} to={[0, Math.cos(angle) * radius * 0.94, Math.sin(angle) * radius * 0.94]} radius={0.002} color="#b23a4b" />
       })}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow>
         <cylinderGeometry args={[0.018, 0.018, 0.045, 16]} />
-        <meshStandardMaterial color="#657e8c" metalness={0.6} roughness={0.35} />
+        <meshStandardMaterial color="#111111" metalness={0.6} roughness={0.35} />
       </mesh>
       </group>
     </group>

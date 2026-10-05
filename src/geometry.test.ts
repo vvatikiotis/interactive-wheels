@@ -53,6 +53,30 @@ describe('configured wheelchair', () => {
     close(cambered.rearWheels[0].camber, -6 * Math.PI / 180)
   })
 
+  it('tapers front frame tubes to 85 percent of seat width and centers the footrest between them', () => {
+    const standard = deriveGeometry({ ...DEFAULT_CONFIG, seatWidth: 40 })
+    close(standard.frontFrame.upperSpacing, 0.4)
+    close(standard.frontFrame.lowerSpacing, 0.34)
+    close(standard.footrest.center[0], 0)
+    expect(standard.footrest.width).toBeLessThan(standard.frontFrame.lowerSpacing)
+    const narrow = deriveGeometry({ ...DEFAULT_CONFIG, seatWidth: 34 })
+    close(narrow.frontFrame.upperSpacing, 0.34)
+    close(narrow.frontFrame.lowerSpacing, 0.289)
+  })
+
+  it('attaches each caster fork one quarter of the front-frame tube length above its lower end', () => {
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatWidth: 40 })
+    for (const [index, side] of [-1, 1].entries()) {
+      const lower = side < 0 ? chair.frontFrame.lowerLeft : chair.frontFrame.lowerRight
+      const upper = side < 0 ? chair.frontFrame.upperLeft : chair.frontFrame.upperRight
+      const attachment = chair.casters[index].forkAttachment
+      const tubeLength = Math.hypot(...upper.map((value, axis) => value - lower[axis]) as [number, number, number])
+      const attachmentFromBottom = Math.hypot(...attachment.map((value, axis) => value - lower[axis]) as [number, number, number])
+      close(attachmentFromBottom / tubeLength, 0.25)
+      close(attachment[0], side * (chair.frontFrame.lowerSpacing / 2 + (chair.frontFrame.upperSpacing - chair.frontFrame.lowerSpacing) * 0.125))
+    }
+  })
+
   it('preserves the front seat height while seat depth and tilt change', () => {
     const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatDepth: 46, seatAngle: 12 })
     close(chair.seat.front[1], 0.5)

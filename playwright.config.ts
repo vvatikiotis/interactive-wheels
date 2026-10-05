@@ -1,7 +1,6 @@
 import { defineConfig } from '@playwright/test'
 
-const dev = process.env.VIEWER_DEV === '1'
-const baseURL = dev ? 'http://127.0.0.1:5173/' : 'http://127.0.0.1:4173/'
+const baseURL = 'http://127.0.0.1:4173/'
 
 export default defineConfig({
   testDir: './tests',
@@ -15,8 +14,8 @@ export default defineConfig({
     viewport: { width: 1280, height: 900 },
   },
   webServer: {
-    command: dev ? 'npm run dev -- --host 127.0.0.1' : 'npm run build && npm run preview -- --host 127.0.0.1',
-    url: dev ? 'http://127.0.0.1:5173/' : 'http://127.0.0.1:4173/', 
+    command: 'npm run build && npm run preview -- --host 127.0.0.1',
+    url: baseURL, 
     reuseExistingServer: !process.env.CI,
   },
 })

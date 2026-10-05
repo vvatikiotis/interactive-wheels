@@ -22,7 +22,9 @@ Changing the seat angle keeps the front seat height fixed and moves the rear up 
 
 ## Agreed wheelchair style
 
-Use a generic rigid-frame active wheelchair with two large rear wheels, two small front casters, a seat, backrest, and footrest. Use recognizable tubing and wheels with simple materials. No brand-specific details, folding frame mechanism, or occupant.
+Use a generic rigid-frame active wheelchair with two large rear wheels, two small front casters, a seat, backrest, and footrest. Use recognizable tubing and wheels with simple materials.
+
+The front frame tubes attach 40 cm apart at the seat when seat width is 40 cm. Their lower ends are 15% narrower than their upper attachment points, with the proportion scaling with seat width (for example, 34 cm seat width gives 28.9 cm lower spacing). Place the footrest platform's upper surface 2 cm above the lower ends, spanning between the front frame tubes. Attach each caster fork to its front frame tube 25% of the tube's length up from the lower end, rather than at the tube's lowest point. No brand-specific details, folding frame mechanism, or occupant.
 
 ## Agreed backrest folding
 

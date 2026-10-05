@@ -42,13 +42,12 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10 }: { center: Poin
 }
 
 export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CONFIG }) {
-  const { seat, backrest, rearWheels, axleTube, casters } = deriveGeometry(configuration)
-  const half = seat.width / 2
-  const frameOffset = half + 0.022
+  const { seat, backrest, rearWheels, axleTube, casters, frontFrame, footrest } = deriveGeometry(configuration)
+  const frameOffset = seat.width / 2 + 0.022
   const sidePoints = (side: number) => ({
-    front: [side * frameOffset, seat.seatForward[1], seat.seatForward[2]] as Point,
+    front: [side * (frontFrame.upperSpacing / 2 + 0.01), seat.seatForward[1], seat.seatForward[2]] as Point,
     rear: [side * frameOffset, seat.seatRear[1], seat.seatRear[2]] as Point,
-    lower: [side * frameOffset, 0.25, seat.front[2] + 0.07] as Point,
+    lower: side < 0 ? frontFrame.lowerLeft : frontFrame.lowerRight,
     backBase: [side * frameOffset, backrest.base[1], backrest.base[2]] as Point,
     backTop: [side * frameOffset, backrest.top[1], backrest.top[2]] as Point,
   })
@@ -68,19 +67,17 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
       return <group key={side}>
         <Tube from={points.front} to={points.rear} />
         <Tube from={points.front} to={points.lower} />
-        <Tube from={points.lower} to={points.rear} />
         <Tube from={points.rear} to={[wheel.center[0], points.rear[1], wheel.center[2]]} />
         <Tube from={[wheel.center[0], points.rear[1], wheel.center[2]]} to={wheel.center} />
         <Tube from={points.backBase} to={points.backTop} radius={0.011} />
-        <Tube from={points.lower} to={[caster.center[0], caster.center[1] + 0.04, caster.center[2]]} />
+        <Tube from={caster.forkAttachment} to={caster.center} />
         <Wheel center={wheel.center} radius={WHEEL.rearRadius} tire={WHEEL.rearTire} camber={wheel.camber} />
         <Wheel center={caster.center} radius={WHEEL.casterRadius} tire={WHEEL.casterTire} spokes={5} />
-        <Tube from={points.front} to={[side * frameOffset, 0.18, seat.front[2] + 0.12]} />
-        <Tube from={[side * frameOffset, 0.18, seat.front[2] + 0.12]} to={[side * frameOffset, 0.18, seat.front[2] + 0.25]} />
       </group>
     })}
-    <mesh position={[0, 0.18, seat.front[2] + 0.19]} castShadow receiveShadow>
-      <boxGeometry args={[0.28, 0.018, 0.12]} />
+    <Tube from={frontFrame.upperLeft} to={frontFrame.upperRight} radius={0.008} />
+    <mesh position={footrest.center} castShadow receiveShadow>
+      <boxGeometry args={[footrest.width, 0.018, footrest.depth]} />
       <meshStandardMaterial color="#516978" roughness={0.72} />
     </mesh>
     <Tube from={axleTube.start} to={axleTube.end} radius={0.012} />

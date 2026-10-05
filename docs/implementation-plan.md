@@ -11,6 +11,7 @@ The main complexity is maintaining connected geometry while dimensions and angle
 ### Risks to address first
 
 - **Seat anchoring:** keep the top of the front seating surface at 50 cm, accounting for upholstery thickness. Derive the rear seat position and backrest hinge from seat depth and tilt.
+- **Tapered front frame:** derive upper leg spacing from seat width and lower spacing as 85% of that width. Position the footrest platform's upper surface 2 cm above the lower ends. Derive its width from lower tube spacing so it stays between the tubes across seat-width adjustments. Attach each caster fork to its front frame tube 25% of the tube's length up from the lower end.
 - **Rear axle position:** derive both rear-wheel centres and a transverse axle tube at hub height from one seat-relative fore–aft value. Keep the seat, front casters, and footrest in place; adapt connections from the tube to the frame. Camber tilts the wheels independently of the tube. When seat depth changes, the tube and rear wheels follow the rear seat edge, keeping the displayed axle position unchanged. Review clearance against backrest, frame, and folded path throughout its range. This changes the chair's visible balance, not a computed tipping point.
 - **Cambered wheels:** derive axle height from the rendered tire's vertical extent after tilting, including tire thickness. A fixed axle height can lift a tilted wheel off the ground. Derive lateral clearance from the seat and frame.
 - **Folding sweep:** test the path, not just the endpoints. A 45 cm backrest is longer than a 36 cm seat and may extend past its front edge when folded. That overhang is not inherently invalid, but intersections with tubing, wheels, or footrest are.
@@ -27,7 +28,7 @@ Define a single coordinate convention and use metres internally, converting cent
 
 Create a pure `deriveGeometry(configuration, foldProgress)` function returning component anchors, dimensions, and orientations. Derive seat geometry first, then backrest, grounded wheels, and connecting frame/footrest geometry.
 
-Test seat dimensions, fixed front height, backrest angle relative to seat, left/right symmetry, tire-ground contact, and how both rear-wheel centres and the axle tube move together while the seat, casters, and footrest stay put. Use geometry constants shared with rendering rather than separate approximations.
+Test seat dimensions, fixed front height, backrest angle relative to seat, left/right symmetry, tire-ground contact, and how both rear-wheel centres and the axle tube move together while the seat, casters, and footrest stay put. Use geometry constants shared with rendering rather than separate approximations. Include a geometry test for 40 cm upper spacing and 34 cm lower spacing at a 40 cm seat width, and test proportional taper at other seat widths.
 
 ### 2. Render the default chair
 

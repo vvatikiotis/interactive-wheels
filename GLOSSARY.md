@@ -31,5 +31,14 @@ The inward or outward lean of the rear wheels from vertical. Positive values mea
 **Backrest height**:
 The distance along the backrest from its junction with the seat to its top, rather than its vertical height above the ground.
 
+**Front frame tubes**:
+The two frame tubes descending from the front of the seat toward the casters. They taper inward toward their lower ends; their spacing scales proportionally with seat width.
+
+**Footrest platform**:
+The surface supporting the user's feet, spanning between the front frame tubes a couple of centimetres above their lower ends.
+
+**Caster fork attachment**:
+The point where a front caster fork connects to its front frame tube. In this prototype it sits 25% of the tube's length up from its lower end.
+
 **Front seat height**:
 The distance from the ground to the top of the seat at its front edge.

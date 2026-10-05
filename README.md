@@ -11,6 +11,6 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite. Run `npm test`, `npm run typecheck`, and `npm run build` for automated checks. Run `npm run test:browser` for the Chrome rotation/zoom check (requires Google Chrome installed at the standard macOS path).
+Open the local URL printed by Vite. Run `npm test`, `npm run typecheck`, and `npm run build` for automated checks. Run `npm run test:browser` for the production Chrome rotation/zoom check, or `npm run test:dev-browser` to check the development server (requires Google Chrome installed at the standard macOS path).
 
 The chair is a visual prototype, not a clinical or engineering validation tool.

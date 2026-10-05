@@ -9,7 +9,8 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
     "test": "vitest run",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:dev-browser": "VIEWER_DEV=1 VIEWER_URL=http://127.0.0.1:5173/ playwright test"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

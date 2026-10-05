@@ -1,47 +1,54 @@
 # Wheelchair configuration
 
-Terms for describing the wheelchair's dimensions and angles.
+Terms used for the chair's measurements and components.
 
 ## Language
 
 **Seat width**:
-The side-to-side width of the seating surface, excluding frame tubing.
+Side-to-side width of the seating surface, excluding frame tubing.
 
 **Seat depth**:
-The full front-to-back seat measurement, excluding frame tubing. The frontmost 10% is uncovered, so the seat surface spans the rear 90% of the measured depth.
+Full front-to-back seat measurement, excluding frame tubing; it includes the uncovered space ahead of the seating surface.
+
+**Front seat height**:
+Ground-to-seat distance at the front edge of the seating surface.
 
 **Seat angle**:
-The angle of the seat relative to the ground. Positive values mean the rear of the seat is lower than the front.
+Angle of the seat relative to the ground. Positive values place the rear below the front.
 _Avoid_: Backrest angle when referring to seat tilt
 
 **Backrest angle**:
-The angle of the backrest relative to the seat, not relative to the ground. Measured from the forward direction along the seat, 90° is perpendicular and larger angles lean backward.
-_Avoid_: Recline angle without specifying its reference
+Angle of the backrest relative to the seat, measured from the seat's forward direction. At 90° the backrest is perpendicular; larger values lean backward.
+_Avoid_: Recline angle without a reference
+
+**Backrest height**:
+Distance along the backrest from its junction with the seat to its top, not vertical height above the ground.
+
+**Rear-wheel camber**:
+Lean of the rear wheels from vertical. Positive values bring their tops closer together; negative values move their tops farther apart.
 
 **Rear axle position**:
-The horizontal forward distance of both rear-wheel centres from the rear edge of the seat. Zero places the wheel centres directly below that edge; values are non-negative. The transverse axle tube between the wheels moves with their centres; this setting does not calculate a tipping point.
+Horizontal forward distance from the seat's rear edge to both rear-wheel centres. At zero, the centres are directly below that edge.
 _Avoid_: Tipping point
 
 **Axle tube**:
-The transverse bar between the rear-wheel axle attachments, at hub height. It moves with both rear wheels when rear axle position changes.
+Transverse bar joining the rear-wheel axle attachments at hub height.
 
-**Rear-wheel camber**:
-The inward or outward lean of the rear wheels from vertical. Positive values mean the tops of the wheels are closer together than their bottoms; negative values mean they are farther apart. The prototype allows −4° to 6°.
-
-**Backrest height**:
-The distance along the backrest from its junction with the seat to its top, rather than its vertical height above the ground.
-
-**Front seat rod**:
-The pair of left-to-right metal bars attached beneath the rectangular seat surface, one 25% and the other 70% of its depth in from the front edge. Both bow downward at the centre and do not attach to the front legs.
+**Front seat rods**:
+Two left-to-right bars beneath the seating surface that bend downward at their centres.
 
 **Front frame tubes**:
-The two frame tubes descending from the front of the seat toward the casters. They angle 70 degrees above the ground in side view and taper inward toward their lower ends; their spacing scales proportionally with seat width.
+The two tubes descending from the front of the seat toward the casters and tapering inward toward their lower ends.
 
-**Footrest platform**:
-The surface supporting the user's feet, spanning between the front frame tubes and resting above the transverse metal rod connecting their lower ends. Its slope is measured relative to the ground; positive values raise the front edge.
+**Footplate**:
+Surface supporting the user's feet between the lower front frame tubes.
+_Avoid_: Footrest platform when referring only to the plate
+
+**Footplate slope**:
+Angle of the footplate relative to the ground. Positive values raise its front edge.
+
+**Caster fork**:
+Inverted-U support straddling a small front wheel, with legs attached to opposite ends of that wheel's axle.
 
 **Caster fork attachment**:
-The point where a caster-fork stem connects to its front frame tube. In this prototype it sits 25% of the tube's length up from its lower end. The stem joins an inverted-U fork that surrounds the caster; the axle runs perpendicular to the wheel between the fork legs.
-
-**Front seat height**:
-The distance from the ground to the top of the seat at its front edge.
+Point where the fork's stem joins a front frame tube.

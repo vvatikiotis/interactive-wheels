@@ -1,117 +1,42 @@
 # Interactive wheelchair prototype
 
-Status: scope confirmed; all eight adjustment controls implemented. Folding and resets remain.
+## Purpose and limits
 
-## Agreed objective
+A browser-based visual configurator for a rigid-frame wheelchair. The chair should look connected as its dimensions change, but the model does not assess stability, safety, clinical suitability, or manufacturing feasibility. It has no occupant, backend, saved configurations, or imported 3D assets.
 
-Build a small browser prototype that shows how adjustments change a wheelchair visually. Users must be able to rotate the view, zoom in and out, and change adjustments interactively.
+## Current controls
 
-The wheelchair must remain visually whole: no disconnected parts or visibly strange configurations. Manufacturing feasibility, clinical suitability, and engineering validation are not goals.
+Sliders update the generated chair immediately, in 1 cm or 1° steps. Measurements are displayed beside each slider.
 
-## Agreed adjustments
+| Adjustment | Range | Default | Meaning |
+|---|---:|---:|---|
+| Seat width | 33–46 cm | 39 cm | Seating surface, excluding tubing |
+| Seat depth | 36–46 cm | 40 cm | Full front-to-back measurement; the front 10% is uncovered |
+| Rear-wheel camber | −4–6° | 2° | Positive brings wheel tops inward |
+| Rear axle position | 0–12 cm | 8 cm | Forward from the seat's rear edge; zero aligns wheel centres beneath it |
+| Backrest height | 10–45 cm | 20 cm | Measured along the backrest |
+| Backrest angle to seat | 80–110° | 85° | 90° is perpendicular to the seat; larger values lean backward |
+| Seat angle to ground | 0–12° | 6° | Positive lowers the rear while front height remains fixed |
+| Footplate slope | 0–15° | 0° | Positive raises the front edge relative to the ground |
 
-- Seat width
-- Seat depth
-- Rear-wheel camber
-- Rear axle position (moves both rear wheels forward or backward together relative to the seat)
-- Backrest height
-- Backrest angle relative to the seat
-- Seat angle relative to the ground
-- Footplate slope relative to the ground; positive values raise the front edge
+## Chair geometry
 
-Changing the seat angle keeps the front seat height fixed and moves the rear up or down. The backrest moves with the seat, preserving its selected angle relative to the seat.
+- The front seat height is 50 cm. The seat surface spans the rear 90% of the measured depth. Backrest supports start at the rear corners of this surface. Two downward-bent crossbars sit beneath it, 25% and 70% of the surface depth from its front edge.
+- Front frame tubes descend at 70° to the ground in side view. Their lower spacing is 85% of their seat-width-derived upper spacing. A transverse rod joins their lower ends.
+- The 10 mm thick footplate fits between the front tubes. Its centre is 4 cm behind the transverse rod; its height changes with slope so its underside meets the rod. Sloping it does not change its width or depth.
+- Each caster-fork stem connects one quarter of the way up its front tube. An inverted-U fork straddles the caster, with its legs joining opposite ends of the axle perpendicular to the wheel. The small caster wheels have thick tyres and perforated, rather than spoked or solid, faces.
+- The rear wheels and their transverse axle tube move together as rear axle position changes. Supports join the rear seat corners and seat-side midpoints to the axle attachments. Rear-wheel camber tilts the wheels independently of the axle tube.
 
-## Agreed wheelchair style
+The model derives positions from shared configuration geometry and uses generated meshes. Wheel-ground contact and frame coherence are visual targets, not mechanical guarantees across every possible combination.
 
-Use a generic rigid-frame active wheelchair with two large rear wheels, two small front casters, a seat, backrest, and footrest. Use recognizable tubing and wheels with simple materials.
+## Interaction
 
-The backrest support rods attach directly to the back corners of the seat surface. The seat's frontmost 10% of measured depth is uncovered; the surface covers the rear 90%, aligned to the back edge. Two left-to-right metal rods attach beneath the rectangular seat surface, one 25% and the other 70% of the surface depth in from its front edge. Both centres bend downward beneath the surface; they do not attach to the front legs. In side view, they angle 70 degrees above the ground. Their lower ends are 15% narrower than their upper attachment points, with the proportion scaling with seat width (for example, 34 cm seat width gives 28.9 cm lower spacing). Connect the lower ends of the front frame tubes with a transverse metal rod, continuing the frame across the front. Place the footrest platform above this rod and between the front frame tubes, with its center shifted 4 cm rearward from the rod. The platform is 10 mm thick. Attach each caster-fork stem to its front frame tube 25% of the tube's length up from the lower end. The stem joins the top of an inverted-U fork; its legs flank the caster and connect to opposite ends of the axle rod, which is perpendicular to the wheel. No brand-specific details, folding frame mechanism, or occupant.
+The desktop viewer starts in a three-quarter view. Drag to orbit and scroll to zoom; the camera stays above the ground and zoom is limited. The scene has a light background, ground plane, and shadow. Mobile and touch controls are outside the present scope.
 
-## Agreed backrest folding
+## Not implemented
 
-Provide a Fold / Unfold button that animates the backrest forward toward the seat. Folding is separate from the configured backrest angle. Unfolding restores the selected backrest angle relative to the seat. Disable all adjustment sliders, including rear axle position, while folded and during folding or unfolding. Keep camera rotation and zoom available. Enable adjustments again once unfolding finishes.
+The earlier scope also calls for a Fold / Unfold control, separate Reset view and Reset configuration controls, and collision-aware slider limits with an explanation when a setting is blocked. These are **not** part of the current prototype. Folding, if implemented, should take about 0.4 seconds, restore the configured backrest angle when unfolded, disable adjustments while folded or moving, and leave camera controls available. Reset configuration should restore defaults and unfold without changing the camera; Reset view should leave the configuration alone. Collision limits should stop at the last valid slider step rather than silently changing other values.
 
-## Agreed browser controls
+## Verification boundary
 
-Target desktop browsers with mouse or trackpad input. Mobile browsers and touch controls are out of scope for this prototype.
-
-Drag to rotate the view and scroll to zoom. Put adjustment controls in a side panel and provide a Reset view button.
-
-## Agreed adjustment controls
-
-Use sliders with visible measurements, without editable number fields. Show dimensions in centimetres and angles in degrees. Update the wheelchair as the user drags.
-
-Provide Reset configuration separately from Reset view. Reset configuration immediately restores all adjustment defaults and the unfolded backrest without changing the camera position. If a fold or unfold animation is running, reset cancels it.
-
-## Agreed measurement conventions
-
-Seat width and depth describe the seating surface, excluding frame tubing. Front seat height is measured from the ground to the top of the seat at its front edge. Rear axle position is the horizontal forward distance from the rear edge of the seat to both rear-wheel centres, measured in centimetres. Zero places the wheel centres directly below the seat's rear edge; values are non-negative. The slider labels indicate the forward direction. Changing seat depth moves the rear wheels and axle tube with the rear seat edge, preserving the selected rear axle position.
-
-Measure backrest angle from the forward direction along the seat to the backrest: values above 90° lean backward. In the folded position, the backrest is approximately parallel to the seat and stops just above it to avoid overlap, rather than reaching an exact 0° angle.
-
-## Agreed fixed dimensions and slider steps
-
-Use a front seat height of 50 cm, rear-wheel diameter of 61 cm (approximately 24 inches), and caster diameter of 10 cm. Dimension sliders use 1 cm steps; angle sliders use 1° steps.
-
-Derive the remaining frame and footrest geometry to keep the chair connected rather than adding controls beyond those listed above.
-
-## Agreed ground contact and geometry
-
-Keep wheel sizes fixed and wheels in contact with the ground as adjustments change. Adapt the simplified tubing and connections around the selected dimensions so the chair remains connected.
-
-Moving the rear axle position moves both rear-wheel centres and a visible transverse axle tube together, without moving the seat, front casters, or footrest. Show the tube between the rear-wheel axle attachments at hub height. Connect the rear corners of the seat surface directly to this axle tube with frame supports. Add a second support on each side from the midpoint of the seat side rail to the same axle-tube attachment. Rear-wheel camber still tilts the wheels independently of this tube. This is not a calculation of the tipping point or stability.
-
-Seat tilt changes the seat and its supporting geometry, not the orientation of the whole chair. This is a connected visual model, not a reproduction of real adjustment mechanisms.
-
-## Agreed visual constraints
-
-Use conservative slider ranges and restrict combinations where necessary to keep the wheelchair connected and visually coherent. Preserve selected dimensions rather than silently changing them to hide collisions. These restrictions are visual limits, not safety or manufacturing validation.
-
-The following ranges are provisional visual ranges, not validated wheelchair specifications. Narrow them if visual testing reveals collisions.
-
-| Adjustment | Range | Default |
-|---|---:|---:|
-| Seat width | 33–46 cm | 39 cm |
-| Seat depth | 36–46 cm | 40 cm |
-| Rear-wheel camber | −4–6° | 2° |
-| Rear axle position | 0 to +12 cm | +8 cm |
-| Backrest height | 10–45 cm | 20 cm |
-| Backrest angle to seat | 80–110° | 85° |
-| Seat angle to ground | 0–12° | 6° |
-| Footplate slope | 0–15° | 0° |
-
-Positive seat angle means the rear is lower than the front. A 90° backrest angle is perpendicular to the seat. Positive camber means the rear wheels lean inward at the top. Measure backrest height along the backrest from the seat junction.
-
-If a combination would cause a visible collision, stop the affected slider at the valid limit and show a short explanation, such as “Limited to avoid wheel/frame overlap.” Do not silently change other settings. Allow the full agreed ranges wherever the simplified geometry can accommodate them. Collision limits and explanations remain to be implemented.
-
-## Agreed implementation scope
-
-Use React, TypeScript, and Vite, with React Three Fiber and Drei for the 3D view. Generate all geometry in code, including tubing, wheels, seat, and backrest. No imported models or backend.
-
-Run locally in a desktop browser. Defer Blender assets, hosting, saving configurations, and export.
-
-## Agreed animation behavior
-
-Slider changes follow input directly, without an additional transition animation. Animate normal folding and unfolding over approximately 0.4 seconds. Ignore repeated fold-button clicks during that animation.
-
-## Agreed presentation
-
-Use a light background, a ground plane with a soft shadow, and contrasting frame and upholstery. Start with a three-quarter view showing the front and one side.
-
-Keep the camera above ground and limit zoom to avoid navigating inside the chair. No decorative environment, automatic rotation, or extra visual effects.
-
-## Agreed acceptance checks
-
-- Runs locally in a current desktop Chrome browser.
-- All adjustment sliders, including rear axle position, update the chair and display the selected measurements. The current checkpoint covers all eight sliders.
-- At defaults, limits, and tested combinations, parts stay connected, wheels stay grounded, and no obvious intersections appear. Full geometry validation for combinations remains.
-- Restricted combinations stop with an explanation.
-- Folding and unfolding work at allowed settings without visible collisions. Folding remains to be implemented.
-- Rotation, zoom, both resets, and slider disabling behave as agreed.
-- Automated geometry checks cover dimensions and ground contact; browser checks cover appearance and interaction.
-
-These checks validate the visual prototype, not engineering accuracy.
-
-## Interview status
-
-The user confirmed the initial scope and requested rear axle position as an additional control. Its range is 0 to +12 cm in 1 cm steps, with a +8 cm default. This addition was authorized and implemented as a geometry and UI control.
+Unit tests check derived dimensions and key connections. Browser tests exercise the eight sliders, extreme settings, orbit, and zoom in desktop Chrome. These checks do not prove collision-free geometry for all combinations or validate wheelchair safety.

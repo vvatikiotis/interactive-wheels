@@ -1,6 +1,6 @@
 # Interactive wheelchair prototype
 
-Current checkpoint: a generated rigid-frame wheelchair with drag-to-rotate and scroll-to-zoom camera controls and eight adjustment sliders. Backrest folding and configuration/view resets are planned but not implemented yet. See `docs/prototype-scope.md` and `docs/implementation-plan.md`.
+A browser-based rigid-frame wheelchair configurator with eight sliders and a generated 3D view. Drag to rotate; scroll to zoom. It is a visual prototype, not a clinical or engineering validation tool.
 
 ## Run
 
@@ -11,6 +11,15 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite. If the development server was already running, stop it and restart it to load this update. Run `npm test`, `npm run typecheck`, and `npm run build` for automated checks. Run `npm run test:browser` for the production Chrome interaction checks, or `npm run test:dev-browser` for development-server checks (requires Google Chrome installed at the standard macOS path).
+Open the local URL printed by Vite.
 
-The chair is a visual prototype, not a clinical or engineering validation tool.
+## Check
+
+```sh
+npm test
+npm run typecheck
+npm run build
+npm run test:browser
+```
+
+Browser tests launch Google Chrome from the standard macOS application path. See [prototype scope](docs/prototype-scope.md) for current behavior and [implementation plan](docs/implementation-plan.md) for remaining work.

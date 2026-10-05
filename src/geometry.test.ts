@@ -67,6 +67,19 @@ describe('configured wheelchair', () => {
     close(chair.backrest.top[2] - chair.backrest.base[2], 0)
   })
 
+  it('folds the backrest toward the seat without changing its configured angle', () => {
+    const config = { ...DEFAULT_CONFIG, backrestAngle: 100 }
+    const open = deriveGeometry(config)
+    const halfway = deriveGeometry(config, 0.5)
+    const folded = deriveGeometry(config, 1)
+    close(open.backrest.angle - open.seat.tilt, 100 * Math.PI / 180)
+    close(halfway.backrest.angle - halfway.seat.tilt, 54 * Math.PI / 180)
+    close(folded.backrest.angle - folded.seat.tilt, 8 * Math.PI / 180)
+    expect(folded.backrest.top[2]).toBeGreaterThan(open.backrest.top[2])
+    close(folded.backrest.height, open.backrest.height)
+    close(config.backrestAngle, 100)
+  })
+
   it('carries the backrest with the tilted seat while retaining its selected length and relative angle', () => {
     const chair = deriveGeometry({ ...DEFAULT_CONFIG, backrestHeight: 35, backrestAngle: 95 })
     close(chair.backrest.top[1], 0.80176)

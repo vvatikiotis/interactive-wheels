@@ -33,10 +33,12 @@ The model derives positions from shared configuration geometry and uses generate
 
 The desktop viewer starts in a three-quarter view. Drag to orbit and scroll to zoom; the camera stays above the ground and zoom is limited. The scene has a light background, ground plane, and shadow. Mobile and touch controls are outside the present scope.
 
+Fold / Unfold animates the backrest forward toward the seat over about 0.4 seconds, independently of the configured backrest angle. All eight sliders are disabled while folding, folded, or unfolding; orbit and zoom remain available. Unfolding restores the configured angle.
+
 ## Not implemented
 
-The earlier scope also calls for a Fold / Unfold control, separate Reset view and Reset configuration controls, and collision-aware slider limits with an explanation when a setting is blocked. These are **not** part of the current prototype. Folding, if implemented, should take about 0.4 seconds, restore the configured backrest angle when unfolded, disable adjustments while folded or moving, and leave camera controls available. Reset configuration should restore defaults and unfold without changing the camera; Reset view should leave the configuration alone. Collision limits should stop at the last valid slider step rather than silently changing other values.
+Separate Reset view and Reset configuration controls, and collision-aware slider limits with an explanation when a setting is blocked, are **not** part of the current prototype. Reset configuration should restore defaults and unfold without changing the camera; Reset view should leave the configuration alone. Collision limits should stop at the last valid slider step rather than silently changing other values.
 
 ## Verification boundary
 
-Unit tests check derived dimensions and key connections. Browser tests exercise the eight sliders, extreme settings, orbit, and zoom in desktop Chrome. These checks do not prove collision-free geometry for all combinations or validate wheelchair safety.
+Unit tests check derived dimensions and key connections. Browser tests exercise the eight sliders, extreme settings, folding and unfolding, orbit, and zoom in desktop Chrome. These checks do not prove collision-free geometry for all combinations or validate wheelchair safety.

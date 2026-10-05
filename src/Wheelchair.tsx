@@ -75,8 +75,8 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPus
   </group>
 }
 
-export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CONFIG }) {
-  const { seat, backrest, rearWheels, axleTube, rearFrameConnections, rearFrameMidConnections, casters, frontFrame, footrest } = deriveGeometry(configuration)
+export function Wheelchair({ configuration, foldProgress = 0 }: { configuration: typeof DEFAULT_CONFIG; foldProgress?: number }) {
+  const { seat, backrest, rearWheels, axleTube, rearFrameConnections, rearFrameMidConnections, casters, frontFrame, footrest } = deriveGeometry(configuration, foldProgress)
   const sidePoints = (side: number) => ({
     front: [side * (frontFrame.upperSpacing / 2 + 0.01), frontFrame.upperLeft[1], frontFrame.upperLeft[2]] as Point,
     rear: [side * seat.width / 2, seat.seatRear[1], seat.seatRear[2]] as Point,

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei/core/OrbitControls.js'
@@ -8,6 +8,22 @@ import './style.css'
 
 function App() {
   const [configuration, setConfiguration] = useState<WheelchairConfig>({ ...DEFAULT_CONFIG })
+  const [foldPhase, setFoldPhase] = useState<'unfolded' | 'folding' | 'folded' | 'unfolding'>('unfolded')
+  const [foldProgress, setFoldProgress] = useState(0)
+  useEffect(() => {
+    if (foldPhase !== 'folding' && foldPhase !== 'unfolding') return
+    let frame: number
+    let start: number | undefined
+    const tick = (time: number) => {
+      start ??= time
+      const fraction = Math.min((time - start) / 400, 1)
+      setFoldProgress(foldPhase === 'folding' ? fraction : 1 - fraction)
+      if (fraction < 1) frame = requestAnimationFrame(tick)
+      else setFoldPhase(foldPhase === 'folding' ? 'folded' : 'unfolded')
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [foldPhase])
   const controls: { key: keyof WheelchairConfig; label: string; min: number; max: number; unit: string }[] = [
     { key: 'seatWidth', label: 'Seat width', min: 33, max: 46, unit: 'cm' },
     { key: 'seatDepth', label: 'Seat depth', min: 36, max: 46, unit: 'cm' },
@@ -33,7 +49,7 @@ function App() {
           <color attach="background" args={['#edf2f3']} />
           <ambientLight intensity={1.6} />
           <directionalLight position={[1.5, 2.5, 2]} intensity={2.3} castShadow shadow-mapSize={[1024, 1024]} />
-          <Wheelchair configuration={configuration} />
+          <Wheelchair configuration={configuration} foldProgress={foldProgress} />
           <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]}>
             <planeGeometry args={[200, 200]} />
             <meshStandardMaterial color="#dce6e7" roughness={1} />
@@ -48,11 +64,15 @@ function App() {
           const formatted = control.key === 'rearAxlePosition' && value > 0 ? `+${value}` : value
           return <div className="control" key={control.key}>
             <label htmlFor={control.key}>{control.label} <output>{formatted} {control.unit}</output></label>
-            <input id={control.key} aria-label={control.label} type="range" min={control.min} max={control.max} step="1" value={value}
+            <input id={control.key} aria-label={control.label} type="range" min={control.min} max={control.max} step="1" value={value} disabled={foldPhase !== 'unfolded'}
               onChange={event => setConfiguration(current => ({ ...current, [control.key]: Number(event.target.value) }))} />
             {control.key === 'rearAxlePosition' && <div className="range-labels"><span>Backward</span><span>Forward</span></div>}
           </div>
         })}
+        <button className="fold-button" type="button" disabled={foldPhase === 'folding' || foldPhase === 'unfolding'}
+          onClick={() => setFoldPhase(foldPhase === 'folded' ? 'unfolding' : 'folding')}>
+          {foldPhase === 'folding' ? 'Folding…' : foldPhase === 'unfolding' ? 'Unfolding…' : foldPhase === 'folded' ? 'Unfold' : 'Fold'}
+        </button>
       </aside>
     </section>
   </main>

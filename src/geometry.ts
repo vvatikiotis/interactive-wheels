@@ -27,7 +27,7 @@ const radians = (degrees: number) => degrees * Math.PI / 180
 export const WHEEL = { rearRadius: 0.295, rearTire: 0.01, casterRadius: 0.04, casterTire: 0.0104 }
 export const FRONT_FRAME_ANGLE_DEGREES = 70
 
-export function deriveGeometry(config: WheelchairConfig) {
+export function deriveGeometry(config: WheelchairConfig, foldProgress = 0) {
   const width = config.seatWidth / 100
   const depth = config.seatDepth / 100
   const tilt = radians(config.seatAngle)
@@ -79,7 +79,7 @@ export function deriveGeometry(config: WheelchairConfig) {
     width: lowerSpacing - 0.07,
     depth: 0.12,
   }
-  const backAngle = tilt + radians(config.backrestAngle)
+  const backAngle = tilt + radians(config.backrestAngle + (8 - config.backrestAngle) * foldProgress)
   const backTop: Point = [0, rear[1] + config.backrestHeight / 100 * Math.sin(backAngle), rear[2] + config.backrestHeight / 100 * Math.cos(backAngle)]
   const backrestSupports = ([-1, 1] as const).map(side => ({
     base: [side * width / 2, seatRear[1], seatRear[2]] as Point,

@@ -6,8 +6,8 @@ See [prototype-scope.md](prototype-scope.md) for the current behavior, ranges, a
 
 - React, TypeScript, Vite, React Three Fiber, and Drei render a generated chair and a mouse-controlled 3D view.
 - `src/geometry.ts` derives seat, frame, backrest, footplate, axle, and wheel positions from eight configuration values. A separate fold progress moves the backrest without changing its configured angle. Internal distances are in metres; slider dimensions are in centimetres and angles in degrees. Caster centre height follows the tyre radius so thicker tyres remain grounded.
-- `src/Wheelchair.tsx` renders those shapes; `src/main.tsx` owns slider state, the 0.4-second Fold / Unfold animation, both reset controls, and the viewer.
-- `src/geometry.test.ts` covers key derived measurements, connections, and sampled backrest fold poses. `tests/viewer.spec.ts` covers slider values, two extreme configurations, folding and unfolding, both resets, camera orbit, and zoom.
+- `src/Wheelchair.tsx` renders those shapes and an optional wireframe mannequin derived in `src/mannequin.ts`; `src/main.tsx` owns slider state, mannequin visibility, the 0.4-second Fold / Unfold animation, both reset controls, and the viewer.
+- `src/geometry.test.ts` covers key derived measurements, connections, and sampled backrest fold poses. `src/mannequin.test.ts` checks the figure's seat, footplate, and backrest anchors. `tests/viewer.spec.ts` covers slider values, the mannequin toggle, two extreme configurations, folding and unfolding, both resets, camera orbit, and zoom.
 
 ## Remaining work, if completing the earlier scope
 

@@ -1,6 +1,6 @@
 # Interactive wheelchair prototype
 
-Status: design interview complete; scope confirmed by the user. Application implementation is not authorized yet.
+Status: scope confirmed; rear axle position addition agreed and implemented.
 
 ## Agreed objective
 
@@ -13,6 +13,7 @@ The wheelchair must remain visually whole: no disconnected parts or visibly stra
 - Seat width
 - Seat depth
 - Rear-wheel camber
+- Rear axle position (moves both rear wheels forward or backward together relative to the seat)
 - Backrest height
 - Backrest angle relative to the seat
 - Seat angle relative to the ground
@@ -25,7 +26,7 @@ Use a generic rigid-frame active wheelchair with two large rear wheels, two smal
 
 ## Agreed backrest folding
 
-Provide a Fold / Unfold button that animates the backrest forward toward the seat. Folding is separate from the configured backrest angle. Unfolding restores the selected backrest angle relative to the seat. Disable all six adjustment sliders while folded and during folding or unfolding. Keep camera rotation and zoom available. Enable adjustments again once unfolding finishes.
+Provide a Fold / Unfold button that animates the backrest forward toward the seat. Folding is separate from the configured backrest angle. Unfolding restores the selected backrest angle relative to the seat. Disable all adjustment sliders, including rear axle position, while folded and during folding or unfolding. Keep camera rotation and zoom available. Enable adjustments again once unfolding finishes.
 
 ## Agreed browser controls
 
@@ -37,11 +38,11 @@ Drag to rotate the view and scroll to zoom. Put adjustment controls in a side pa
 
 Use sliders with visible measurements, without editable number fields. Show dimensions in centimetres and angles in degrees. Update the wheelchair as the user drags.
 
-Provide Reset configuration separately from Reset view. Reset configuration immediately restores all six defaults and the unfolded backrest without changing the camera position. If a fold or unfold animation is running, reset cancels it.
+Provide Reset configuration separately from Reset view. Reset configuration immediately restores all adjustment defaults and the unfolded backrest without changing the camera position. If a fold or unfold animation is running, reset cancels it.
 
 ## Agreed measurement conventions
 
-Seat width and depth describe the seating surface, excluding frame tubing. Front seat height is measured from the ground to the top of the seat at its front edge.
+Seat width and depth describe the seating surface, excluding frame tubing. Front seat height is measured from the ground to the top of the seat at its front edge. Rear axle position is the horizontal forward-or-backward distance from the rear edge of the seat to both rear-wheel centres, measured in centimetres: positive is forward, negative is backward. The slider labels show both directions. Changing seat depth moves the rear wheels and axle tube with the rear seat edge, preserving the selected rear axle position.
 
 Measure backrest angle from the forward direction along the seat to the backrest: values above 90° lean backward. In the folded position, the backrest is approximately parallel to the seat and stops just above it to avoid overlap, rather than reaching an exact 0° angle.
 
@@ -49,11 +50,13 @@ Measure backrest angle from the forward direction along the seat to the backrest
 
 Use a front seat height of 50 cm, rear-wheel diameter of 61 cm (approximately 24 inches), and caster diameter of 10 cm. Dimension sliders use 1 cm steps; angle sliders use 1° steps.
 
-Derive the remaining frame and footrest geometry to keep the chair connected rather than adding controls.
+Derive the remaining frame and footrest geometry to keep the chair connected rather than adding controls beyond those listed above.
 
 ## Agreed ground contact and geometry
 
 Keep wheel sizes fixed and wheels in contact with the ground as adjustments change. Adapt the simplified tubing and connections around the selected dimensions so the chair remains connected.
+
+Moving the rear axle position moves both rear-wheel centres and a visible transverse axle tube together, without moving the seat, front casters, or footrest. Show the tube between the rear-wheel axle attachments at hub height; adapt its connections to the frame so the chair stays visually whole. Rear-wheel camber still tilts the wheels independently of this tube. This is not a calculation of the tipping point or stability.
 
 Seat tilt changes the seat and its supporting geometry, not the orientation of the whole chair. This is a connected visual model, not a reproduction of real adjustment mechanisms.
 
@@ -68,6 +71,7 @@ The following ranges are provisional visual ranges, not validated wheelchair spe
 | Seat width | 33–46 cm | 39 cm |
 | Seat depth | 36–46 cm | 40 cm |
 | Rear-wheel camber | 0–6° | 2° |
+| Rear axle position | −5 to +12 cm | +8 cm |
 | Backrest height | 25–45 cm | 35 cm |
 | Backrest angle to seat | 80–110° | 95° |
 | Seat angle to ground | 0–12° | 6° |
@@ -95,7 +99,7 @@ Keep the camera above ground and limit zoom to avoid navigating inside the chair
 ## Agreed acceptance checks
 
 - Runs locally in a current desktop Chrome browser.
-- All six sliders update the chair and display the selected measurements.
+- All adjustment sliders, including rear axle position, update the chair and display the selected measurements.
 - At defaults, limits, and tested combinations, parts stay connected, wheels stay grounded, and no obvious intersections appear.
 - Restricted combinations stop with an explanation.
 - Folding and unfolding work at allowed settings without visible collisions.
@@ -106,4 +110,4 @@ These checks validate the visual prototype, not engineering accuracy.
 
 ## Interview status
 
-The user confirmed the scope and shared understanding. The design interview is complete. Application implementation awaits explicit authorization.
+The user confirmed the initial scope and requested rear axle position as an additional control. Its range is −5 to +12 cm in 1 cm steps, with a +8 cm default. This addition was authorized and implemented as a geometry and UI checkpoint.

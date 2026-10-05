@@ -2,6 +2,8 @@
 
 A browser-based rigid-frame wheelchair configurator with nine sliders, a folding backrest, an optional wireframe mannequin, separate configuration and camera resets, and a generated 3D view. Drag to rotate; scroll to zoom. It is a visual prototype, not a clinical or engineering validation tool.
 
+**Live demo:** https://vvatikiotis.github.io/interactive-wheels/
+
 ## Run
 
 Requires Node.js 20.19+ or 22.12+ and a current desktop Chrome browser.

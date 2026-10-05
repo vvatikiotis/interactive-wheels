@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test'
 
+test('uses the requested browser tab title', async ({ page }) => {
+  await page.goto('/')
+  await expect(page).toHaveTitle('Interactive wheels')
+})
+
 test('shows the requested page title without the checkpoint label', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Interactive Wheels - Alli Opsi')

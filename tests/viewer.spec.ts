@@ -1,0 +1,21 @@
+import { expect, test } from '@playwright/test'
+
+test('default wheelchair is visible and drag/scroll change the view', async ({ page }) => {
+  await page.goto('http://127.0.0.1:4173/')
+  const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
+  await expect(viewer.locator('canvas')).toBeVisible()
+  const box = await viewer.locator('canvas').boundingBox()
+  if (!box) throw new Error('3D viewer has no bounds')
+  const before = await viewer.screenshot()
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(box.x + box.width / 2 + 160, box.y + box.height / 2, { steps: 10 })
+  await page.mouse.up()
+  await page.waitForTimeout(250)
+  const rotated = await viewer.screenshot()
+  expect(rotated.equals(before)).toBe(false)
+  await page.mouse.wheel(0, -400)
+  await page.waitForTimeout(250)
+  const zoomed = await viewer.screenshot()
+  expect(zoomed.equals(rotated)).toBe(false)
+})

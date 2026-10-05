@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_CONFIG, deriveGeometry, WHEEL } from './geometry'
+import { DEFAULT_CONFIG, deriveGeometry, WHEEL, type WheelchairConfig } from './geometry'
 
 const close = (actual: number, expected: number) => expect(actual).toBeCloseTo(expected, 5)
 
@@ -89,6 +89,29 @@ describe('configured wheelchair', () => {
         const { backrest, seat } = deriveGeometry(config, step / 10)
         const seatPlaneAtTip = seat.rear[1] + (backrest.top[2] - seat.rear[2]) * Math.tan(seat.tilt)
         expect(backrest.top[1] - seatPlaneAtTip).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('keeps casters grounded, fork clear, and the folding backrest above the seat at slider extremes', () => {
+    const ranges: [keyof WheelchairConfig, number, number][] = [
+      ['seatWidth', 33, 46], ['seatDepth', 36, 46], ['wheelCamber', -4, 6],
+      ['rearAxlePosition', 0, 12], ['backrestHeight', 10, 45],
+      ['backrestAngle', 80, 110], ['seatAngle', 0, 12], ['footrestSlope', 0, 15],
+    ]
+    for (let combination = 0; combination < 256; combination++) {
+      const config = { ...DEFAULT_CONFIG }
+      ranges.forEach(([key, low, high], index) => { config[key] = combination & (1 << index) ? high : low })
+      for (let step = 0; step <= 10; step++) {
+        const chair = deriveGeometry(config, step / 10)
+        const seatPlaneAtTip = chair.seat.rear[1] + (chair.backrest.top[2] - chair.seat.rear[2]) * Math.tan(chair.seat.tilt)
+        expect(chair.backrest.top[1]).toBeGreaterThan(seatPlaneAtTip)
+        for (const caster of chair.casters) {
+          close(caster.center[1] - WHEEL.casterRadius - WHEEL.casterTire, 0)
+          expect(caster.forkTop[1] - caster.center[1] - WHEEL.casterRadius - WHEEL.casterTire).toBeGreaterThan(0.0079)
+        }
+        const footplateRearBottom = chair.footrest.center[1] - chair.footrest.depth / 2 * Math.sin(chair.footrest.angle) - chair.footrest.thickness / 2 * Math.cos(chair.footrest.angle)
+        expect(footplateRearBottom).toBeGreaterThan(0)
       }
     }
   })
@@ -195,6 +218,7 @@ describe('configured wheelchair', () => {
     for (const caster of chair.casters) {
       const [leftAxle, rightAxle] = caster.forkAxle
       const [leftLeg, rightLeg] = caster.forkLegs
+      expect(caster.forkTop[1] - (caster.center[1] + WHEEL.casterRadius + WHEEL.casterTire)).toBeGreaterThanOrEqual(0.008)
       close(caster.center[0] - leftAxle[0], 0.025)
       close(rightAxle[0] - caster.center[0], 0.025)
       close(leftAxle[1], caster.center[1])

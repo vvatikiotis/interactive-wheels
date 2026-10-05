@@ -80,6 +80,33 @@ test('backrest folds and unfolds while adjustments are disabled', async ({ page 
   expect((await viewer.screenshot()).equals(folded)).toBe(false)
 })
 
+test('extreme backrests fold and unfold without losing the rendered chair', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  for (const settings of [
+    { width: '33', depth: '36', camber: '6', axle: '0', angle: '110', seatAngle: '12' },
+    { width: '46', depth: '46', camber: '-4', axle: '12', angle: '80', seatAngle: '0' },
+  ]) {
+    await page.goto('/')
+    await page.getByLabel('Seat width').fill(settings.width)
+    await page.getByLabel('Seat depth').fill(settings.depth)
+    await page.getByLabel('Rear-wheel camber').fill(settings.camber)
+    await page.getByLabel('Rear axle position').fill(settings.axle)
+    await page.getByLabel('Backrest height').fill('45')
+    await page.getByLabel('Backrest angle to seat').fill(settings.angle)
+    await page.getByLabel('Seat angle to ground').fill(settings.seatAngle)
+    const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
+    const open = await viewer.screenshot()
+    await page.getByRole('button', { name: 'Fold', exact: true }).click()
+    await expect(page.getByRole('button', { name: 'Unfold' })).toBeEnabled()
+    expect((await viewer.screenshot()).equals(open)).toBe(false)
+    await page.getByRole('button', { name: 'Unfold' }).click()
+    await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
+    await expect(viewer.locator('canvas')).toBeVisible()
+  }
+  expect(errors).toEqual([])
+})
+
 test('reset configuration cancels folding and restores defaults without moving the camera', async ({ page }) => {
   await page.goto('/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })

@@ -5,23 +5,36 @@ test('all seven adjustment sliders update their displayed measurements', async (
   const cases = [
     ['Seat width', '46', '46 cm'],
     ['Seat depth', '46', '46 cm'],
-    ['Rear-wheel camber', '6', '6 °'],
+    ['Rear-wheel camber', '-2', '-2 °'],
     ['Rear axle position', '12', '+12 cm'],
-    ['Backrest height', '45', '45 cm'],
+    ['Backrest height', '10', '10 cm'],
     ['Backrest angle to seat', '110', '110 °'],
     ['Seat angle to ground', '12', '12 °'],
   ]
   for (const [label, value, displayed] of cases) {
-    await page.getByLabel(label).fill(value)
+    const slider = page.getByLabel(label)
+    await slider.fill(value)
     await expect(page.locator('label').filter({ hasText: label }).getByText(displayed, { exact: true })).toBeVisible()
   }
+  await expect(page.getByLabel('Rear-wheel camber')).toHaveAttribute('min', '-2')
+  await expect(page.getByLabel('Backrest height')).toHaveAttribute('min', '10')
 })
 
-test('maximum dimensions and angles keep the generated chair renderable', async ({ page }) => {
+test('minimum and maximum dimensions and angles keep the generated chair renderable', async ({ page }) => {
   await page.goto('/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
   await expect(viewer.locator('canvas')).toBeVisible()
   const before = await viewer.screenshot()
+  for (const [label, value] of [
+    ['Seat width', '33'],
+    ['Seat depth', '36'],
+    ['Rear-wheel camber', '-2'],
+    ['Rear axle position', '-5'],
+    ['Backrest height', '10'],
+    ['Backrest angle to seat', '80'],
+    ['Seat angle to ground', '0'],
+  ]) await page.getByLabel(label).fill(value)
+  expect((await viewer.screenshot()).equals(before)).toBe(false)
   for (const [label, value] of [
     ['Seat width', '46'],
     ['Seat depth', '46'],

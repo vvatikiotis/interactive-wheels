@@ -15,7 +15,7 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
   seatDepth: 40,
   wheelCamber: 2,
   rearAxlePosition: 8,
-  backrestHeight: 35,
+  backrestHeight: 10,
   backrestAngle: 95,
   seatAngle: 6,
 }

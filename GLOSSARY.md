@@ -32,7 +32,7 @@ The inward or outward lean of the rear wheels from vertical. Positive values mea
 The distance along the backrest from its junction with the seat to its top, rather than its vertical height above the ground.
 
 **Front frame tubes**:
-The two frame tubes descending from the front of the seat toward the casters. They taper inward toward their lower ends; their spacing scales proportionally with seat width.
+The two frame tubes descending from the front of the seat toward the casters. They angle 70 degrees above the ground in side view and taper inward toward their lower ends; their spacing scales proportionally with seat width.
 
 **Footrest platform**:
 The surface supporting the user's feet, spanning between the front frame tubes a couple of centimetres above their lower ends.

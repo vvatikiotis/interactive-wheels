@@ -23,6 +23,7 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
 const radians = (degrees: number) => degrees * Math.PI / 180
 
 export const WHEEL = { rearRadius: 0.295, rearTire: 0.01, casterRadius: 0.045, casterTire: 0.005 }
+export const FRONT_FRAME_ANGLE_DEGREES = 70
 
 export function deriveGeometry(config: WheelchairConfig) {
   const width = config.seatWidth / 100
@@ -36,8 +37,10 @@ export function deriveGeometry(config: WheelchairConfig) {
   const lowerSpacing = width * 0.85
   const upperLeft: Point = [-width / 2, front[1] - 0.009 * Math.cos(tilt), front[2] + 0.009 * Math.sin(tilt)]
   const upperRight: Point = [width / 2, front[1] - 0.009 * Math.cos(tilt), front[2] + 0.009 * Math.sin(tilt)]
-  const lowerLeft: Point = [-lowerSpacing / 2, 0.065, front[2] + 0.3]
-  const lowerRight: Point = [lowerSpacing / 2, 0.065, front[2] + 0.3]
+  const lowerY = 0.065
+  const lowerZ = upperLeft[2] + (upperLeft[1] - lowerY) / Math.tan(radians(FRONT_FRAME_ANGLE_DEGREES))
+  const lowerLeft: Point = [-lowerSpacing / 2, lowerY, lowerZ]
+  const lowerRight: Point = [lowerSpacing / 2, lowerY, lowerZ]
   const interpolate = (lower: Point, upper: Point, fraction: number): Point => lower.map((value, axis) => value + (upper[axis] - value) * fraction) as Point
   const frontFrame = {
     upperSpacing: width,
@@ -48,7 +51,7 @@ export function deriveGeometry(config: WheelchairConfig) {
     lowerRight,
   }
   const footrest = {
-    center: [0, frontFrame.lowerLeft[1] + 0.02 + 0.009, frontFrame.lowerLeft[2] - 0.03] as Point,
+    center: [0, frontFrame.lowerLeft[1] + 0.011, frontFrame.lowerLeft[2] - 0.03] as Point,
     width: lowerSpacing - 0.07,
     depth: 0.12,
   }

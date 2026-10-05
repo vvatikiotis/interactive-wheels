@@ -1,6 +1,6 @@
 # Prototype implementation plan
 
-Status: rear axle position geometry and slider checkpoint implemented.
+Status: all seven adjustment sliders and live generated geometry implemented; folding and resets remain.
 
 ## Scope review
 
@@ -37,11 +37,11 @@ Check that the chair is recognizable, connected, grounded, and dimensionally con
 
 ### 3. Exercise adjustments and clearances
 
-Test each slider's extrema, all 128 minimum/maximum combinations for seven controls, and targeted intermediate combinations. For rear axle position, also inspect wheel/frame clearance and connecting tubes at both ends of its range. Establish folding clearance early, before treating a configuration as accepted.
+Test each slider's extrema, all 128 minimum/maximum combinations for seven controls, and targeted intermediate combinations. The current checkpoint smoke-tests the all-maximum corner; exhaustive combinations and geometry-specific collision checks remain. For rear axle position, also inspect wheel/frame clearance and connecting tubes at both ends of its range. Establish folding clearance early, before treating a configuration as accepted.
 
 Prefer geometry that supports the full agreed ranges. Add explicit clearance checks where required. On an invalid proposed change, stop at the last valid slider step reachable from the current value; do not jump over an invalid interval or modify other settings. Display a short reason.
 
-Connect all seven sliders with visible units and immediate geometry updates.
+Connect all seven sliders with visible units and immediate geometry updates. The current checkpoint implements direct updates but not collision limits or their explanations.
 
 ### 4. Add folding and reset behavior
 
@@ -78,4 +78,4 @@ These are starting boundaries, not a requirement to build a framework. Add modul
 
 ## First checkpoint
 
-The default-chair viewer and rear axle position geometry/slider checkpoints are implemented. Next, continue with the remaining agreed controls and folding, extending geometry and tests before each interaction.
+The default-chair viewer and all seven adjustment controls are implemented. Next, implement folding, reset behavior, and validated visual restrictions, extending geometry and browser tests.

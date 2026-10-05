@@ -18,7 +18,8 @@ function Tube({ from, to, radius = 0.009, color = metal }: { from: Point; to: Po
 
 function Wheel({ center, radius, tire, camber = 0, spokes = 10 }: { center: Point; radius: number; tire: number; camber?: number; spokes?: number }) {
   return <group position={center}>
-    <group rotation={[0, 0, camber]}>
+    <group rotation={[0, 0, 0]}>
+      <group rotation={[0, 0, camber]}>
       <mesh rotation={[0, Math.PI / 2, 0]} castShadow>
         <torusGeometry args={[radius, tire, 12, 64]} />
         <meshStandardMaterial color="#202832" roughness={0.9} />
@@ -35,6 +36,7 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10 }: { center: Poin
         <cylinderGeometry args={[0.018, 0.018, 0.045, 16]} />
         <meshStandardMaterial color="#657e8c" metalness={0.6} roughness={0.35} />
       </mesh>
+      </group>
     </group>
   </group>
 }
@@ -44,14 +46,14 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
   const half = seat.width / 2
   const frameOffset = half + 0.022
   const sidePoints = (side: number) => ({
-    front: [side * frameOffset, seat.front[1] - 0.024, seat.front[2]] as Point,
-    rear: [side * frameOffset, seat.rear[1] - 0.024, seat.rear[2]] as Point,
+    front: [side * frameOffset, seat.seatForward[1], seat.seatForward[2]] as Point,
+    rear: [side * frameOffset, seat.seatRear[1], seat.seatRear[2]] as Point,
     lower: [side * frameOffset, 0.25, seat.front[2] + 0.07] as Point,
     backBase: [side * frameOffset, backrest.base[1], backrest.base[2]] as Point,
     backTop: [side * frameOffset, backrest.top[1], backrest.top[2]] as Point,
   })
   return <group>
-    <mesh position={[0, (seat.front[1] + seat.rear[1]) / 2 - 0.009, 0]} rotation={[-seat.tilt, 0, 0]} castShadow receiveShadow>
+    <mesh position={[0, (seat.front[1] + seat.rear[1]) / 2 - 0.009 * Math.cos(seat.tilt), 0]} rotation={[-seat.tilt, 0, 0]} castShadow receiveShadow>
       <boxGeometry args={[seat.width, 0.018, seat.depth]} />
       <meshStandardMaterial color={fabric} roughness={0.85} />
     </mesh>
@@ -67,8 +69,8 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
         <Tube from={points.front} to={points.rear} />
         <Tube from={points.front} to={points.lower} />
         <Tube from={points.lower} to={points.rear} />
-        <Tube from={points.rear} to={[wheel.center[0], wheel.center[1] + 0.055, wheel.center[2]]} />
-        <Tube from={[wheel.center[0], wheel.center[1] + 0.055, wheel.center[2]]} to={wheel.center} />
+        <Tube from={points.rear} to={[wheel.center[0], points.rear[1], wheel.center[2]]} />
+        <Tube from={[wheel.center[0], points.rear[1], wheel.center[2]]} to={wheel.center} />
         <Tube from={points.backBase} to={points.backTop} radius={0.011} />
         <Tube from={points.lower} to={[caster.center[0], caster.center[1] + 0.04, caster.center[2]]} />
         <Wheel center={wheel.center} radius={WHEEL.rearRadius} tire={WHEEL.rearTire} camber={wheel.camber} />

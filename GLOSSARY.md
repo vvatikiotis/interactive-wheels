@@ -26,7 +26,7 @@ _Avoid_: Tipping point
 The transverse bar between the rear-wheel axle attachments, at hub height. It moves with both rear wheels when rear axle position changes.
 
 **Rear-wheel camber**:
-The inward lean of the rear wheels from vertical. Positive values mean the tops of the wheels are closer together than their bottoms.
+The inward or outward lean of the rear wheels from vertical. Positive values mean the tops of the wheels are closer together than their bottoms; negative values mean they are farther apart.
 
 **Backrest height**:
 The distance along the backrest from its junction with the seat to its top, rather than its vertical height above the ground.

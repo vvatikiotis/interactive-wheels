@@ -70,9 +70,9 @@ The following ranges are provisional visual ranges, not validated wheelchair spe
 |---|---:|---:|
 | Seat width | 33–46 cm | 39 cm |
 | Seat depth | 36–46 cm | 40 cm |
-| Rear-wheel camber | 0–6° | 2° |
+| Rear-wheel camber | −2–6° | 2° |
 | Rear axle position | −5 to +12 cm | +8 cm |
-| Backrest height | 25–45 cm | 35 cm |
+| Backrest height | 10–45 cm | 10 cm |
 | Backrest angle to seat | 80–110° | 95° |
 | Seat angle to ground | 0–12° | 6° |
 

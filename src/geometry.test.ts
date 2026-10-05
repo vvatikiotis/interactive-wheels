@@ -24,8 +24,8 @@ describe('configured wheelchair', () => {
     close(chair.backrest.top[2] - chair.backrest.base[2], 0)
   })
 
-  it('carries the backrest with the tilted seat while retaining the selected relative angle', () => {
-    const chair = deriveGeometry(DEFAULT_CONFIG)
+  it('carries the backrest with the tilted seat while retaining its selected length and relative angle', () => {
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, backrestHeight: 35 })
     close(chair.backrest.top[1], 0.80176)
     close(chair.backrest.top[2], -0.26569)
   })
@@ -63,7 +63,7 @@ describe('configured wheelchair', () => {
     close(chair.rearWheels[0].center[2] - chair.seat.rear[2], 0.08)
   })
 
-  it('keeps both cambered rear tires and casters grounded and symmetric', () => {
+  it('keeps both positively cambered rear tires and casters grounded and symmetric', () => {
     const chair = deriveGeometry({ ...DEFAULT_CONFIG, wheelCamber: 6, seatWidth: 46 })
     close(chair.rearWheels[0].center[1], 0.303329178)
     close(chair.rearWheels[1].center[1], 0.303329178)
@@ -72,5 +72,20 @@ describe('configured wheelchair', () => {
     close(chair.casters[0].center[1], 0.05)
     close(chair.casters[1].center[1], 0.05)
     close(chair.rearWheels[0].center[0], -chair.rearWheels[1].center[0])
+  })
+
+  it('uses a 10 cm backrest height by default', () => {
+    const chair = deriveGeometry(DEFAULT_CONFIG)
+    close(chair.backrest.height, 0.1)
+  })
+
+  it('supports two degrees of negative camber with both rear tires grounded and outward tilt', () => {
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, wheelCamber: -2 })
+    close(chair.rearWheels[0].center[1], 0.3048142)
+    close(chair.rearWheels[1].center[1], 0.3048142)
+    close(chair.rearWheels[0].camber, 2 * Math.PI / 180)
+    close(chair.rearWheels[1].camber, -2 * Math.PI / 180)
+    close(chair.rearWheels[0].center[1] - (0.295 + 0.01) * Math.cos(2 * Math.PI / 180), 0)
+    close(chair.rearWheels[1].center[1] - (0.295 + 0.01) * Math.cos(2 * Math.PI / 180), 0)
   })
 })

@@ -7,8 +7,8 @@ test('all seven adjustment sliders update their displayed measurements', async (
     ['Seat depth', '46', '46 cm'],
     ['Rear-wheel camber', '-4', '-4 °'],
     ['Rear axle position', '12', '+12 cm'],
-    ['Backrest height', '10', '10 cm'],
-    ['Backrest angle to seat', '110', '110 °'],
+    ['Backrest height', '20', '20 cm'],
+    ['Backrest angle to seat', '85', '85 °'],
     ['Seat angle to ground', '12', '12 °'],
   ]
   for (const [label, value, displayed] of cases) {

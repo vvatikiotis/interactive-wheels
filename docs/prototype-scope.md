@@ -1,6 +1,6 @@
 # Interactive wheelchair prototype
 
-Status: scope confirmed; all seven adjustment controls implemented. Folding and resets remain.
+Status: scope confirmed; all eight adjustment controls implemented. Folding and resets remain.
 
 ## Agreed objective
 
@@ -17,6 +17,7 @@ The wheelchair must remain visually whole: no disconnected parts or visibly stra
 - Backrest height
 - Backrest angle relative to the seat
 - Seat angle relative to the ground
+- Footplate slope relative to the ground; positive values raise the front edge
 
 Changing the seat angle keeps the front seat height fixed and moves the rear up or down. The backrest moves with the seat, preserving its selected angle relative to the seat.
 
@@ -77,6 +78,7 @@ The following ranges are provisional visual ranges, not validated wheelchair spe
 | Backrest height | 10–45 cm | 20 cm |
 | Backrest angle to seat | 80–110° | 85° |
 | Seat angle to ground | 0–12° | 6° |
+| Footplate slope | 0–15° | 0° |
 
 Positive seat angle means the rear is lower than the front. A 90° backrest angle is perpendicular to the seat. Positive camber means the rear wheels lean inward at the top. Measure backrest height along the backrest from the seat junction.
 
@@ -101,7 +103,7 @@ Keep the camera above ground and limit zoom to avoid navigating inside the chair
 ## Agreed acceptance checks
 
 - Runs locally in a current desktop Chrome browser.
-- All adjustment sliders, including rear axle position, update the chair and display the selected measurements. The current checkpoint covers all seven sliders.
+- All adjustment sliders, including rear axle position, update the chair and display the selected measurements. The current checkpoint covers all eight sliders.
 - At defaults, limits, and tested combinations, parts stay connected, wheels stay grounded, and no obvious intersections appear. Full geometry validation for combinations remains.
 - Restricted combinations stop with an explanation.
 - Folding and unfolding work at allowed settings without visible collisions. Folding remains to be implemented.

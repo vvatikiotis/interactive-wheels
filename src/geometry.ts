@@ -6,6 +6,7 @@ export interface WheelchairConfig {
   backrestHeight: number
   backrestAngle: number
   seatAngle: number
+  footrestSlope: number
 }
 
 export type Point = [number, number, number]
@@ -18,6 +19,7 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
   backrestHeight: 20,
   backrestAngle: 85,
   seatAngle: 6,
+  footrestSlope: 0,
 }
 
 const radians = (degrees: number) => degrees * Math.PI / 180
@@ -67,9 +69,13 @@ export function deriveGeometry(config: WheelchairConfig) {
     seatRods,
     crossbar: { start: lowerLeft, end: lowerRight, radius: 0.009 },
   }
+  const footrestSlope = radians(config.footrestSlope)
+  const footrestThickness = 0.01
+  const footrestSupportOffset = 0.04
   const footrest = {
-    thickness: 0.01,
-    center: [0, frontFrame.lowerLeft[1] + frontFrame.crossbar.radius + 0.005, frontFrame.lowerLeft[2] - 0.04] as Point,
+    angle: footrestSlope,
+    thickness: footrestThickness,
+    center: [0, frontFrame.lowerLeft[1] + frontFrame.crossbar.radius + footrestThickness / (2 * Math.cos(footrestSlope)) - footrestSupportOffset * Math.tan(footrestSlope), frontFrame.lowerLeft[2] - footrestSupportOffset] as Point,
     width: lowerSpacing - 0.07,
     depth: 0.12,
   }

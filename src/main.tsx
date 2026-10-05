@@ -16,6 +16,7 @@ function App() {
     { key: 'backrestHeight', label: 'Backrest height', min: 10, max: 45, unit: 'cm' },
     { key: 'backrestAngle', label: 'Backrest angle to seat', min: 80, max: 110, unit: '°' },
     { key: 'seatAngle', label: 'Seat angle to ground', min: 0, max: 12, unit: '°' },
+    { key: 'footrestSlope', label: 'Footplate slope', min: 0, max: 15, unit: '°' },
   ]
 
   return <main>
@@ -52,7 +53,6 @@ function App() {
             {control.key === 'rearAxlePosition' && <div className="range-labels"><span>Backward</span><span>Forward</span></div>}
           </div>
         })}
-        <p className="explanation">Rear axle position is measured from the rear edge of the seat. No tipping point is calculated.</p>
       </aside>
     </section>
   </main>

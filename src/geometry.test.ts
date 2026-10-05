@@ -123,6 +123,18 @@ describe('configured wheelchair', () => {
     close(cambered.rearWheels[0].camber, -6 * Math.PI / 180)
   })
 
+  it('adjusts footplate slope while keeping its dimensions and crossbar support', () => {
+    const level = deriveGeometry(DEFAULT_CONFIG)
+    const inclined = deriveGeometry({ ...DEFAULT_CONFIG, footrestSlope: 10 })
+    close(level.footrest.angle, 0)
+    close(inclined.footrest.angle, 10 * Math.PI / 180)
+    close(inclined.footrest.width, level.footrest.width)
+    close(inclined.footrest.depth, level.footrest.depth)
+    const distanceToCrossbar = inclined.frontFrame.crossbar.start[2] - inclined.footrest.center[2]
+    const bottomAtCrossbar = inclined.footrest.center[1] + distanceToCrossbar * Math.tan(inclined.footrest.angle) - inclined.footrest.thickness / (2 * Math.cos(inclined.footrest.angle))
+    close(bottomAtCrossbar, inclined.frontFrame.crossbar.start[1] + inclined.frontFrame.crossbar.radius)
+  })
+
   it('tapers front frame tubes to 85 percent of seat width and centers the footrest between them', () => {
     const standard = deriveGeometry({ ...DEFAULT_CONFIG, seatWidth: 40 })
     close(standard.frontFrame.upperSpacing, 0.4)

@@ -1,6 +1,6 @@
 # Interactive wheelchair prototype
 
-Current checkpoint: a generated rigid-frame wheelchair with drag-to-rotate and scroll-to-zoom camera controls and seven adjustment sliders. Backrest folding and configuration/view resets are planned but not implemented yet. See `docs/prototype-scope.md` and `docs/implementation-plan.md`.
+Current checkpoint: a generated rigid-frame wheelchair with drag-to-rotate and scroll-to-zoom camera controls and eight adjustment sliders. Backrest folding and configuration/view resets are planned but not implemented yet. See `docs/prototype-scope.md` and `docs/implementation-plan.md`.
 
 ## Run
 

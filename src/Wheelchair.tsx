@@ -79,7 +79,10 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
         <Tube from={[side * frameOffset, 0.18, seat.front[2] + 0.12]} to={[side * frameOffset, 0.18, seat.front[2] + 0.25]} />
       </group>
     })}
-    <Tube from={[-frameOffset, 0.18, seat.front[2] + 0.25]} to={[frameOffset, 0.18, seat.front[2] + 0.25]} radius={0.014} />
+    <mesh position={[0, 0.18, seat.front[2] + 0.19]} castShadow receiveShadow>
+      <boxGeometry args={[0.28, 0.018, 0.12]} />
+      <meshStandardMaterial color="#516978" roughness={0.72} />
+    </mesh>
     <Tube from={axleTube.start} to={axleTube.end} radius={0.012} />
     <Tube from={[-frameOffset, backrest.top[1], backrest.top[2]]} to={[frameOffset, backrest.top[1], backrest.top[2]]} radius={0.009} />
   </group>

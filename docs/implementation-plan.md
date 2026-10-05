@@ -5,7 +5,7 @@ See [prototype-scope.md](prototype-scope.md) for the current behavior, ranges, a
 ## Implemented
 
 - React, TypeScript, Vite, React Three Fiber, and Drei render a generated chair and a mouse-controlled 3D view.
-- `src/geometry.ts` derives seat, frame, backrest, footplate, axle, and wheel positions from eight configuration values. Internal distances are in metres; slider dimensions are in centimetres and angles in degrees.
+- `src/geometry.ts` derives seat, frame, backrest, footplate, axle, and wheel positions from eight configuration values. Internal distances are in metres; slider dimensions are in centimetres and angles in degrees. Caster centre height follows the tyre radius so thicker tyres remain grounded.
 - `src/Wheelchair.tsx` renders those shapes; `src/main.tsx` owns slider state and the viewer.
 - `src/geometry.test.ts` covers key derived measurements and connections. `tests/viewer.spec.ts` covers slider values, two extreme configurations, camera orbit, and zoom.
 

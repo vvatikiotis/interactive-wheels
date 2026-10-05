@@ -204,10 +204,10 @@ describe('configured wheelchair', () => {
 
   it('uses smaller-radius, thick caster tyres and keeps the front wheels grounded', () => {
     close(WHEEL.casterRadius, 0.04)
-    close(WHEEL.casterTire, 0.008)
+    close(WHEEL.casterTire, 0.0104)
     const chair = deriveGeometry(DEFAULT_CONFIG)
-    close(chair.casters[0].center[1], 0.048)
-    close(chair.casters[1].center[1], 0.048)
+    close(chair.casters[0].center[1], 0.0504)
+    close(chair.casters[1].center[1], 0.0504)
   })
 
   it('keeps both positively cambered rear tires and casters grounded and symmetric', () => {
@@ -216,8 +216,8 @@ describe('configured wheelchair', () => {
     close(chair.rearWheels[1].center[1], 0.303329178)
     close(chair.rearWheels[0].center[1] - (0.295 + 0.01) * Math.cos(6 * Math.PI / 180), 0)
     close(chair.rearWheels[1].center[1] - (0.295 + 0.01) * Math.cos(6 * Math.PI / 180), 0)
-    close(chair.casters[0].center[1], 0.048)
-    close(chair.casters[1].center[1], 0.048)
+    close(chair.casters[0].center[1], 0.0504)
+    close(chair.casters[1].center[1], 0.0504)
     close(chair.rearWheels[0].center[0], -chair.rearWheels[1].center[0])
   })
 

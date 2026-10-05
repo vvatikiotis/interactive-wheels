@@ -14,6 +14,7 @@ function App() {
   const [configuration, setConfiguration] = useState<WheelchairConfig>({ ...DEFAULT_CONFIG })
   const [foldPhase, setFoldPhase] = useState<'unfolded' | 'folding' | 'folded' | 'unfolding'>('unfolded')
   const [foldProgress, setFoldProgress] = useState(0)
+  const [showMannequin, setShowMannequin] = useState(false)
   useEffect(() => {
     if (foldPhase !== 'folding' && foldPhase !== 'unfolding') return
     let frame: number
@@ -53,7 +54,7 @@ function App() {
           <color attach="background" args={['#edf2f3']} />
           <ambientLight intensity={1.6} />
           <directionalLight position={[1.5, 2.5, 2]} intensity={2.3} castShadow shadow-mapSize={[1024, 1024]} />
-          <Wheelchair configuration={configuration} foldProgress={foldProgress} />
+          <Wheelchair configuration={configuration} foldProgress={foldProgress} showMannequin={showMannequin && foldPhase === 'unfolded'} />
           <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]}>
             <planeGeometry args={[200, 200]} />
             <meshStandardMaterial color="#cdd9dc" roughness={1} />
@@ -77,6 +78,10 @@ function App() {
         <button className="fold-button" type="button" disabled={foldPhase === 'folding' || foldPhase === 'unfolding'}
           onClick={() => setFoldPhase(foldPhase === 'folded' ? 'unfolding' : 'folding')}>
           {foldPhase === 'folding' ? 'Folding…' : foldPhase === 'unfolding' ? 'Unfolding…' : foldPhase === 'folded' ? 'Unfold' : 'Fold'}
+        </button>
+        <button className="mannequin-button" type="button" aria-pressed={showMannequin} disabled={foldPhase !== 'unfolded'}
+          onClick={() => setShowMannequin(visible => !visible)}>
+          {showMannequin ? 'Hide mannequin' : 'Show mannequin'}
         </button>
         <div className="reset-actions">
           <button type="button" onClick={() => {

@@ -2,7 +2,7 @@
 
 ## Purpose and limits
 
-A browser-based visual configurator for a rigid-frame wheelchair. The chair should look connected as its dimensions change, but the model does not assess stability, safety, clinical suitability, or manufacturing feasibility. It has no occupant, backend, saved configurations, or imported 3D assets.
+A browser-based visual configurator for a rigid-frame wheelchair. The chair should look connected as its dimensions change, but the model does not assess stability, safety, clinical suitability, or manufacturing feasibility. It has an optional wireframe mannequin for scale, but no realistic occupant model, backend, saved configurations, or imported 3D assets.
 
 ## Current controls
 
@@ -33,7 +33,7 @@ The model derives positions from shared configuration geometry and uses generate
 
 The desktop viewer starts in a three-quarter view. Drag to orbit and scroll to zoom; the camera stays above the ground and zoom is limited. The scene has a light background, a contrasting ground plane with a 20 cm reference grid, and a shadow to make ground contact and orientation visible. Mobile and touch controls are outside the present scope.
 
-Fold / Unfold animates the backrest forward toward the seat over about 0.4 seconds, independently of the configured backrest angle. All eight sliders are disabled while folding, folded, or unfolding; orbit and zoom remain available. Unfolding restores the configured angle. Reset configuration restores all eight defaults and immediately unfolds, canceling any animation without moving the camera. Reset view restores the starting camera without changing the configuration.
+Fold / Unfold animates the backrest forward toward the seat over about 0.4 seconds, independently of the configured backrest angle. All eight sliders are disabled while folding, folded, or unfolding; orbit and zoom remain available. Unfolding restores the configured angle. Show mannequin / Hide mannequin toggles a seated wireframe figure that follows the seat, backrest angle, and footplate. It is hidden during folding and while folded, and returns on unfolding if selected; its toggle is disabled until unfolded. It is a scale cue, not a fit assessment. Reset configuration restores all eight defaults and immediately unfolds, canceling any animation without moving the camera or changing the mannequin toggle. Reset view restores the starting camera without changing the configuration.
 
 ## Not implemented
 
@@ -41,4 +41,4 @@ Collision-aware slider limits with an explanation when a setting is blocked are 
 
 ## Verification boundary
 
-Unit tests check derived dimensions and key connections. Browser tests exercise the eight sliders, extreme settings (including narrow and wide backrest folding), both resets, orbit, and zoom in desktop Chrome. These checks do not prove collision-free geometry for all combinations or validate wheelchair safety.
+Unit tests check derived dimensions and key connections. Browser tests exercise the eight sliders, the mannequin toggle, extreme settings (including narrow and wide backrest folding), both resets, orbit, and zoom in desktop Chrome. These checks do not prove collision-free geometry for all combinations or validate wheelchair safety.

@@ -1,6 +1,6 @@
 # Interactive wheelchair prototype
 
-A browser-based rigid-frame wheelchair configurator with eight sliders, a folding backrest, separate configuration and camera resets, and a generated 3D view. Drag to rotate; scroll to zoom. It is a visual prototype, not a clinical or engineering validation tool.
+A browser-based rigid-frame wheelchair configurator with eight sliders, a folding backrest, an optional wireframe mannequin, separate configuration and camera resets, and a generated 3D view. Drag to rotate; scroll to zoom. It is a visual prototype, not a clinical or engineering validation tool.
 
 ## Run
 

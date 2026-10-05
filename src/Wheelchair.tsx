@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { CylinderGeometry, Path, QuadraticBezierCurve3, Quaternion, Shape, ShapeGeometry, TubeGeometry, Vector3 } from 'three'
 import { DEFAULT_CONFIG, deriveGeometry, WHEEL, type Point } from './geometry'
+import { deriveMannequin } from './mannequin'
 
 const metal = '#516978'
 const fabric = '#283b49'
@@ -75,8 +76,20 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPus
   </group>
 }
 
-export function Wheelchair({ configuration, foldProgress = 0 }: { configuration: typeof DEFAULT_CONFIG; foldProgress?: number }) {
-  const { seat, backrest, rearWheels, axleTube, rearFrameConnections, rearFrameMidConnections, casters, frontFrame, footrest } = deriveGeometry(configuration, foldProgress)
+function Mannequin({ chair }: { chair: ReturnType<typeof deriveGeometry> }) {
+  const figure = deriveMannequin(chair)
+  return <group name="mannequin">
+    {figure.segments.map(([from, to], index) => <Tube key={index} from={from} to={to} radius={0.003} color="#da9b70" />)}
+    <mesh position={figure.head.center}>
+      <sphereGeometry args={[figure.head.radius, 14, 10]} />
+      <meshBasicMaterial color="#da9b70" wireframe />
+    </mesh>
+  </group>
+}
+
+export function Wheelchair({ configuration, foldProgress = 0, showMannequin = false }: { configuration: typeof DEFAULT_CONFIG; foldProgress?: number; showMannequin?: boolean }) {
+  const chair = deriveGeometry(configuration, foldProgress)
+  const { seat, backrest, rearWheels, axleTube, rearFrameConnections, rearFrameMidConnections, casters, frontFrame, footrest } = chair
   const sidePoints = (side: number) => ({
     front: [side * (frontFrame.upperSpacing / 2 + 0.01), frontFrame.upperLeft[1], frontFrame.upperLeft[2]] as Point,
     rear: [side * seat.width / 2, seat.seatRear[1], seat.seatRear[2]] as Point,
@@ -121,5 +134,6 @@ export function Wheelchair({ configuration, foldProgress = 0 }: { configuration:
     </mesh>
     <Tube from={axleTube.start} to={axleTube.end} radius={0.012} />
     <Tube from={backrest.supports[0].top} to={backrest.supports[1].top} radius={0.009} />
+    {showMannequin && <Mannequin chair={chair} />}
   </group>
 }

@@ -54,6 +54,25 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
   await expect(viewer.locator('canvas')).toBeVisible()
 })
 
+test('mannequin can be shown, hidden, and returns after unfolding', async ({ page }) => {
+  await page.goto('/')
+  const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
+  const hidden = await viewer.screenshot()
+  await page.getByRole('button', { name: 'Show mannequin' }).click()
+  const visible = await viewer.screenshot()
+  expect(visible.equals(hidden)).toBe(false)
+  await page.getByRole('button', { name: 'Hide mannequin' }).click()
+  await expect.poll(async () => (await viewer.screenshot()).equals(hidden)).toBe(true)
+  await page.getByRole('button', { name: 'Show mannequin' }).click()
+  await page.getByRole('button', { name: 'Fold', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Unfold' })).toBeEnabled()
+  await expect(page.getByRole('button', { name: 'Hide mannequin' })).toBeDisabled()
+  await page.getByRole('button', { name: 'Unfold' }).click()
+  await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
+  await expect(page.getByRole('button', { name: 'Hide mannequin' })).toBeEnabled()
+  expect((await viewer.screenshot()).equals(hidden)).toBe(false)
+})
+
 test('backrest folds and unfolds while adjustments are disabled', async ({ page }) => {
   await page.goto('/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })

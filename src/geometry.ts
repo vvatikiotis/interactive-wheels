@@ -34,9 +34,24 @@ export function deriveGeometry(config: WheelchairConfig) {
   const rear: Point = [0, 0.5 - depth * Math.sin(tilt), -depth * Math.cos(tilt) / 2]
   const seatForward = [0, front[1] - 0.009 * Math.cos(tilt), front[2] + 0.009 * Math.sin(tilt)] as Point
   const seatRear = [0, rear[1], rear[2]] as Point
+  const surfaceDepth = depth * 0.9
+  const surfaceCenter: Point = [0, (front[1] + rear[1]) / 2 - 0.009 * Math.cos(tilt) - depth * 0.05 * Math.sin(tilt), -depth * 0.05 * Math.cos(tilt)]
+  const surfaceFront: Point = [0, surfaceCenter[1] + surfaceDepth * 0.5 * Math.sin(tilt), surfaceCenter[2] + surfaceDepth * 0.5 * Math.cos(tilt)]
+  const seatRodAt = (insetRatio: number) => {
+    const inset = surfaceDepth * insetRatio
+    const start: Point = [-width / 2, surfaceFront[1] - inset * Math.sin(tilt) - 0.018 * Math.cos(tilt), surfaceFront[2] - inset * Math.cos(tilt) + 0.018 * Math.sin(tilt)]
+    const end: Point = [width / 2, start[1], start[2]]
+    return {
+      start,
+      control: [0, start[1] - 0.04, start[2]] as Point,
+      end,
+      radius: 0.009,
+    }
+  }
+  const seatRods = [seatRodAt(0.25), seatRodAt(0.7)]
   const lowerSpacing = width * 0.85
-  const upperLeft: Point = [-width / 2, front[1] - 0.009 * Math.cos(tilt), front[2] + 0.009 * Math.sin(tilt)]
-  const upperRight: Point = [width / 2, front[1] - 0.009 * Math.cos(tilt), front[2] + 0.009 * Math.sin(tilt)]
+  const upperLeft: Point = [-width / 2, seatForward[1], seatForward[2]]
+  const upperRight: Point = [width / 2, seatForward[1], seatForward[2]]
   const lowerY = 0.065
   const lowerZ = upperLeft[2] + (upperLeft[1] - lowerY) / Math.tan(radians(FRONT_FRAME_ANGLE_DEGREES))
   const lowerLeft: Point = [-lowerSpacing / 2, lowerY, lowerZ]
@@ -49,6 +64,7 @@ export function deriveGeometry(config: WheelchairConfig) {
     upperRight,
     lowerLeft,
     lowerRight,
+    seatRods,
     crossbar: { start: lowerLeft, end: lowerRight, radius: 0.009 },
   }
   const footrest = {
@@ -74,7 +90,7 @@ export function deriveGeometry(config: WheelchairConfig) {
     forkAttachment: interpolate(side < 0 ? lowerLeft : lowerRight, side < 0 ? upperLeft : upperRight, 0.25),
   }))
   return {
-    seat: { front, rear, seatForward, seatRear, width, depth, tilt },
+    seat: { front, rear, seatForward, seatRear, surfaceCenter, surfaceFront, surfaceDepth, width, depth, tilt },
     frontFrame,
     footrest,
     backrest: { base: rear, top: backTop, height: config.backrestHeight / 100, angle: backAngle },

@@ -12,6 +12,38 @@ describe('configured wheelchair', () => {
     expect(chair.seat.rear[1]).toBeLessThan(chair.seat.front[1])
   })
 
+  it('attaches the seat-front rod under the seat surface and bends its center downward', () => {
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatDepth: 40 })
+    const { start, control, end } = chair.frontFrame.seatRods[0]
+    const inset = chair.seat.surfaceDepth * 0.25
+    close(start[0], -chair.seat.width / 2)
+    close(end[0], chair.seat.width / 2)
+    close(start[1], end[1])
+    close(start[2], chair.seat.surfaceFront[2] - inset * Math.cos(chair.seat.tilt) + 0.018 * Math.sin(chair.seat.tilt))
+    close(start[1], chair.seat.surfaceFront[1] - inset * Math.sin(chair.seat.tilt) - 0.018 * Math.cos(chair.seat.tilt))
+    const midpoint = start.map((value, axis) => value * 0.25 + control[axis] * 0.5 + end[axis] * 0.25)
+    close(midpoint[0], 0)
+    close(midpoint[1], start[1] - 0.02)
+    close(midpoint[2], start[2])
+  })
+
+  it('places a second downward-bent seat rod 70 percent along the seat surface', () => {
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatDepth: 40 })
+    const { start, control, end } = chair.frontFrame.seatRods[1]
+    const inset = chair.seat.surfaceDepth * 0.7
+    close(start[2], chair.seat.surfaceFront[2] - inset * Math.cos(chair.seat.tilt) + 0.018 * Math.sin(chair.seat.tilt))
+    close(end[2], start[2])
+    const midpoint = start.map((value, axis) => value * 0.25 + control[axis] * 0.5 + end[axis] * 0.25)
+    close(midpoint[1], start[1] - 0.02)
+  })
+
+  it('leaves the frontmost ten percent of the measured seat depth uncovered', () => {
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatDepth: 40 })
+    close(chair.seat.surfaceDepth, 0.36)
+    close(chair.seat.surfaceCenter[2] + chair.seat.surfaceDepth * Math.cos(chair.seat.tilt) / 2, chair.seat.front[2] - 0.1 * chair.seat.depth * Math.cos(chair.seat.tilt))
+    close(chair.seat.surfaceCenter[2] - chair.seat.surfaceDepth * Math.cos(chair.seat.tilt) / 2, chair.seat.rear[2])
+  })
+
   it('keeps front height fixed as the rear drops with seat tilt', () => {
     const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatAngle: 12 })
     close(chair.seat.front[1], 0.5)

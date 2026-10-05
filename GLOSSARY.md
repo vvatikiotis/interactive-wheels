@@ -8,7 +8,7 @@ Terms for describing the wheelchair's dimensions and angles.
 The side-to-side width of the seating surface, excluding frame tubing.
 
 **Seat depth**:
-The front-to-back length of the seating surface, excluding frame tubing.
+The full front-to-back seat measurement, excluding frame tubing. The frontmost 10% is uncovered, so the seat surface spans the rear 90% of the measured depth.
 
 **Seat angle**:
 The angle of the seat relative to the ground. Positive values mean the rear of the seat is lower than the front.
@@ -30,6 +30,9 @@ The inward or outward lean of the rear wheels from vertical. Positive values mea
 
 **Backrest height**:
 The distance along the backrest from its junction with the seat to its top, rather than its vertical height above the ground.
+
+**Front seat rod**:
+The pair of left-to-right metal bars attached beneath the rectangular seat surface, one 25% and the other 70% of its depth in from the front edge. Both bow downward at the centre and do not attach to the front legs.
 
 **Front frame tubes**:
 The two frame tubes descending from the front of the seat toward the casters. They angle 70 degrees above the ground in side view and taper inward toward their lower ends; their spacing scales proportionally with seat width.

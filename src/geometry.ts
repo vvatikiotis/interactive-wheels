@@ -24,7 +24,7 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
 
 const radians = (degrees: number) => degrees * Math.PI / 180
 
-export const WHEEL = { rearRadius: 0.295, rearTire: 0.01, casterRadius: 0.04, casterTire: 0.008 }
+export const WHEEL = { rearRadius: 0.295, rearTire: 0.01, casterRadius: 0.04, casterTire: 0.0104 }
 export const FRONT_FRAME_ANGLE_DEGREES = 70
 
 export function deriveGeometry(config: WheelchairConfig) {

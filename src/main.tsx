@@ -12,7 +12,7 @@ function App() {
     { key: 'seatWidth', label: 'Seat width', min: 33, max: 46, unit: 'cm' },
     { key: 'seatDepth', label: 'Seat depth', min: 36, max: 46, unit: 'cm' },
     { key: 'wheelCamber', label: 'Rear-wheel camber', min: -4, max: 6, unit: '°' },
-    { key: 'rearAxlePosition', label: 'Rear axle position', min: -5, max: 12, unit: 'cm' },
+    { key: 'rearAxlePosition', label: 'Rear axle position', min: 0, max: 12, unit: 'cm' },
     { key: 'backrestHeight', label: 'Backrest height', min: 10, max: 45, unit: 'cm' },
     { key: 'backrestAngle', label: 'Backrest angle to seat', min: 80, max: 110, unit: '°' },
     { key: 'seatAngle', label: 'Seat angle to ground', min: 0, max: 12, unit: '°' },

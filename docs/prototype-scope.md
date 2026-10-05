@@ -44,7 +44,7 @@ Provide Reset configuration separately from Reset view. Reset configuration imme
 
 ## Agreed measurement conventions
 
-Seat width and depth describe the seating surface, excluding frame tubing. Front seat height is measured from the ground to the top of the seat at its front edge. Rear axle position is the horizontal forward-or-backward distance from the rear edge of the seat to both rear-wheel centres, measured in centimetres: positive is forward, negative is backward. The slider labels show both directions. Changing seat depth moves the rear wheels and axle tube with the rear seat edge, preserving the selected rear axle position.
+Seat width and depth describe the seating surface, excluding frame tubing. Front seat height is measured from the ground to the top of the seat at its front edge. Rear axle position is the horizontal forward distance from the rear edge of the seat to both rear-wheel centres, measured in centimetres. Zero places the wheel centres directly below the seat's rear edge; values are non-negative. The slider labels indicate the forward direction. Changing seat depth moves the rear wheels and axle tube with the rear seat edge, preserving the selected rear axle position.
 
 Measure backrest angle from the forward direction along the seat to the backrest: values above 90° lean backward. In the folded position, the backrest is approximately parallel to the seat and stops just above it to avoid overlap, rather than reaching an exact 0° angle.
 
@@ -58,7 +58,7 @@ Derive the remaining frame and footrest geometry to keep the chair connected rat
 
 Keep wheel sizes fixed and wheels in contact with the ground as adjustments change. Adapt the simplified tubing and connections around the selected dimensions so the chair remains connected.
 
-Moving the rear axle position moves both rear-wheel centres and a visible transverse axle tube together, without moving the seat, front casters, or footrest. Show the tube between the rear-wheel axle attachments at hub height. Connect the rear corners of the seat surface directly to this axle tube with frame supports. Rear-wheel camber still tilts the wheels independently of this tube. This is not a calculation of the tipping point or stability.
+Moving the rear axle position moves both rear-wheel centres and a visible transverse axle tube together, without moving the seat, front casters, or footrest. Show the tube between the rear-wheel axle attachments at hub height. Connect the rear corners of the seat surface directly to this axle tube with frame supports. Add a second support on each side from the midpoint of the seat side rail to the same axle-tube attachment. Rear-wheel camber still tilts the wheels independently of this tube. This is not a calculation of the tipping point or stability.
 
 Seat tilt changes the seat and its supporting geometry, not the orientation of the whole chair. This is a connected visual model, not a reproduction of real adjustment mechanisms.
 
@@ -73,7 +73,7 @@ The following ranges are provisional visual ranges, not validated wheelchair spe
 | Seat width | 33–46 cm | 39 cm |
 | Seat depth | 36–46 cm | 40 cm |
 | Rear-wheel camber | −4–6° | 2° |
-| Rear axle position | −5 to +12 cm | +8 cm |
+| Rear axle position | 0 to +12 cm | +8 cm |
 | Backrest height | 10–45 cm | 20 cm |
 | Backrest angle to seat | 80–110° | 85° |
 | Seat angle to ground | 0–12° | 6° |
@@ -112,4 +112,4 @@ These checks validate the visual prototype, not engineering accuracy.
 
 ## Interview status
 
-The user confirmed the initial scope and requested rear axle position as an additional control. Its range is −5 to +12 cm in 1 cm steps, with a +8 cm default. This addition was authorized and implemented as a geometry and UI control.
+The user confirmed the initial scope and requested rear axle position as an additional control. Its range is 0 to +12 cm in 1 cm steps, with a +8 cm default. This addition was authorized and implemented as a geometry and UI control.

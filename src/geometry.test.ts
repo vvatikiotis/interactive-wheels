@@ -95,10 +95,24 @@ describe('configured wheelchair', () => {
     }
   })
 
+  it('adds a second support from each side-rail midpoint to the existing axle attachment', () => {
+    const chair = deriveGeometry(DEFAULT_CONFIG)
+    for (const [index, side] of [-1, 1].entries()) {
+      const existing = chair.rearFrameConnections[index]
+      const added = chair.rearFrameMidConnections[index]
+      close(added.axlePoint[0], existing.axlePoint[0])
+      close(added.axlePoint[1], existing.axlePoint[1])
+      close(added.axlePoint[2], existing.axlePoint[2])
+      close(added.seatPoint[0], side * (chair.seat.width / 2 + 0.005))
+      close(added.seatPoint[1], (chair.frontFrame.upperLeft[1] + chair.seat.seatRear[1]) / 2)
+      close(added.seatPoint[2], (chair.frontFrame.upperLeft[2] + chair.seat.seatRear[2]) / 2)
+    }
+  })
+
   it('keeps the selected rear axle position when seat depth changes', () => {
-    const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatDepth: 46, rearAxlePosition: -5 })
-    close(chair.rearWheels[0].center[2] - chair.seat.rear[2], -0.05)
-    close(chair.rearAxlePosition, -0.05)
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatDepth: 46, rearAxlePosition: 0 })
+    close(chair.rearWheels[0].center[2] - chair.seat.rear[2], 0)
+    close(chair.rearAxlePosition, 0)
   })
 
   it('changes wheel camber independently of the transverse axle tube', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_CONFIG, deriveGeometry } from './geometry'
+import { DEFAULT_CONFIG, deriveGeometry, WHEEL } from './geometry'
 
 const close = (actual: number, expected: number) => expect(actual).toBeCloseTo(expected, 5)
 
@@ -150,16 +150,32 @@ describe('configured wheelchair', () => {
     close(angle, 70)
   })
 
-  it('attaches each caster fork one quarter of the front-frame tube length above its lower end', () => {
-    const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatWidth: 40 })
-    for (const [index, side] of [-1, 1].entries()) {
-      const lower = side < 0 ? chair.frontFrame.lowerLeft : chair.frontFrame.lowerRight
-      const upper = side < 0 ? chair.frontFrame.upperLeft : chair.frontFrame.upperRight
-      const attachment = chair.casters[index].forkAttachment
-      const tubeLength = Math.hypot(...upper.map((value, axis) => value - lower[axis]) as [number, number, number])
-      const attachmentFromBottom = Math.hypot(...attachment.map((value, axis) => value - lower[axis]) as [number, number, number])
-      close(attachmentFromBottom / tubeLength, 0.25)
-      close(attachment[0], side * (chair.frontFrame.lowerSpacing / 2 + (chair.frontFrame.upperSpacing - chair.frontFrame.lowerSpacing) * 0.125))
+
+  it('places each caster inside an inverted-U fork with axle across its legs and stem at the top', () => {
+    const chair = deriveGeometry(DEFAULT_CONFIG)
+    for (const caster of chair.casters) {
+      const [leftAxle, rightAxle] = caster.forkAxle
+      const [leftLeg, rightLeg] = caster.forkLegs
+      close(caster.center[0] - leftAxle[0], 0.025)
+      close(rightAxle[0] - caster.center[0], 0.025)
+      close(leftAxle[1], caster.center[1])
+      close(rightAxle[1], caster.center[1])
+      close(leftAxle[2], caster.center[2])
+      close(rightAxle[2], caster.center[2])
+      close(leftLeg[1][0], leftAxle[0])
+      close(leftLeg[1][1], leftAxle[1])
+      close(leftLeg[1][2], leftAxle[2])
+      close(rightLeg[1][0], rightAxle[0])
+      close(rightLeg[1][1], rightAxle[1])
+      close(rightLeg[1][2], rightAxle[2])
+      expect(leftLeg[0][1]).toBeGreaterThan(leftLeg[1][1])
+      expect(rightLeg[0][1]).toBeGreaterThan(rightLeg[1][1])
+      close(caster.forkStem[0][0], caster.forkAttachment[0])
+      close(caster.forkStem[0][1], caster.forkAttachment[1])
+      close(caster.forkStem[0][2], caster.forkAttachment[2])
+      close(caster.forkStem[1][0], caster.forkTop[0])
+      close(caster.forkStem[1][1], caster.forkTop[1])
+      close(caster.forkStem[1][2], caster.forkTop[2])
     }
   })
 
@@ -173,14 +189,22 @@ describe('configured wheelchair', () => {
     close(chair.rearWheels[0].center[2] - chair.seat.rear[2], 0.08)
   })
 
+  it('uses smaller-radius, thick caster tyres and keeps the front wheels grounded', () => {
+    close(WHEEL.casterRadius, 0.04)
+    close(WHEEL.casterTire, 0.008)
+    const chair = deriveGeometry(DEFAULT_CONFIG)
+    close(chair.casters[0].center[1], 0.048)
+    close(chair.casters[1].center[1], 0.048)
+  })
+
   it('keeps both positively cambered rear tires and casters grounded and symmetric', () => {
     const chair = deriveGeometry({ ...DEFAULT_CONFIG, wheelCamber: 6, seatWidth: 46 })
     close(chair.rearWheels[0].center[1], 0.303329178)
     close(chair.rearWheels[1].center[1], 0.303329178)
     close(chair.rearWheels[0].center[1] - (0.295 + 0.01) * Math.cos(6 * Math.PI / 180), 0)
     close(chair.rearWheels[1].center[1] - (0.295 + 0.01) * Math.cos(6 * Math.PI / 180), 0)
-    close(chair.casters[0].center[1], 0.05)
-    close(chair.casters[1].center[1], 0.05)
+    close(chair.casters[0].center[1], 0.048)
+    close(chair.casters[1].center[1], 0.048)
     close(chair.rearWheels[0].center[0], -chair.rearWheels[1].center[0])
   })
 

@@ -22,7 +22,7 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
 
 const radians = (degrees: number) => degrees * Math.PI / 180
 
-export const WHEEL = { rearRadius: 0.295, rearTire: 0.01, casterRadius: 0.045, casterTire: 0.005 }
+export const WHEEL = { rearRadius: 0.295, rearTire: 0.01, casterRadius: 0.04, casterTire: 0.008 }
 export const FRONT_FRAME_ANGLE_DEGREES = 70
 
 export function deriveGeometry(config: WheelchairConfig) {
@@ -101,10 +101,22 @@ export function deriveGeometry(config: WheelchairConfig) {
       axlePoint: connection.axlePoint,
     }
   })
-  const casters = ([-1, 1] as const).map(side => ({
-    center: [side * (width / 2 + 0.025), WHEEL.casterRadius + WHEEL.casterTire, front[2] + 0.1] as Point,
-    forkAttachment: interpolate(side < 0 ? lowerLeft : lowerRight, side < 0 ? upperLeft : upperRight, 0.25),
-  }))
+  const casters = ([-1, 1] as const).map(side => {
+    const center: Point = [side * (width / 2 + 0.025), WHEEL.casterRadius + WHEEL.casterTire, front[2] + 0.1]
+    const forkAttachment = interpolate(side < 0 ? lowerLeft : lowerRight, side < 0 ? upperLeft : upperRight, 0.25)
+    const forkHalfWidth = 0.025
+    const topY = center[1] + WHEEL.casterRadius + 0.012
+    const forkTop: Point = [center[0], topY, center[2]]
+    const leftAxle: Point = [center[0] - forkHalfWidth, center[1], center[2]]
+    const rightAxle: Point = [center[0] + forkHalfWidth, center[1], center[2]]
+    const forkAxle: [Point, Point] = [leftAxle, rightAxle]
+    const forkLegs: [[Point, Point], [Point, Point]] = [
+      [[leftAxle[0], topY, center[2]], leftAxle],
+      [[rightAxle[0], topY, center[2]], rightAxle],
+    ]
+    const forkStem: [Point, Point] = [forkAttachment, forkTop]
+    return { center, forkAttachment, forkTop, forkLegs, forkAxle, forkStem }
+  })
   return {
     seat: { front, rear, seatForward, seatRear, surfaceCenter, surfaceFront, surfaceDepth, width, depth, tilt },
     frontFrame,

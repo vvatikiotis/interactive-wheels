@@ -56,11 +56,11 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPus
 }
 
 export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CONFIG }) {
-  const { seat, backrest, rearWheels, axleTube, casters, frontFrame, footrest } = deriveGeometry(configuration)
+  const { seat, backrest, rearWheels, axleTube, rearFrameConnections, casters, frontFrame, footrest } = deriveGeometry(configuration)
   const frameOffset = seat.width / 2 + 0.022
   const sidePoints = (side: number) => ({
     front: [side * (frontFrame.upperSpacing / 2 + 0.01), frontFrame.upperLeft[1], frontFrame.upperLeft[2]] as Point,
-    rear: [side * frameOffset, seat.seatRear[1], seat.seatRear[2]] as Point,
+    rear: [side * seat.width / 2, seat.seatRear[1], seat.seatRear[2]] as Point,
     lower: side < 0 ? frontFrame.lowerLeft : frontFrame.lowerRight,
     backBase: [side * frameOffset, backrest.base[1], backrest.base[2]] as Point,
     backTop: [side * frameOffset, backrest.top[1], backrest.top[2]] as Point,
@@ -77,12 +77,12 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
     {([-1, 1] as const).map((side, index) => {
       const points = sidePoints(side)
       const wheel = rearWheels[index]
+      const rearFrameConnection = rearFrameConnections[index]
       const caster = casters[index]
       return <group key={side}>
         <Tube from={points.front} to={points.rear} />
         <Tube from={points.front} to={points.lower} />
-        <Tube from={points.rear} to={[wheel.center[0], points.rear[1], wheel.center[2]]} />
-        <Tube from={[wheel.center[0], points.rear[1], wheel.center[2]]} to={wheel.center} />
+        <Tube from={rearFrameConnection.seatPoint} to={rearFrameConnection.axlePoint} />
         <Tube from={points.backBase} to={points.backTop} radius={0.011} />
         <Tube from={caster.forkAttachment} to={caster.center} />
         <Wheel center={wheel.center} radius={WHEEL.rearRadius} tire={WHEEL.rearTire} camber={wheel.camber} side={side} hasPushRim />

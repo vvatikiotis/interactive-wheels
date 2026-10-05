@@ -85,6 +85,11 @@ export function deriveGeometry(config: WheelchairConfig) {
     start: [-wheelOffset, rearWheelHeight, axleZ] as Point,
     end: [wheelOffset, rearWheelHeight, axleZ] as Point,
   }
+  const frameOffset = width / 2 + 0.022
+  const rearFrameConnections = ([-1, 1] as const).map(side => ({
+    seatPoint: [side * width / 2, seatRear[1], seatRear[2]] as Point,
+    axlePoint: [side * frameOffset, rearWheelHeight, axleZ] as Point,
+  }))
   const casters = ([-1, 1] as const).map(side => ({
     center: [side * (width / 2 + 0.025), WHEEL.casterRadius + WHEEL.casterTire, front[2] + 0.1] as Point,
     forkAttachment: interpolate(side < 0 ? lowerLeft : lowerRight, side < 0 ? upperLeft : upperRight, 0.25),
@@ -96,6 +101,7 @@ export function deriveGeometry(config: WheelchairConfig) {
     backrest: { base: rear, top: backTop, height: config.backrestHeight / 100, angle: backAngle },
     rearWheels,
     axleTube,
+    rearFrameConnections,
     rearAxlePosition: config.rearAxlePosition / 100,
     casters,
   }

@@ -58,7 +58,7 @@ Derive the remaining frame and footrest geometry to keep the chair connected rat
 
 Keep wheel sizes fixed and wheels in contact with the ground as adjustments change. Adapt the simplified tubing and connections around the selected dimensions so the chair remains connected.
 
-Moving the rear axle position moves both rear-wheel centres and a visible transverse axle tube together, without moving the seat, front casters, or footrest. Show the tube between the rear-wheel axle attachments at hub height; adapt its connections to the frame so the chair stays visually whole. Rear-wheel camber still tilts the wheels independently of this tube. This is not a calculation of the tipping point or stability.
+Moving the rear axle position moves both rear-wheel centres and a visible transverse axle tube together, without moving the seat, front casters, or footrest. Show the tube between the rear-wheel axle attachments at hub height. Connect the rear corners of the seat surface directly to this axle tube with frame supports. Rear-wheel camber still tilts the wheels independently of this tube. This is not a calculation of the tipping point or stability.
 
 Seat tilt changes the seat and its supporting geometry, not the orientation of the whole chair. This is a connected visual model, not a reproduction of real adjustment mechanisms.
 

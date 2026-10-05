@@ -71,6 +71,19 @@ describe('configured wheelchair', () => {
     close(chair.rearAxlePosition, 0.08)
   })
 
+  it('connects the two rear seat-surface corners directly to the axle rod', () => {
+    const chair = deriveGeometry(DEFAULT_CONFIG)
+    for (const [index, side] of [-1, 1].entries()) {
+      const connection = chair.rearFrameConnections[index]
+      close(connection.seatPoint[0], side * chair.seat.width / 2)
+      close(connection.seatPoint[1], chair.seat.seatRear[1])
+      close(connection.seatPoint[2], chair.seat.seatRear[2])
+      close(connection.axlePoint[1], chair.axleTube.start[1])
+      close(connection.axlePoint[2], chair.axleTube.start[2])
+      expect(Math.abs(connection.axlePoint[0])).toBeLessThan(Math.abs(chair.axleTube.end[0]))
+    }
+  })
+
   it('keeps the selected rear axle position when seat depth changes', () => {
     const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatDepth: 46, rearAxlePosition: -5 })
     close(chair.rearWheels[0].center[2] - chair.seat.rear[2], -0.05)

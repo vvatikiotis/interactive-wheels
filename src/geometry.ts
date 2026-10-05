@@ -68,7 +68,8 @@ export function deriveGeometry(config: WheelchairConfig) {
     crossbar: { start: lowerLeft, end: lowerRight, radius: 0.009 },
   }
   const footrest = {
-    center: [0, frontFrame.lowerLeft[1] + frontFrame.crossbar.radius + 0.009, frontFrame.lowerLeft[2]] as Point,
+    thickness: 0.01,
+    center: [0, frontFrame.lowerLeft[1] + frontFrame.crossbar.radius + 0.005, frontFrame.lowerLeft[2] - 0.04] as Point,
     width: lowerSpacing - 0.07,
     depth: 0.12,
   }

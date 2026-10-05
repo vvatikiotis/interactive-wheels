@@ -30,10 +30,33 @@ describe('configured wheelchair', () => {
     close(chair.backrest.top[2], -0.26569)
   })
 
+  it('moves both rear wheels and axle tube together relative to the seat rear edge', () => {
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, rearAxlePosition: 8 })
+    close(chair.rearWheels[0].center[2], -0.118904379)
+    close(chair.rearWheels[1].center[2], -0.118904379)
+    close(chair.axleTube.start[2], chair.rearWheels[0].center[2])
+    close(chair.axleTube.end[2], chair.rearWheels[1].center[2])
+    close(chair.rearAxlePosition, 0.08)
+  })
+
+  it('keeps the selected rear axle position when seat depth changes', () => {
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatDepth: 46, rearAxlePosition: -5 })
+    close(chair.rearWheels[0].center[2] - chair.seat.rear[2], -0.05)
+    close(chair.rearAxlePosition, -0.05)
+  })
+
+  it('changes wheel camber independently of the transverse axle tube', () => {
+    const straight = deriveGeometry({ ...DEFAULT_CONFIG, wheelCamber: 0 })
+    const cambered = deriveGeometry({ ...DEFAULT_CONFIG, wheelCamber: 6 })
+    close(straight.axleTube.start[1], 0.305)
+    close(cambered.axleTube.start[1], 0.303329178)
+    close(cambered.rearWheels[0].camber, -6 * Math.PI / 180)
+  })
+
   it('keeps both cambered rear tires and casters grounded and symmetric', () => {
     const chair = deriveGeometry({ ...DEFAULT_CONFIG, wheelCamber: 6, seatWidth: 46 })
-    close(chair.rearWheels[0].center[1], 0.30338)
-    close(chair.rearWheels[1].center[1], 0.30338)
+    close(chair.rearWheels[0].center[1], 0.303329178)
+    close(chair.rearWheels[1].center[1], 0.303329178)
     close(chair.casters[0].center[1], 0.05)
     close(chair.casters[1].center[1], 0.05)
     close(chair.rearWheels[0].center[0], -chair.rearWheels[1].center[0])

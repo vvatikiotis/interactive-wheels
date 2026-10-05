@@ -1,22 +1,23 @@
 # Prototype implementation plan
 
-Status: proposed plan following review of `prototype-scope.md` and `../GLOSSARY.md`. No application implementation authorized.
+Status: rear axle position geometry and slider checkpoint implemented.
 
 ## Scope review
 
-The scope is suitable for a small interactive prototype. Keep the six controls, folding, and camera interaction; do not add assets, persistence, a backend, or engineering validation.
+The scope is suitable for a small interactive prototype. Keep the seven agreed controls, folding, and camera interaction; do not add assets, persistence, a backend, or engineering validation.
 
 The main complexity is maintaining connected geometry while dimensions and angles change. The controls cannot be implemented as unrelated mesh transformations.
 
 ### Risks to address first
 
 - **Seat anchoring:** keep the top of the front seating surface at 50 cm, accounting for upholstery thickness. Derive the rear seat position and backrest hinge from seat depth and tilt.
+- **Rear axle position:** derive both rear-wheel centres and a transverse axle tube at hub height from one seat-relative fore–aft value. Keep the seat, front casters, and footrest in place; adapt connections from the tube to the frame. Camber tilts the wheels independently of the tube. When seat depth changes, the tube and rear wheels follow the rear seat edge, keeping the displayed axle position unchanged. Review clearance against backrest, frame, and folded path throughout its range. This changes the chair's visible balance, not a computed tipping point.
 - **Cambered wheels:** derive axle height from the rendered tire's vertical extent after tilting, including tire thickness. A fixed axle height can lift a tilted wheel off the ground. Derive lateral clearance from the seat and frame.
 - **Folding sweep:** test the path, not just the endpoints. A 45 cm backrest is longer than a 36 cm seat and may extend past its front edge when folded. That overhang is not inherently invalid, but intersections with tubing, wheels, or footrest are.
 - **Constraint complexity:** avoid a physics engine or general mesh-collision system. Use simple geometry designed for clearance, then explicit rules for demonstrated collision risks. Intended overlaps at tube joints are not collisions.
 - **Coverage:** minimum/maximum combinations alone do not establish correctness at intermediate angles. Include intermediate poses and sampled folding paths alongside analytic checks.
 
-No further user decision blocks this plan. Coordinate axes, internal units, tube thicknesses, hinge offsets, and fixed attachment positions are implementation choices within the agreed scope. Surface any required change to agreed behavior rather than silently expanding or weakening the scope.
+The rear axle position range is −5 to +12 cm, default +8 cm in 1 cm steps, measured horizontally from the rear seat edge; positive is forward. Its geometry and slider are implemented. Coordinate axes, internal units, tube thicknesses, hinge offsets, and fixed attachment positions are implementation choices within the agreed scope. Surface any required change to agreed behavior rather than silently expanding or weakening the scope.
 
 ## Implementation sequence
 
@@ -26,7 +27,7 @@ Define a single coordinate convention and use metres internally, converting cent
 
 Create a pure `deriveGeometry(configuration, foldProgress)` function returning component anchors, dimensions, and orientations. Derive seat geometry first, then backrest, grounded wheels, and connecting frame/footrest geometry.
 
-Test seat dimensions, fixed front height, backrest angle relative to seat, left/right symmetry, and tire-ground contact. Use geometry constants shared with rendering rather than separate approximations.
+Test seat dimensions, fixed front height, backrest angle relative to seat, left/right symmetry, tire-ground contact, and how both rear-wheel centres and the axle tube move together while the seat, casters, and footrest stay put. Use geometry constants shared with rendering rather than separate approximations.
 
 ### 2. Render the default chair
 
@@ -36,19 +37,19 @@ Check that the chair is recognizable, connected, grounded, and dimensionally con
 
 ### 3. Exercise adjustments and clearances
 
-Test each slider's extrema, all 64 minimum/maximum combinations, and targeted intermediate combinations. Establish folding clearance early, before treating a configuration as accepted.
+Test each slider's extrema, all 128 minimum/maximum combinations for seven controls, and targeted intermediate combinations. For rear axle position, also inspect wheel/frame clearance and connecting tubes at both ends of its range. Establish folding clearance early, before treating a configuration as accepted.
 
 Prefer geometry that supports the full agreed ranges. Add explicit clearance checks where required. On an invalid proposed change, stop at the last valid slider step reachable from the current value; do not jump over an invalid interval or modify other settings. Display a short reason.
 
-Connect the six sliders with visible units and immediate geometry updates.
+Connect all seven sliders with visible units and immediate geometry updates.
 
 ### 4. Add folding and reset behavior
 
 Represent unfolded, folding, folded, and unfolding states explicitly. Animate fold progress over approximately 0.4 seconds, retaining the selected backrest angle separately.
 
-Check clearance along the folding path, including tall-backrest/short-seat configurations. Disable all sliders while not fully unfolded, ignore repeated fold-button clicks during animation, and keep camera controls available.
+Check clearance along the folding path, including tall-backrest/short-seat configurations. Disable all seven sliders while not fully unfolded, ignore repeated fold-button clicks during animation, and keep camera controls available.
 
-Reset configuration cancels animation, restores defaults, and unfolds immediately without moving the camera.
+Reset configuration cancels animation, restores all seven defaults, and unfolds immediately without moving the camera.
 
 ### 5. Finish presentation and acceptance checks
 
@@ -56,7 +57,7 @@ Add the agreed light background, contrasting materials, ground plane, soft shado
 
 Use a small unit-test setup for geometry and browser tests for interaction. Verify in current desktop Chrome:
 
-- Slider updates, displayed values, bounds, and any restriction explanations.
+- Slider updates, displayed values, bounds, and any restriction explanations, including rear axle position.
 - Default and extreme configurations from multiple viewing angles.
 - Folding path, disabled controls, repeated clicks, and reset during animation.
 - Rotation and zoom while folded.
@@ -77,4 +78,4 @@ These are starting boundaries, not a requirement to build a framework. Add modul
 
 ## First checkpoint
 
-Review a recognizable default chair plus geometry test results before expanding to all interactions. If that foundation is wrong, visual polish and additional controls will not fix it.
+The default-chair viewer and rear axle position geometry/slider checkpoints are implemented. Next, continue with the remaining agreed controls and folding, extending geometry and tests before each interaction.

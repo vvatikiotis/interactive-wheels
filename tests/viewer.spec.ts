@@ -1,7 +1,20 @@
 import { expect, test } from '@playwright/test'
 
+test('rear axle slider moves both rear wheels and the axle tube', async ({ page }) => {
+  await page.goto('/')
+  const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
+  await expect(viewer.locator('canvas')).toBeVisible()
+  await expect(page.getByText('+8 cm')).toBeVisible()
+  const before = await viewer.screenshot()
+  const slider = page.getByLabel('Rear axle position')
+  await slider.fill('12')
+  await expect(page.getByText('+12 cm')).toBeVisible()
+  const after = await viewer.screenshot()
+  expect(after.equals(before)).toBe(false)
+})
+
 test('default wheelchair is visible and drag/scroll change the view', async ({ page }) => {
-  await page.goto(process.env.VIEWER_URL ?? 'http://127.0.0.1:4173/')
+  await page.goto('/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
   await expect(viewer.locator('canvas')).toBeVisible()
   const box = await viewer.locator('canvas').boundingBox()

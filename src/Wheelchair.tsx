@@ -17,28 +17,30 @@ function Tube({ from, to, radius = 0.009, color = metal }: { from: Point; to: Po
 }
 
 function Wheel({ center, radius, tire, camber = 0, spokes = 10 }: { center: Point; radius: number; tire: number; camber?: number; spokes?: number }) {
-  return <group position={center} rotation={[0, 0, camber]}>
-    <mesh rotation={[0, Math.PI / 2, 0]} castShadow>
-      <torusGeometry args={[radius, tire, 12, 64]} />
-      <meshStandardMaterial color="#202832" roughness={0.9} />
-    </mesh>
-    <mesh rotation={[0, Math.PI / 2, 0]}>
-      <torusGeometry args={[radius * 0.85, 0.004, 8, 48]} />
-      <meshStandardMaterial color="#9baeb8" metalness={0.7} roughness={0.3} />
-    </mesh>
-    {Array.from({ length: spokes }, (_, index) => {
-      const angle = index * Math.PI * 2 / spokes
-      return <Tube key={index} from={[0, 0, 0]} to={[0, Math.cos(angle) * radius * 0.85, Math.sin(angle) * radius * 0.85]} radius={0.002} color="#b9c8cc" />
-    })}
-    <mesh rotation={[0, 0, Math.PI / 2]} castShadow>
-      <cylinderGeometry args={[0.018, 0.018, 0.045, 16]} />
-      <meshStandardMaterial color="#657e8c" metalness={0.6} roughness={0.35} />
-    </mesh>
+  return <group position={center}>
+    <group rotation={[0, 0, camber]}>
+      <mesh rotation={[0, Math.PI / 2, 0]} castShadow>
+        <torusGeometry args={[radius, tire, 12, 64]} />
+        <meshStandardMaterial color="#202832" roughness={0.9} />
+      </mesh>
+      <mesh rotation={[0, Math.PI / 2, 0]}>
+        <torusGeometry args={[radius * 0.85, 0.004, 8, 48]} />
+        <meshStandardMaterial color="#9baeb8" metalness={0.7} roughness={0.3} />
+      </mesh>
+      {Array.from({ length: spokes }, (_, index) => {
+        const angle = index * Math.PI * 2 / spokes
+        return <Tube key={index} from={[0, 0, 0]} to={[0, Math.cos(angle) * radius * 0.85, Math.sin(angle) * radius * 0.85]} radius={0.002} color="#b9c8cc" />
+      })}
+      <mesh rotation={[0, 0, Math.PI / 2]} castShadow>
+        <cylinderGeometry args={[0.018, 0.018, 0.045, 16]} />
+        <meshStandardMaterial color="#657e8c" metalness={0.6} roughness={0.35} />
+      </mesh>
+    </group>
   </group>
 }
 
-export function Wheelchair() {
-  const { seat, backrest, rearWheels, casters } = deriveGeometry(DEFAULT_CONFIG)
+export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CONFIG }) {
+  const { seat, backrest, rearWheels, axleTube, casters } = deriveGeometry(configuration)
   const half = seat.width / 2
   const frameOffset = half + 0.022
   const sidePoints = (side: number) => ({
@@ -65,7 +67,8 @@ export function Wheelchair() {
         <Tube from={points.front} to={points.rear} />
         <Tube from={points.front} to={points.lower} />
         <Tube from={points.lower} to={points.rear} />
-        <Tube from={points.rear} to={wheel.center} />
+        <Tube from={points.rear} to={[wheel.center[0], wheel.center[1] + 0.055, wheel.center[2]]} />
+        <Tube from={[wheel.center[0], wheel.center[1] + 0.055, wheel.center[2]]} to={wheel.center} />
         <Tube from={points.backBase} to={points.backTop} radius={0.011} />
         <Tube from={points.lower} to={[caster.center[0], caster.center[1] + 0.04, caster.center[2]]} />
         <Wheel center={wheel.center} radius={WHEEL.rearRadius} tire={WHEEL.rearTire} camber={wheel.camber} />
@@ -75,6 +78,7 @@ export function Wheelchair() {
       </group>
     })}
     <Tube from={[-frameOffset, 0.18, seat.front[2] + 0.25]} to={[frameOffset, 0.18, seat.front[2] + 0.25]} radius={0.014} />
+    <Tube from={axleTube.start} to={axleTube.end} radius={0.012} />
     <Tube from={[-frameOffset, backrest.top[1], backrest.top[2]]} to={[frameOffset, backrest.top[1], backrest.top[2]]} radius={0.009} />
   </group>
 }

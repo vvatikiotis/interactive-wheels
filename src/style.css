@@ -6,5 +6,14 @@ h1 { margin: 0 0 .2rem; font-size: clamp(1.5rem, 3vw, 2.4rem); }
 p { margin: .2rem 0; }
 .eyebrow { color: #527784; text-transform: uppercase; letter-spacing: .12em; font-size: .75rem; font-weight: 700; }
 .note { max-width: 16rem; color: #637882; text-align: right; }
-.viewport { margin: 0 clamp(1rem, 5vw, 5rem) 2rem; height: max(560px, calc(100vh - 180px)); border-radius: 18px; overflow: hidden; border: 1px solid #cedbdd; background: #edf2f3; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 1rem; margin: 0 clamp(1rem, 5vw, 5rem) 2rem; }
+.viewport { min-width: 0; height: max(560px, calc(100vh - 180px)); border-radius: 18px; overflow: hidden; border: 1px solid #cedbdd; background: #edf2f3; }
+.controls { align-self: start; background: white; border: 1px solid #cedbdd; border-radius: 14px; padding: 1.2rem; }
+.controls h2 { margin: 0 0 1.4rem; font-size: 1.15rem; }
+.controls label { display: flex; justify-content: space-between; gap: .5rem; font-weight: 650; }
+.controls output { white-space: nowrap; color: #527784; }
+.controls input { width: 100%; margin: 1rem 0 .25rem; accent-color: #527784; }
+.range-labels { display: flex; justify-content: space-between; color: #637882; font-size: .85rem; }
+.explanation { margin-top: 1rem; color: #637882; font-size: .9rem; }
+@media (max-width: 850px) { .workspace { grid-template-columns: 1fr; } .controls { order: -1; } }
 @media (max-width: 700px) { header { align-items: start; flex-direction: column; } .note { text-align: left; } }

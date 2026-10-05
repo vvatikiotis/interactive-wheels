@@ -64,6 +64,14 @@ describe('configured wheelchair', () => {
     close(narrow.frontFrame.lowerSpacing, 0.289)
   })
 
+  it('sets the front frame tubes 70 degrees above the ground in side view', () => {
+    const chair = deriveGeometry(DEFAULT_CONFIG)
+    const lower = chair.frontFrame.lowerLeft
+    const upper = chair.frontFrame.upperLeft
+    const angle = Math.atan2(upper[1] - lower[1], Math.abs(upper[2] - lower[2])) * 180 / Math.PI
+    close(angle, 70)
+  })
+
   it('attaches each caster fork one quarter of the front-frame tube length above its lower end', () => {
     const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatWidth: 40 })
     for (const [index, side] of [-1, 1].entries()) {

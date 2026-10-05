@@ -1,6 +1,6 @@
 # Interactive wheelchair prototype
 
-Status: scope confirmed; rear axle position addition agreed and implemented.
+Status: scope confirmed; all seven adjustment controls implemented. Folding and resets remain.
 
 ## Agreed objective
 
@@ -78,7 +78,7 @@ The following ranges are provisional visual ranges, not validated wheelchair spe
 
 Positive seat angle means the rear is lower than the front. A 90° backrest angle is perpendicular to the seat. Positive camber means the rear wheels lean inward at the top. Measure backrest height along the backrest from the seat junction.
 
-If a combination would cause a visible collision, stop the affected slider at the valid limit and show a short explanation, such as “Limited to avoid wheel/frame overlap.” Do not silently change other settings. Allow the full agreed ranges wherever the simplified geometry can accommodate them.
+If a combination would cause a visible collision, stop the affected slider at the valid limit and show a short explanation, such as “Limited to avoid wheel/frame overlap.” Do not silently change other settings. Allow the full agreed ranges wherever the simplified geometry can accommodate them. Collision limits and explanations remain to be implemented.
 
 ## Agreed implementation scope
 
@@ -99,10 +99,10 @@ Keep the camera above ground and limit zoom to avoid navigating inside the chair
 ## Agreed acceptance checks
 
 - Runs locally in a current desktop Chrome browser.
-- All adjustment sliders, including rear axle position, update the chair and display the selected measurements.
-- At defaults, limits, and tested combinations, parts stay connected, wheels stay grounded, and no obvious intersections appear.
+- All adjustment sliders, including rear axle position, update the chair and display the selected measurements. The current checkpoint covers all seven sliders.
+- At defaults, limits, and tested combinations, parts stay connected, wheels stay grounded, and no obvious intersections appear. Full geometry validation for combinations remains.
 - Restricted combinations stop with an explanation.
-- Folding and unfolding work at allowed settings without visible collisions.
+- Folding and unfolding work at allowed settings without visible collisions. Folding remains to be implemented.
 - Rotation, zoom, both resets, and slider disabling behave as agreed.
 - Automated geometry checks cover dimensions and ground contact; browser checks cover appearance and interaction.
 
@@ -110,4 +110,4 @@ These checks validate the visual prototype, not engineering accuracy.
 
 ## Interview status
 
-The user confirmed the initial scope and requested rear axle position as an additional control. Its range is −5 to +12 cm in 1 cm steps, with a +8 cm default. This addition was authorized and implemented as a geometry and UI checkpoint.
+The user confirmed the initial scope and requested rear axle position as an additional control. Its range is −5 to +12 cm in 1 cm steps, with a +8 cm default. This addition was authorized and implemented as a geometry and UI control.

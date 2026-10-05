@@ -53,10 +53,22 @@ describe('configured wheelchair', () => {
     close(cambered.rearWheels[0].camber, -6 * Math.PI / 180)
   })
 
+  it('preserves the front seat height while seat depth and tilt change', () => {
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatDepth: 46, seatAngle: 12 })
+    close(chair.seat.front[1], 0.5)
+    close(chair.seat.width, 0.39)
+    close(chair.seat.depth, 0.46)
+    close(chair.seat.seatRear[2], chair.seat.rear[2])
+    expect(chair.seat.rear[1]).toBeLessThan(0.5)
+    close(chair.rearWheels[0].center[2] - chair.seat.rear[2], 0.08)
+  })
+
   it('keeps both cambered rear tires and casters grounded and symmetric', () => {
     const chair = deriveGeometry({ ...DEFAULT_CONFIG, wheelCamber: 6, seatWidth: 46 })
     close(chair.rearWheels[0].center[1], 0.303329178)
     close(chair.rearWheels[1].center[1], 0.303329178)
+    close(chair.rearWheels[0].center[1] - (0.295 + 0.01) * Math.cos(6 * Math.PI / 180), 0)
+    close(chair.rearWheels[1].center[1] - (0.295 + 0.01) * Math.cos(6 * Math.PI / 180), 0)
     close(chair.casters[0].center[1], 0.05)
     close(chair.casters[1].center[1], 0.05)
     close(chair.rearWheels[0].center[0], -chair.rearWheels[1].center[0])

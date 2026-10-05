@@ -29,7 +29,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Seat width', '33'],
     ['Seat depth', '36'],
     ['Rear-wheel camber', '-4'],
-    ['Rear axle position', '-5'],
+    ['Rear axle position', '0'],
     ['Backrest height', '10'],
     ['Backrest angle to seat', '80'],
     ['Seat angle to ground', '0'],

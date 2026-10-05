@@ -19,7 +19,7 @@ The angle of the backrest relative to the seat, not relative to the ground. Meas
 _Avoid_: Recline angle without specifying its reference
 
 **Rear axle position**:
-The horizontal forward-or-backward distance of both rear-wheel centres from the rear edge of the seat. Positive values place the wheel centres forward of that edge; negative values place them behind it. The transverse axle tube between the wheels moves with their centres; this setting does not calculate a tipping point.
+The horizontal forward distance of both rear-wheel centres from the rear edge of the seat. Zero places the wheel centres directly below that edge; values are non-negative. The transverse axle tube between the wheels moves with their centres; this setting does not calculate a tipping point.
 _Avoid_: Tipping point
 
 **Axle tube**:

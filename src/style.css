@@ -7,7 +7,7 @@ header { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 1rem; 
 h1 { margin: 0 0 .2rem; font-size: clamp(1.5rem, 3vw, 2.4rem); }
 p { margin: .2rem 0; }
 .note { max-width: 16rem; color: #637882; text-align: right; }
-.workspace { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 1rem; margin: 0 clamp(1rem, 5vw, 5rem) 1rem; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 1rem; margin: 0 clamp(1rem, 5vw, 5rem) .5rem; }
 .viewport { min-width: 0; height: max(560px, calc(100vh - 230px)); border-radius: 18px; overflow: hidden; border: 1px solid #cedbdd; background: #edf2f3; }
 .controls { align-self: start; background: white; border: 1px solid #cedbdd; border-radius: 14px; padding: 1.2rem; }
 .controls h2 { margin: 0 0 .8rem; font-size: 1.15rem; }

@@ -97,9 +97,9 @@ describe('configured wheelchair', () => {
     const ranges: [keyof WheelchairConfig, number, number][] = [
       ['seatWidth', 33, 46], ['seatDepth', 36, 46], ['wheelCamber', -4, 6],
       ['rearAxlePosition', 0, 12], ['backrestHeight', 10, 45],
-      ['backrestAngle', 80, 110], ['seatAngle', 0, 12], ['footrestSlope', 0, 15],
+      ['backrestAngle', 80, 110], ['seatAngle', 0, 12], ['footrestSlope', 0, 15], ['footrestHeight', 1, 10],
     ]
-    for (let combination = 0; combination < 256; combination++) {
+    for (let combination = 0; combination < 512; combination++) {
       const config = { ...DEFAULT_CONFIG }
       ranges.forEach(([key, low, high], index) => { config[key] = combination & (1 << index) ? high : low })
       for (let step = 0; step <= 10; step++) {
@@ -111,7 +111,7 @@ describe('configured wheelchair', () => {
           expect(caster.forkTop[1] - caster.center[1] - WHEEL.casterRadius - WHEEL.casterTire).toBeGreaterThan(0.0079)
         }
         const footplateRearBottom = chair.footrest.center[1] - chair.footrest.depth / 2 * Math.sin(chair.footrest.angle) - chair.footrest.thickness / 2 * Math.cos(chair.footrest.angle)
-        expect(footplateRearBottom).toBeGreaterThan(0)
+        close(footplateRearBottom, config.footrestHeight / 100)
       }
     }
   })
@@ -172,16 +172,22 @@ describe('configured wheelchair', () => {
     close(cambered.rearWheels[0].camber, -6 * Math.PI / 180)
   })
 
-  it('adjusts footplate slope while keeping its dimensions and crossbar support', () => {
-    const level = deriveGeometry(DEFAULT_CONFIG)
-    const inclined = deriveGeometry({ ...DEFAULT_CONFIG, footrestSlope: 10 })
-    close(level.footrest.angle, 0)
-    close(inclined.footrest.angle, 10 * Math.PI / 180)
-    close(inclined.footrest.width, level.footrest.width)
-    close(inclined.footrest.depth, level.footrest.depth)
-    const distanceToCrossbar = inclined.frontFrame.crossbar.start[2] - inclined.footrest.center[2]
-    const bottomAtCrossbar = inclined.footrest.center[1] + distanceToCrossbar * Math.tan(inclined.footrest.angle) - inclined.footrest.thickness / (2 * Math.cos(inclined.footrest.angle))
-    close(bottomAtCrossbar, inclined.frontFrame.crossbar.start[1] + inclined.frontFrame.crossbar.radius)
+  it('measures footplate height at its lowest underside for both slopes and connects supports to the fixed crossbar', () => {
+    for (const height of [1, 7, 10]) for (const slope of [0, 15]) {
+      const chair = deriveGeometry({ ...DEFAULT_CONFIG, footrestHeight: height, footrestSlope: slope })
+      const plate = chair.footrest
+      const rearBottom = plate.center[1] - plate.depth / 2 * Math.sin(plate.angle) - plate.thickness / 2 * Math.cos(plate.angle)
+      close(rearBottom, height / 100)
+      close(plate.center[2], chair.frontFrame.lowerLeft[2] - 0.04)
+      close(plate.width, chair.frontFrame.lowerSpacing - 0.07)
+      for (const support of plate.supports) {
+        close(support[0][1], chair.frontFrame.crossbar.start[1])
+        close(support[0][2], chair.frontFrame.crossbar.start[2])
+        close(Math.abs(support[1][0]), plate.width / 2 - 0.012)
+        close(support[1][1], height / 100 + 0.02 * Math.sin(plate.angle))
+        close(support[1][2], plate.center[2] - 0.04 * Math.cos(plate.angle) + plate.thickness / 2 * Math.sin(plate.angle))
+      }
+    }
   })
 
   it('tapers front frame tubes to 85 percent of seat width and centers the footrest between them', () => {
@@ -197,7 +203,7 @@ describe('configured wheelchair', () => {
     close(standard.frontFrame.crossbar.end[1], standard.frontFrame.lowerRight[1])
     close(standard.frontFrame.crossbar.end[2], standard.frontFrame.lowerRight[2])
     close(standard.footrest.thickness, 0.01)
-    close(standard.footrest.center[1] - standard.footrest.thickness / 2, standard.frontFrame.lowerLeft[1] + standard.frontFrame.crossbar.radius)
+    close(standard.footrest.center[1] - standard.footrest.thickness / 2, DEFAULT_CONFIG.footrestHeight / 100)
     close(standard.footrest.center[2], standard.frontFrame.lowerLeft[2] - 0.04)
     const narrow = deriveGeometry({ ...DEFAULT_CONFIG, seatWidth: 34 })
     close(narrow.frontFrame.upperSpacing, 0.34)

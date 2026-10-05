@@ -28,7 +28,7 @@ test('shows a small centered credit at the bottom of the page', async ({ page })
   expect(box.y + box.height).toBeLessThanOrEqual(900)
 })
 
-test('all eight adjustment sliders update their displayed measurements', async ({ page }) => {
+test('all nine adjustment sliders update their displayed measurements', async ({ page }) => {
   await page.goto('/')
   const cases = [
     ['Seat width', '46', '46 cm'],
@@ -39,6 +39,7 @@ test('all eight adjustment sliders update their displayed measurements', async (
     ['Backrest angle to seat', '85', '85 °'],
     ['Seat angle to ground', '12', '12 °'],
     ['Footplate slope', '10', '10 °'],
+    ['Footplate height', '1', '1 cm'],
   ]
   for (const [label, value, displayed] of cases) {
     const slider = page.getByLabel(label)
@@ -49,6 +50,8 @@ test('all eight adjustment sliders update their displayed measurements', async (
   await expect(page.getByLabel('Backrest height')).toHaveAttribute('min', '10')
   await expect(page.getByLabel('Footplate slope')).toHaveAttribute('min', '0')
   await expect(page.getByLabel('Footplate slope')).toHaveAttribute('max', '15')
+  await expect(page.getByLabel('Footplate height')).toHaveAttribute('min', '1')
+  await expect(page.getByLabel('Footplate height')).toHaveAttribute('max', '10')
 })
 
 test('minimum and maximum dimensions and angles keep the generated chair renderable', async ({ page }) => {
@@ -65,6 +68,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Backrest angle to seat', '80'],
     ['Seat angle to ground', '0'],
     ['Footplate slope', '0'],
+    ['Footplate height', '1'],
   ]) await page.getByLabel(label).fill(value)
   expect((await viewer.screenshot()).equals(before)).toBe(false)
   for (const [label, value] of [
@@ -76,6 +80,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Backrest angle to seat', '110'],
     ['Seat angle to ground', '12'],
     ['Footplate slope', '15'],
+    ['Footplate height', '10'],
   ]) await page.getByLabel(label).fill(value)
   await expect(page.getByText('12 °', { exact: true })).toBeVisible()
   expect((await viewer.screenshot()).equals(before)).toBe(false)
@@ -108,7 +113,7 @@ test('backrest folds and unfolds while adjustments are disabled', async ({ page 
   const before = await viewer.screenshot()
   await page.getByRole('button', { name: 'Fold', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Folding…' })).toBeDisabled()
-  await expect(page.locator('.controls input:disabled')).toHaveCount(8)
+  await expect(page.locator('.controls input:disabled')).toHaveCount(9)
   await expect(page.getByRole('button', { name: 'Unfold' })).toBeEnabled()
   const folded = await viewer.screenshot()
   expect(folded.equals(before)).toBe(false)
@@ -120,7 +125,7 @@ test('backrest folds and unfolds while adjustments are disabled', async ({ page 
   await page.mouse.up()
   expect((await viewer.screenshot()).equals(folded)).toBe(false)
   await page.getByRole('button', { name: 'Unfold' }).click()
-  await expect(page.locator('.controls input:disabled')).toHaveCount(8)
+  await expect(page.locator('.controls input:disabled')).toHaveCount(9)
   await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
   await expect(page.locator('.controls input:disabled')).toHaveCount(0)
   await expect(page.getByText('100 °', { exact: true })).toBeVisible()
@@ -167,10 +172,12 @@ test('reset configuration cancels folding and restores defaults without moving t
   const rotatedDefault = await viewer.screenshot()
   await page.getByLabel('Seat width').fill('46')
   await page.getByLabel('Footplate slope').fill('15')
+  await page.getByLabel('Footplate height').fill('1')
   await page.getByRole('button', { name: 'Fold', exact: true }).click()
   await page.getByRole('button', { name: 'Reset configuration' }).click()
   await expect(page.getByLabel('Seat width')).toHaveValue('39')
   await expect(page.getByLabel('Footplate slope')).toHaveValue('0')
+  await expect(page.getByLabel('Footplate height')).toHaveValue('7')
   await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
   await expect(page.locator('.controls input:disabled')).toHaveCount(0)
   await expect.poll(async () => (await viewer.screenshot()).equals(rotatedDefault)).toBe(true)

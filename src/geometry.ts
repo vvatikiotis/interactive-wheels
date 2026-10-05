@@ -7,6 +7,7 @@ export interface WheelchairConfig {
   backrestAngle: number
   seatAngle: number
   footrestSlope: number
+  footrestHeight: number
 }
 
 export type Point = [number, number, number]
@@ -20,6 +21,7 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
   backrestAngle: 85,
   seatAngle: 6,
   footrestSlope: 0,
+  footrestHeight: 7,
 }
 
 const radians = (degrees: number) => degrees * Math.PI / 180
@@ -71,13 +73,22 @@ export function deriveGeometry(config: WheelchairConfig, foldProgress = 0) {
   }
   const footrestSlope = radians(config.footrestSlope)
   const footrestThickness = 0.01
-  const footrestSupportOffset = 0.04
+  const footrestDepth = 0.12
+  const footrestWidth = lowerSpacing - 0.07
+  const footrestCenter: Point = [0, config.footrestHeight / 100 + footrestDepth / 2 * Math.sin(footrestSlope) + footrestThickness / 2 * Math.cos(footrestSlope), frontFrame.lowerLeft[2] - 0.04]
   const footrest = {
     angle: footrestSlope,
     thickness: footrestThickness,
-    center: [0, frontFrame.lowerLeft[1] + frontFrame.crossbar.radius + footrestThickness / (2 * Math.cos(footrestSlope)) - footrestSupportOffset * Math.tan(footrestSlope), frontFrame.lowerLeft[2] - footrestSupportOffset] as Point,
-    width: lowerSpacing - 0.07,
-    depth: 0.12,
+    center: footrestCenter,
+    width: footrestWidth,
+    depth: footrestDepth,
+    supports: ([-1, 1] as const).map(side => {
+      const x = side * (footrestWidth / 2 - 0.012)
+      return [
+        [x, frontFrame.crossbar.start[1], frontFrame.crossbar.start[2]] as Point,
+        [x, footrestCenter[1] - 0.04 * Math.sin(footrestSlope) - footrestThickness / 2 * Math.cos(footrestSlope), footrestCenter[2] - 0.04 * Math.cos(footrestSlope) + footrestThickness / 2 * Math.sin(footrestSlope)] as Point,
+      ] as [Point, Point]
+    }),
   }
   const backAngle = tilt + radians(config.backrestAngle + (8 - config.backrestAngle) * foldProgress)
   const backTop: Point = [0, rear[1] + config.backrestHeight / 100 * Math.sin(backAngle), rear[2] + config.backrestHeight / 100 * Math.cos(backAngle)]

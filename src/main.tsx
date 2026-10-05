@@ -38,6 +38,7 @@ function App() {
     { key: 'backrestAngle', label: 'Backrest angle to seat', min: 80, max: 110, unit: '°' },
     { key: 'seatAngle', label: 'Seat angle to ground', min: 0, max: 12, unit: '°' },
     { key: 'footrestSlope', label: 'Footplate slope', min: 0, max: 15, unit: '°' },
+    { key: 'footrestHeight', label: 'Footplate height', min: 1, max: 10, unit: 'cm' },
   ]
 
   return <>

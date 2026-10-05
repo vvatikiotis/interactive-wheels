@@ -16,7 +16,7 @@ function Tube({ from, to, radius = 0.009, color = metal }: { from: Point; to: Po
   </mesh>
 }
 
-function Wheel({ center, radius, tire, camber = 0, spokes = 10 }: { center: Point; radius: number; tire: number; camber?: number; spokes?: number }) {
+function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPushRim = false }: { center: Point; radius: number; tire: number; camber?: number; spokes?: number; side?: number; hasPushRim?: boolean }) {
   return <group position={center}>
     <group rotation={[0, 0, 0]}>
       <group rotation={[0, 0, camber]}>
@@ -25,12 +25,16 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10 }: { center: Poin
         <meshStandardMaterial color="#202832" roughness={0.9} />
       </mesh>
       <mesh rotation={[0, Math.PI / 2, 0]}>
-        <torusGeometry args={[radius * 0.85, 0.004, 8, 48]} />
+        <torusGeometry args={[radius * 0.94, 0.004, 8, 48]} />
         <meshStandardMaterial color="#9baeb8" metalness={0.7} roughness={0.3} />
       </mesh>
+      {hasPushRim && <mesh position={[side * 0.04, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <torusGeometry args={[radius * 0.85, 0.004, 8, 48]} />
+        <meshStandardMaterial color="#9baeb8" metalness={0.7} roughness={0.3} />
+      </mesh>}
       {Array.from({ length: spokes }, (_, index) => {
         const angle = index * Math.PI * 2 / spokes
-        return <Tube key={index} from={[0, 0, 0]} to={[0, Math.cos(angle) * radius * 0.85, Math.sin(angle) * radius * 0.85]} radius={0.002} color="#b9c8cc" />
+        return <Tube key={index} from={[0, 0, 0]} to={[0, Math.cos(angle) * radius * 0.94, Math.sin(angle) * radius * 0.94]} radius={0.002} color="#b9c8cc" />
       })}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow>
         <cylinderGeometry args={[0.018, 0.018, 0.045, 16]} />
@@ -71,7 +75,7 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
         <Tube from={[wheel.center[0], points.rear[1], wheel.center[2]]} to={wheel.center} />
         <Tube from={points.backBase} to={points.backTop} radius={0.011} />
         <Tube from={caster.forkAttachment} to={caster.center} />
-        <Wheel center={wheel.center} radius={WHEEL.rearRadius} tire={WHEEL.rearTire} camber={wheel.camber} />
+        <Wheel center={wheel.center} radius={WHEEL.rearRadius} tire={WHEEL.rearTire} camber={wheel.camber} side={side} hasPushRim />
         <Wheel center={caster.center} radius={WHEEL.casterRadius} tire={WHEEL.casterTire} spokes={5} />
       </group>
     })}

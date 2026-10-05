@@ -5,7 +5,7 @@ test('all seven adjustment sliders update their displayed measurements', async (
   const cases = [
     ['Seat width', '46', '46 cm'],
     ['Seat depth', '46', '46 cm'],
-    ['Rear-wheel camber', '-2', '-2 °'],
+    ['Rear-wheel camber', '-4', '-4 °'],
     ['Rear axle position', '12', '+12 cm'],
     ['Backrest height', '10', '10 cm'],
     ['Backrest angle to seat', '110', '110 °'],
@@ -16,7 +16,7 @@ test('all seven adjustment sliders update their displayed measurements', async (
     await slider.fill(value)
     await expect(page.locator('label').filter({ hasText: label }).getByText(displayed, { exact: true })).toBeVisible()
   }
-  await expect(page.getByLabel('Rear-wheel camber')).toHaveAttribute('min', '-2')
+  await expect(page.getByLabel('Rear-wheel camber')).toHaveAttribute('min', '-4')
   await expect(page.getByLabel('Backrest height')).toHaveAttribute('min', '10')
 })
 
@@ -28,7 +28,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
   for (const [label, value] of [
     ['Seat width', '33'],
     ['Seat depth', '36'],
-    ['Rear-wheel camber', '-2'],
+    ['Rear-wheel camber', '-4'],
     ['Rear axle position', '-5'],
     ['Backrest height', '10'],
     ['Backrest angle to seat', '80'],

@@ -17,7 +17,7 @@ The main complexity is maintaining connected geometry while dimensions and angle
 - **Constraint complexity:** avoid a physics engine or general mesh-collision system. Use simple geometry designed for clearance, then explicit rules for demonstrated collision risks. Intended overlaps at tube joints are not collisions.
 - **Coverage:** minimum/maximum combinations alone do not establish correctness at intermediate angles. Include intermediate poses and sampled folding paths alongside analytic checks.
 
-The rear axle position range is −5 to +12 cm, default +8 cm in 1 cm steps, measured horizontally from the rear seat edge; positive is forward. Its geometry and slider are implemented. Backrest height ranges from 10–45 cm with a 10 cm default. Rear-wheel camber ranges from −2–6° with a 2° default. The revised height default and camber range are implemented. Coordinate axes, internal units, tube thicknesses, hinge offsets, and fixed attachment positions are implementation choices within the agreed scope. Surface any required change to agreed behavior rather than silently expanding or weakening the scope.
+The rear axle position range is −5 to +12 cm, default +8 cm in 1 cm steps, measured horizontally from the rear seat edge; positive is forward. Its geometry and slider are implemented. Backrest height ranges from 10–45 cm with a 10 cm default. Rear-wheel camber ranges from −4–6° with a 2° default. The revised height default and camber range are implemented. Coordinate axes, internal units, tube thicknesses, hinge offsets, and fixed attachment positions are implementation choices within the agreed scope. Surface any required change to agreed behavior rather than silently expanding or weakening the scope.
 
 ## Implementation sequence
 

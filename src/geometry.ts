@@ -74,6 +74,10 @@ export function deriveGeometry(config: WheelchairConfig) {
   }
   const backAngle = tilt + radians(config.backrestAngle)
   const backTop: Point = [0, rear[1] + config.backrestHeight / 100 * Math.sin(backAngle), rear[2] + config.backrestHeight / 100 * Math.cos(backAngle)]
+  const backrestSupports = ([-1, 1] as const).map(side => ({
+    base: [side * width / 2, seatRear[1], seatRear[2]] as Point,
+    top: [side * width / 2, backTop[1], backTop[2]] as Point,
+  }))
   const rearWheelHeight = (WHEEL.rearRadius + WHEEL.rearTire) * Math.cos(camber)
   const wheelOffset = width / 2 + 0.065
   const axleZ = rear[2] + config.rearAxlePosition / 100
@@ -98,7 +102,7 @@ export function deriveGeometry(config: WheelchairConfig) {
     seat: { front, rear, seatForward, seatRear, surfaceCenter, surfaceFront, surfaceDepth, width, depth, tilt },
     frontFrame,
     footrest,
-    backrest: { base: rear, top: backTop, height: config.backrestHeight / 100, angle: backAngle },
+    backrest: { base: rear, top: backTop, supports: backrestSupports, height: config.backrestHeight / 100, angle: backAngle },
     rearWheels,
     axleTube,
     rearFrameConnections,

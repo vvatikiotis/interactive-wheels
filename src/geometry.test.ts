@@ -25,7 +25,7 @@ describe('configured wheelchair', () => {
   })
 
   it('carries the backrest with the tilted seat while retaining its selected length and relative angle', () => {
-    const chair = deriveGeometry({ ...DEFAULT_CONFIG, backrestHeight: 35 })
+    const chair = deriveGeometry({ ...DEFAULT_CONFIG, backrestHeight: 35, backrestAngle: 95 })
     close(chair.backrest.top[1], 0.80176)
     close(chair.backrest.top[2], -0.26569)
   })
@@ -59,6 +59,14 @@ describe('configured wheelchair', () => {
     close(standard.frontFrame.lowerSpacing, 0.34)
     close(standard.footrest.center[0], 0)
     expect(standard.footrest.width).toBeLessThan(standard.frontFrame.lowerSpacing)
+    close(standard.frontFrame.crossbar.start[0], standard.frontFrame.lowerLeft[0])
+    close(standard.frontFrame.crossbar.start[1], standard.frontFrame.lowerLeft[1])
+    close(standard.frontFrame.crossbar.start[2], standard.frontFrame.lowerLeft[2])
+    close(standard.frontFrame.crossbar.end[0], standard.frontFrame.lowerRight[0])
+    close(standard.frontFrame.crossbar.end[1], standard.frontFrame.lowerRight[1])
+    close(standard.frontFrame.crossbar.end[2], standard.frontFrame.lowerRight[2])
+    close(standard.footrest.center[1] - 0.009, standard.frontFrame.lowerLeft[1] + standard.frontFrame.crossbar.radius)
+    close(standard.footrest.center[2], standard.frontFrame.lowerLeft[2])
     const narrow = deriveGeometry({ ...DEFAULT_CONFIG, seatWidth: 34 })
     close(narrow.frontFrame.upperSpacing, 0.34)
     close(narrow.frontFrame.lowerSpacing, 0.289)
@@ -106,9 +114,10 @@ describe('configured wheelchair', () => {
     close(chair.rearWheels[0].center[0], -chair.rearWheels[1].center[0])
   })
 
-  it('uses a 10 cm backrest height by default', () => {
+  it('uses the agreed backrest height and angle defaults', () => {
     const chair = deriveGeometry(DEFAULT_CONFIG)
-    close(chair.backrest.height, 0.1)
+    close(chair.backrest.height, 0.2)
+    close(chair.backrest.angle - chair.seat.tilt, 85 * Math.PI / 180)
   })
 
   it('supports four degrees of negative camber with both rear tires grounded and outward tilt', () => {

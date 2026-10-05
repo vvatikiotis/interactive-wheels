@@ -35,7 +35,7 @@ The distance along the backrest from its junction with the seat to its top, rath
 The two frame tubes descending from the front of the seat toward the casters. They angle 70 degrees above the ground in side view and taper inward toward their lower ends; their spacing scales proportionally with seat width.
 
 **Footrest platform**:
-The surface supporting the user's feet, spanning between the front frame tubes a couple of centimetres above their lower ends.
+The surface supporting the user's feet, spanning between the front frame tubes and resting directly on the transverse metal rod connecting their lower ends.
 
 **Caster fork attachment**:
 The point where a front caster fork connects to its front frame tube. In this prototype it sits 25% of the tube's length up from its lower end.

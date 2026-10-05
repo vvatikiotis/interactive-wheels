@@ -56,8 +56,9 @@ function App() {
           <Wheelchair configuration={configuration} foldProgress={foldProgress} />
           <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]}>
             <planeGeometry args={[200, 200]} />
-            <meshStandardMaterial color="#dce6e7" roughness={1} />
+            <meshStandardMaterial color="#cdd9dc" roughness={1} />
           </mesh>
+          <gridHelper args={[6, 30, '#617f89', '#839da6']} position={[0, 0.002, 0]} />
           <OrbitControls ref={orbitControls} target={[...INITIAL_CAMERA_TARGET]} enablePan={false} minDistance={0.85} maxDistance={3} maxPolarAngle={Math.PI / 2 - 0.03} />
         </Canvas>
       </section>

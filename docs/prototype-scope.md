@@ -31,7 +31,7 @@ The model derives positions from shared configuration geometry and uses generate
 
 ## Interaction
 
-The desktop viewer starts in a three-quarter view. Drag to orbit and scroll to zoom; the camera stays above the ground and zoom is limited. The scene has a light background, ground plane, and shadow. Mobile and touch controls are outside the present scope.
+The desktop viewer starts in a three-quarter view. Drag to orbit and scroll to zoom; the camera stays above the ground and zoom is limited. The scene has a light background, a contrasting ground plane with a 20 cm reference grid, and a shadow to make ground contact and orientation visible. Mobile and touch controls are outside the present scope.
 
 Fold / Unfold animates the backrest forward toward the seat over about 0.4 seconds, independently of the configured backrest angle. All eight sliders are disabled while folding, folded, or unfolding; orbit and zoom remain available. Unfolding restores the configured angle. Reset configuration restores all eight defaults and immediately unfolds, canceling any animation without moving the camera. Reset view restores the starting camera without changing the configuration.
 

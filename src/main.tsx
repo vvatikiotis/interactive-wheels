@@ -40,13 +40,13 @@ function App() {
     { key: 'footrestSlope', label: 'Footplate slope', min: 0, max: 15, unit: '°' },
   ]
 
-  return <main>
+  return <>
+  <main>
     <header>
       <div>
-        <p className="eyebrow">Interactive wheelchair · Geometry checkpoint</p>
-        <h1>Rigid-frame wheelchair</h1>
-        <p>Drag to rotate · Scroll to zoom</p>
+        <h1>Interactive Wheels - Alli Opsi</h1>
       </div>
+      <p className="viewer-hint">Drag to rotate · Scroll to zoom</p>
     </header>
     <section className="workspace">
       <section className="viewport" aria-label="3D wheelchair viewer">
@@ -104,6 +104,8 @@ function App() {
       </aside>
     </section>
   </main>
+  <footer>Vassilis Vatikiotis - AI assisted - 2026</footer>
+  </>
 }
 
 createRoot(document.getElementById('root')!).render(<App />)

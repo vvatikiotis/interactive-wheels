@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { CylinderGeometry, QuadraticBezierCurve3, Quaternion, TubeGeometry, Vector3 } from 'three'
+import { CylinderGeometry, Path, QuadraticBezierCurve3, Quaternion, Shape, ShapeGeometry, TubeGeometry, Vector3 } from 'three'
 import { DEFAULT_CONFIG, deriveGeometry, WHEEL, type Point } from './geometry'
 
 const metal = '#516978'
@@ -27,7 +27,26 @@ function BentTube({ from, control, to, radius }: { from: Point; control: Point; 
   </mesh>
 }
 
-function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPushRim = false }: { center: Point; radius: number; tire: number; camber?: number; spokes?: number; side?: number; hasPushRim?: boolean }) {
+function PerforatedWheel({ radius, tire }: { radius: number; tire: number }) {
+  const geometry = useMemo(() => {
+    const shape = new Shape()
+    shape.absarc(0, 0, radius * 0.82, 0, Math.PI * 2, false)
+    for (let index = 0; index < 10; index++) {
+      const angle = index * Math.PI * 2 / 10
+      const hole = new Path()
+      hole.absarc(Math.cos(angle) * radius * 0.5, Math.sin(angle) * radius * 0.5, radius * 0.1, 0, Math.PI * 2, true)
+      shape.holes.push(hole)
+    }
+    return new ShapeGeometry(shape, 48)
+  }, [radius])
+  return <group>
+    {[-1, 1].map(side => <mesh key={side} geometry={geometry} position={[side * tire * 0.45, 0, 0]} rotation={[0, Math.PI / 2, 0]} castShadow receiveShadow>
+      <meshStandardMaterial color="#111111" metalness={0.35} roughness={0.55} side={2} />
+    </mesh>)}
+  </group>
+}
+
+function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPushRim = false, perforated = false }: { center: Point; radius: number; tire: number; camber?: number; spokes?: number; side?: number; hasPushRim?: boolean; perforated?: boolean }) {
   return <group position={center}>
     <group rotation={[0, 0, 0]}>
       <group rotation={[0, 0, camber]}>
@@ -43,7 +62,7 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPus
         <torusGeometry args={[radius * 0.85 * 1.1, 0.006, 8, 48]} />
         <meshStandardMaterial color="#9baeb8" metalness={0.7} roughness={0.3} />
       </mesh>}
-      {Array.from({ length: spokes }, (_, index) => {
+      {perforated ? <PerforatedWheel radius={radius} tire={tire} /> : Array.from({ length: spokes }, (_, index) => {
         const angle = index * Math.PI * 2 / spokes
         return <Tube key={index} from={[0, 0, 0]} to={[0, Math.cos(angle) * radius * 0.953, Math.sin(angle) * radius * 0.953]} radius={0.002} color="#b23a4b" />
       })}
@@ -85,9 +104,13 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
         <Tube from={rearFrameConnection.seatPoint} to={rearFrameConnection.axlePoint} />
         <Tube from={rearFrameMidConnection.seatPoint} to={rearFrameMidConnection.axlePoint} />
         <Tube from={backrestSupport.base} to={backrestSupport.top} radius={0.011} />
-        <Tube from={caster.forkAttachment} to={caster.center} />
+        <Tube from={caster.forkStem[0]} to={caster.forkStem[1]} radius={0.007} />
+        <Tube from={caster.forkLegs[0][0]} to={caster.forkLegs[0][1]} radius={0.006} />
+        <Tube from={caster.forkLegs[1][0]} to={caster.forkLegs[1][1]} radius={0.006} />
+        <Tube from={caster.forkLegs[0][0]} to={caster.forkLegs[1][0]} radius={0.006} />
+        <Tube from={caster.forkAxle[0]} to={caster.forkAxle[1]} radius={0.004} />
         <Wheel center={wheel.center} radius={WHEEL.rearRadius} tire={WHEEL.rearTire} camber={wheel.camber} side={side} hasPushRim />
-        <Wheel center={caster.center} radius={WHEEL.casterRadius} tire={WHEEL.casterTire} spokes={5} />
+        <Wheel center={caster.center} radius={WHEEL.casterRadius} tire={WHEEL.casterTire} perforated />
       </group>
     })}
     {frontFrame.seatRods.map((rod, index) => <BentTube key={index} from={rod.start} control={rod.control} to={rod.end} radius={rod.radius} />)}

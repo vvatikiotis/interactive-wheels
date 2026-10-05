@@ -41,7 +41,7 @@ The two frame tubes descending from the front of the seat toward the casters. Th
 The surface supporting the user's feet, spanning between the front frame tubes and resting directly on the transverse metal rod connecting their lower ends.
 
 **Caster fork attachment**:
-The point where a front caster fork connects to its front frame tube. In this prototype it sits 25% of the tube's length up from its lower end.
+The point where a caster-fork stem connects to its front frame tube. In this prototype it sits 25% of the tube's length up from its lower end. The stem joins an inverted-U fork that surrounds the caster; the axle runs perpendicular to the wheel between the fork legs.
 
 **Front seat height**:
 The distance from the ground to the top of the seat at its front edge.

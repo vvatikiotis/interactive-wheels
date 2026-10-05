@@ -3,6 +3,10 @@ body { margin: 0; background: #f5f7f7; color: #253640; font: 16px/1.5 system-ui,
 #root { min-height: 100vh; display: flex; flex-direction: column; }
 main { flex: 1; display: flex; flex-direction: column; }
 header { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 1rem; align-items: end; padding: 1.25rem clamp(1rem, 5vw, 5rem); }
+.header-links { display: flex; flex-direction: column; align-items: flex-end; }
+.github-link { display: inline-flex; padding: .2rem; border-radius: 6px; }
+.github-link img { display: block; width: 24px; height: 24px; }
+.github-link:focus-visible { outline: 2px solid #527784; outline-offset: 2px; }
 .viewer-hint { color: #637882; font-size: .875rem; }
 h1 { margin: 0 0 .2rem; font-size: clamp(1.5rem, 3vw, 2.4rem); }
 p { margin: .2rem 0; }
@@ -23,4 +27,4 @@ p { margin: .2rem 0; }
 .reset-actions button { flex: 1; font-size: .85rem; padding: .5rem .2rem; }
 footer { margin-top: auto; padding: 0 1rem .75rem; color: #637882; font-size: .7rem; text-align: center; }
 .explanation { margin-top: 1rem; color: #637882; font-size: .9rem; }
-@media (max-width: 850px) { header, .workspace { grid-template-columns: 1fr; } .controls { order: -1; } }
+@media (max-width: 850px) { header, .workspace { grid-template-columns: 1fr; } header { grid-template-columns: minmax(0, 1fr) auto; } .controls { order: -1; } }

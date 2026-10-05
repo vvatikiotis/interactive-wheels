@@ -47,7 +47,12 @@ function App() {
       <div>
         <h1>Interactive Wheels - Alli Opsi</h1>
       </div>
-      <p className="viewer-hint">Drag to rotate · Scroll to zoom</p>
+      <div className="header-links">
+        <a className="github-link" href="https://github.com/vvatikiotis/interactive-wheels" target="_blank" rel="noreferrer" aria-label="View source on GitHub">
+          <img src="https://github.githubassets.com/favicons/favicon.svg" alt="GitHub" />
+        </a>
+        <p className="viewer-hint">Drag to rotate · Scroll to zoom</p>
+      </div>
     </header>
     <section className="workspace">
       <section className="viewport" aria-label="3D wheelchair viewer">

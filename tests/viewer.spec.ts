@@ -6,6 +6,14 @@ test('shows the requested page title without the checkpoint label', async ({ pag
   await expect(page.getByText('Interactive wheelchair · Geometry checkpoint')).toHaveCount(0)
 })
 
+test('repository logo links to the project on GitHub', async ({ page }) => {
+  await page.goto('/')
+  const link = page.getByRole('link', { name: 'View source on GitHub' })
+  await expect(link).toHaveAttribute('href', 'https://github.com/vvatikiotis/interactive-wheels')
+  await expect(link).toHaveAttribute('target', '_blank')
+  await expect(link.locator('img')).toHaveAttribute('alt', 'GitHub')
+})
+
 test('camera hint sits above the adjustments while viewer and panel align', async ({ page }) => {
   await page.goto('/')
   const hint = await page.getByText('Drag to rotate · Scroll to zoom').boundingBox()

@@ -6,6 +6,14 @@ test('shows the requested page title without the checkpoint label', async ({ pag
   await expect(page.getByText('Interactive wheelchair · Geometry checkpoint')).toHaveCount(0)
 })
 
+test('uses a near-black Catppuccin page theme without recoloring the scene', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(8, 8, 13)')
+  await expect(page.getByRole('complementary', { name: 'Wheelchair adjustments' })).toHaveCSS('background-color', 'rgb(24, 24, 37)')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCSS('color', 'rgb(205, 214, 244)')
+  await expect(page.getByRole('region', { name: '3D wheelchair viewer' })).toHaveCSS('background-color', 'rgb(237, 242, 243)')
+})
+
 test('repository logo links to the project on GitHub', async ({ page }) => {
   await page.goto('/')
   const link = page.getByRole('link', { name: 'View source on GitHub' })

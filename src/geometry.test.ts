@@ -50,6 +50,17 @@ describe('configured wheelchair', () => {
     close(chair.seat.rear[1], 0.41684)
   })
 
+  it('anchors vertical backrest supports directly at the rear seat-surface corners', () => {
+    const chair = deriveGeometry(DEFAULT_CONFIG)
+    for (const [index, side] of [-1, 1].entries()) {
+      const support = chair.backrest.supports[index]
+      close(support.base[0], side * chair.seat.width / 2)
+      close(support.base[1], chair.seat.seatRear[1])
+      close(support.base[2], chair.seat.seatRear[2])
+      close(support.top[0], support.base[0])
+    }
+  })
+
   it('measures backrest height along the backrest and preserves its angle to a tilted seat', () => {
     const chair = deriveGeometry({ ...DEFAULT_CONFIG, seatAngle: 0, backrestAngle: 90, backrestHeight: 45 })
     close(chair.backrest.top[1] - chair.backrest.base[1], 0.45)

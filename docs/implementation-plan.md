@@ -26,7 +26,7 @@ The rear axle position range is −5 to +12 cm, default +8 cm in 1 cm steps, mea
 
 Define a single coordinate convention and use metres internally, converting centimetres and degrees at the UI boundary. Centralize defaults, ranges, fixed dimensions, and geometry thicknesses.
 
-Create a pure `deriveGeometry(configuration, foldProgress)` function returning component anchors, dimensions, and orientations. Derive seat geometry first, then backrest, grounded wheels, and connecting frame/footrest geometry.
+Create a pure `deriveGeometry(configuration, foldProgress)` function returning component anchors, dimensions, and orientations. Derive seat geometry first, then backrest supports attached directly to the rear seat-surface corners, grounded wheels, and connecting frame/footrest geometry.
 
 Test seat dimensions, fixed front height, backrest angle relative to seat, left/right symmetry, tire-ground contact, and how both rear-wheel centres and the axle tube move together while the seat, casters, and footrest stay put. Use geometry constants shared with rendering rather than separate approximations. Include a geometry test for 40 cm upper spacing and 34 cm lower spacing at a 40 cm seat width, and test proportional taper at other seat widths.
 

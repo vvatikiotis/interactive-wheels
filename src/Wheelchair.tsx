@@ -57,13 +57,10 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPus
 
 export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CONFIG }) {
   const { seat, backrest, rearWheels, axleTube, rearFrameConnections, casters, frontFrame, footrest } = deriveGeometry(configuration)
-  const frameOffset = seat.width / 2 + 0.022
   const sidePoints = (side: number) => ({
     front: [side * (frontFrame.upperSpacing / 2 + 0.01), frontFrame.upperLeft[1], frontFrame.upperLeft[2]] as Point,
     rear: [side * seat.width / 2, seat.seatRear[1], seat.seatRear[2]] as Point,
     lower: side < 0 ? frontFrame.lowerLeft : frontFrame.lowerRight,
-    backBase: [side * frameOffset, backrest.base[1], backrest.base[2]] as Point,
-    backTop: [side * frameOffset, backrest.top[1], backrest.top[2]] as Point,
   })
   return <group>
     <mesh position={seat.surfaceCenter} rotation={[-seat.tilt, 0, 0]} castShadow receiveShadow>
@@ -78,12 +75,13 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
       const points = sidePoints(side)
       const wheel = rearWheels[index]
       const rearFrameConnection = rearFrameConnections[index]
+      const backrestSupport = backrest.supports[index]
       const caster = casters[index]
       return <group key={side}>
         <Tube from={points.front} to={points.rear} />
         <Tube from={points.front} to={points.lower} />
         <Tube from={rearFrameConnection.seatPoint} to={rearFrameConnection.axlePoint} />
-        <Tube from={points.backBase} to={points.backTop} radius={0.011} />
+        <Tube from={backrestSupport.base} to={backrestSupport.top} radius={0.011} />
         <Tube from={caster.forkAttachment} to={caster.center} />
         <Wheel center={wheel.center} radius={WHEEL.rearRadius} tire={WHEEL.rearTire} camber={wheel.camber} side={side} hasPushRim />
         <Wheel center={caster.center} radius={WHEEL.casterRadius} tire={WHEEL.casterTire} spokes={5} />
@@ -96,6 +94,6 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
       <meshStandardMaterial color="#516978" roughness={0.72} />
     </mesh>
     <Tube from={axleTube.start} to={axleTube.end} radius={0.012} />
-    <Tube from={[-frameOffset, backrest.top[1], backrest.top[2]]} to={[frameOffset, backrest.top[1], backrest.top[2]]} radius={0.009} />
+    <Tube from={backrest.supports[0].top} to={backrest.supports[1].top} radius={0.009} />
   </group>
 }

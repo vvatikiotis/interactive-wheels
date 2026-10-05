@@ -4,6 +4,7 @@ import { DEFAULT_CONFIG, deriveGeometry, WHEEL, type Point } from './geometry'
 
 const metal = '#516978'
 const fabric = '#283b49'
+const PUSH_RIM_OFFSET = 0.032
 
 function Tube({ from, to, radius = 0.009, color = metal }: { from: Point; to: Point; radius?: number; color?: string }) {
   const start = new Vector3(...from)
@@ -38,8 +39,8 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPus
         <torusGeometry args={[radius * 0.94, 0.004, 8, 48]} />
         <meshStandardMaterial color="#111111" metalness={0.45} roughness={0.4} />
       </mesh>
-      {hasPushRim && <mesh position={[side * 0.04, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-        <torusGeometry args={[radius * 0.85, 0.006, 8, 48]} />
+      {hasPushRim && <mesh position={[side * PUSH_RIM_OFFSET, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <torusGeometry args={[radius * 0.85 * 1.1, 0.006, 8, 48]} />
         <meshStandardMaterial color="#9baeb8" metalness={0.7} roughness={0.3} />
       </mesh>}
       {Array.from({ length: spokes }, (_, index) => {

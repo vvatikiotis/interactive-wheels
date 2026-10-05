@@ -57,7 +57,7 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPus
 }
 
 export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CONFIG }) {
-  const { seat, backrest, rearWheels, axleTube, rearFrameConnections, casters, frontFrame, footrest } = deriveGeometry(configuration)
+  const { seat, backrest, rearWheels, axleTube, rearFrameConnections, rearFrameMidConnections, casters, frontFrame, footrest } = deriveGeometry(configuration)
   const sidePoints = (side: number) => ({
     front: [side * (frontFrame.upperSpacing / 2 + 0.01), frontFrame.upperLeft[1], frontFrame.upperLeft[2]] as Point,
     rear: [side * seat.width / 2, seat.seatRear[1], seat.seatRear[2]] as Point,
@@ -76,12 +76,14 @@ export function Wheelchair({ configuration }: { configuration: typeof DEFAULT_CO
       const points = sidePoints(side)
       const wheel = rearWheels[index]
       const rearFrameConnection = rearFrameConnections[index]
+      const rearFrameMidConnection = rearFrameMidConnections[index]
       const backrestSupport = backrest.supports[index]
       const caster = casters[index]
       return <group key={side}>
         <Tube from={points.front} to={points.rear} />
         <Tube from={points.front} to={points.lower} />
         <Tube from={rearFrameConnection.seatPoint} to={rearFrameConnection.axlePoint} />
+        <Tube from={rearFrameMidConnection.seatPoint} to={rearFrameMidConnection.axlePoint} />
         <Tube from={backrestSupport.base} to={backrestSupport.top} radius={0.011} />
         <Tube from={caster.forkAttachment} to={caster.center} />
         <Wheel center={wheel.center} radius={WHEEL.rearRadius} tire={WHEEL.rearTire} camber={wheel.camber} side={side} hasPushRim />

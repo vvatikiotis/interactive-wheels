@@ -138,6 +138,25 @@ test('rear axle slider moves both rear wheels and the axle tube', async ({ page 
   expect(after.equals(before)).toBe(false)
 })
 
+test('ground plane has a visible horizon and position grid', async ({ page }) => {
+  await page.goto('/')
+  const screenshot = await page.getByRole('region', { name: '3D wheelchair viewer' }).screenshot()
+  const contrast = await page.evaluate(async image => {
+    const bitmap = await createImageBitmap(await (await fetch(image)).blob())
+    const canvas = document.createElement('canvas')
+    canvas.width = bitmap.width
+    canvas.height = bitmap.height
+    const context = canvas.getContext('2d')!
+    context.drawImage(bitmap, 0, 0)
+    const ground = context.getImageData(60, Math.floor(bitmap.height * 0.8), 130, 1).data
+    const values = Array.from({ length: 130 }, (_, index) => ground[index * 4])
+    const sky = context.getImageData(60, 40, 1, 1).data[0]
+    return { horizon: Math.abs(sky - values[0]), grid: Math.max(...values) - Math.min(...values) }
+  }, `data:image/png;base64,${screenshot.toString('base64')}`)
+  expect(contrast.horizon).toBeGreaterThan(15)
+  expect(contrast.grid).toBeGreaterThan(65)
+})
+
 test('default wheelchair is visible and drag/scroll change the view', async ({ page }) => {
   await page.goto('/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })

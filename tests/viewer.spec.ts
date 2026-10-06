@@ -60,7 +60,7 @@ test('all nine adjustment sliders update their displayed measurements', async ({
     ['Backrest angle to seat', '85', '85 °'],
     ['Seat angle to ground', '12', '12 °'],
     ['Footplate slope', '10', '10 °'],
-    ['Footplate height', '1', '1 cm'],
+    ['Footplate height', '9', '9 cm'],
   ]
   for (const [label, value, displayed] of cases) {
     const slider = page.getByLabel(label)
@@ -71,8 +71,19 @@ test('all nine adjustment sliders update their displayed measurements', async ({
   await expect(page.getByLabel('Backrest height')).toHaveAttribute('min', '10')
   await expect(page.getByLabel('Footplate slope')).toHaveAttribute('min', '0')
   await expect(page.getByLabel('Footplate slope')).toHaveAttribute('max', '15')
-  await expect(page.getByLabel('Footplate height')).toHaveAttribute('min', '1')
+  await expect(page.getByLabel('Footplate height')).toHaveAttribute('min', '9')
   await expect(page.getByLabel('Footplate height')).toHaveAttribute('max', '10')
+})
+
+test('footplate height cannot go below the front crossbar top at either slope endpoint', async ({ page }) => {
+  await page.goto('/')
+  const height = page.getByLabel('Footplate height')
+  await expect(height).toHaveAttribute('min', '7.9')
+  await page.getByLabel('Footplate slope').fill('15')
+  await expect(height).toHaveAttribute('min', '9.5')
+  await height.fill('9.5')
+  await expect(height).toHaveValue('9.5')
+  await expect(page.locator('label').filter({ hasText: 'Footplate height' }).getByText('9.5 cm', { exact: true })).toBeVisible()
 })
 
 test('minimum and maximum dimensions and angles keep the generated chair renderable', async ({ page }) => {
@@ -89,7 +100,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Backrest angle to seat', '80'],
     ['Seat angle to ground', '0'],
     ['Footplate slope', '0'],
-    ['Footplate height', '1'],
+    ['Footplate height', '8']
   ]) await page.getByLabel(label).fill(value)
   expect((await viewer.screenshot()).equals(before)).toBe(false)
   for (const [label, value] of [
@@ -193,12 +204,12 @@ test('reset configuration cancels folding and restores defaults without moving t
   const rotatedDefault = await viewer.screenshot()
   await page.getByLabel('Seat width').fill('46')
   await page.getByLabel('Footplate slope').fill('15')
-  await page.getByLabel('Footplate height').fill('1')
+  await page.getByLabel('Footplate height').fill('9.5')
   await page.getByRole('button', { name: 'Fold', exact: true }).click()
   await page.getByRole('button', { name: 'Reset configuration' }).click()
   await expect(page.getByLabel('Seat width')).toHaveValue('39')
   await expect(page.getByLabel('Footplate slope')).toHaveValue('0')
-  await expect(page.getByLabel('Footplate height')).toHaveValue('7')
+  await expect(page.getByLabel('Footplate height')).toHaveValue('9')
   await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
   await expect(page.locator('.controls input:disabled')).toHaveCount(0)
   await expect.poll(async () => (await viewer.screenshot()).equals(rotatedDefault)).toBe(true)

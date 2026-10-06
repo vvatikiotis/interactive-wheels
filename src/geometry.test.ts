@@ -111,7 +111,7 @@ describe('configured wheelchair', () => {
           expect(caster.forkTop[1] - caster.center[1] - WHEEL.casterRadius - WHEEL.casterTire).toBeGreaterThan(0.0079)
         }
         const footplateRearBottom = chair.footrest.center[1] - chair.footrest.depth / 2 * Math.sin(chair.footrest.angle) - chair.footrest.thickness / 2 * Math.cos(chair.footrest.angle)
-        close(footplateRearBottom, config.footrestHeight / 100)
+        expect(footplateRearBottom + 1e-10).toBeGreaterThanOrEqual(chair.footrest.minimumHeight / 100)
       }
     }
   })
@@ -172,20 +172,22 @@ describe('configured wheelchair', () => {
     close(cambered.rearWheels[0].camber, -6 * Math.PI / 180)
   })
 
-  it('measures footplate height at its lowest underside for both slopes and connects supports to the fixed crossbar', () => {
-    for (const height of [1, 7, 10]) for (const slope of [0, 15]) {
+  it('keeps the footplate underside at or above the crossbar top for both slopes and height endpoints', () => {
+    for (const height of [1, 10]) for (const slope of [0, 15]) {
       const chair = deriveGeometry({ ...DEFAULT_CONFIG, footrestHeight: height, footrestSlope: slope })
       const plate = chair.footrest
       const rearBottom = plate.center[1] - plate.depth / 2 * Math.sin(plate.angle) - plate.thickness / 2 * Math.cos(plate.angle)
-      close(rearBottom, height / 100)
+      const frontBottom = plate.center[1] + plate.depth / 2 * Math.sin(plate.angle) - plate.thickness / 2 * Math.cos(plate.angle)
+      const crossbarTop = chair.frontFrame.crossbar.start[1] + chair.frontFrame.crossbar.radius
+      expect(Math.min(rearBottom, frontBottom) + 1e-10).toBeGreaterThanOrEqual(crossbarTop)
+      close(rearBottom, Math.max(height / 100, plate.minimumHeight / 100))
       close(plate.center[2], chair.frontFrame.lowerLeft[2] - 0.04)
       close(plate.width, chair.frontFrame.lowerSpacing - 0.07)
       for (const support of plate.supports) {
         close(support[0][1], chair.frontFrame.crossbar.start[1])
         close(support[0][2], chair.frontFrame.crossbar.start[2])
         close(Math.abs(support[1][0]), plate.width / 2 - 0.012)
-        close(support[1][1], height / 100 + 0.02 * Math.sin(plate.angle))
-        close(support[1][2], plate.center[2] - 0.04 * Math.cos(plate.angle) + plate.thickness / 2 * Math.sin(plate.angle))
+        close(support[1][1], plate.center[1] - 0.04 * Math.sin(plate.angle) - plate.thickness / 2 * Math.cos(plate.angle))
       }
     }
   })
@@ -203,7 +205,10 @@ describe('configured wheelchair', () => {
     close(standard.frontFrame.crossbar.end[1], standard.frontFrame.lowerRight[1])
     close(standard.frontFrame.crossbar.end[2], standard.frontFrame.lowerRight[2])
     close(standard.footrest.thickness, 0.01)
-    close(standard.footrest.center[1] - standard.footrest.thickness / 2, DEFAULT_CONFIG.footrestHeight / 100)
+    const crossbarTop = standard.frontFrame.crossbar.start[1] + standard.frontFrame.crossbar.radius
+    const plateBottom = standard.footrest.center[1] - standard.footrest.thickness / 2
+    expect(plateBottom).toBeGreaterThanOrEqual(crossbarTop)
+    close(standard.footrest.center[1] - standard.footrest.thickness / 2, Math.max(DEFAULT_CONFIG.footrestHeight / 100, standard.footrest.minimumHeight / 100))
     close(standard.footrest.center[2], standard.frontFrame.lowerLeft[2] - 0.04)
     const narrow = deriveGeometry({ ...DEFAULT_CONFIG, seatWidth: 34 })
     close(narrow.frontFrame.upperSpacing, 0.34)

@@ -21,7 +21,7 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
   backrestAngle: 85,
   seatAngle: 6,
   footrestSlope: 0,
-  footrestHeight: 7,
+  footrestHeight: 9,
 }
 
 const radians = (degrees: number) => degrees * Math.PI / 180
@@ -75,13 +75,16 @@ export function deriveGeometry(config: WheelchairConfig, foldProgress = 0) {
   const footrestThickness = 0.01
   const footrestDepth = 0.12
   const footrestWidth = lowerSpacing - 0.07
-  const footrestCenter: Point = [0, config.footrestHeight / 100 + footrestDepth / 2 * Math.sin(footrestSlope) + footrestThickness / 2 * Math.cos(footrestSlope), frontFrame.lowerLeft[2] - 0.04]
+  const footrestMinimumHeight = Math.ceil((frontFrame.crossbar.start[1] + frontFrame.crossbar.radius + footrestThickness / 2 * Math.cos(footrestSlope) + footrestDepth / 2 * Math.sin(footrestSlope)) * 1000) / 10
+  const footrestHeight = Math.max(config.footrestHeight, footrestMinimumHeight)
+  const footrestCenter: Point = [0, footrestHeight / 100 + footrestDepth / 2 * Math.sin(footrestSlope) + footrestThickness / 2 * Math.cos(footrestSlope), frontFrame.lowerLeft[2] - 0.04]
   const footrest = {
     angle: footrestSlope,
     thickness: footrestThickness,
     center: footrestCenter,
     width: footrestWidth,
     depth: footrestDepth,
+    minimumHeight: footrestMinimumHeight,
     supports: ([-1, 1] as const).map(side => {
       const x = side * (footrestWidth / 2 - 0.012)
       return [

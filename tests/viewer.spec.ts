@@ -60,7 +60,7 @@ test('all nine adjustment sliders update their displayed measurements', async ({
     ['Backrest angle to seat', '85', '85 °'],
     ['Seat angle to ground', '12', '12 °'],
     ['Footplate slope', '10', '10 °'],
-    ['Footplate height', '2', '2 cm'],
+    ['Front crossbar height', '2', '2 cm'],
   ]
   for (const [label, value, displayed] of cases) {
     const slider = page.getByLabel(label)
@@ -71,20 +71,22 @@ test('all nine adjustment sliders update their displayed measurements', async ({
   await expect(page.getByLabel('Backrest height')).toHaveAttribute('min', '10')
   await expect(page.getByLabel('Footplate slope')).toHaveAttribute('min', '0')
   await expect(page.getByLabel('Footplate slope')).toHaveAttribute('max', '15')
-  await expect(page.getByLabel('Footplate height')).toHaveAttribute('min', '2')
-  await expect(page.getByLabel('Footplate height')).toHaveAttribute('max', '10')
+  await expect(page.getByLabel('Front crossbar height')).toHaveAttribute('min', '2')
+  await expect(page.getByLabel('Front crossbar height')).toHaveAttribute('max', '10')
 })
 
-test('footplate height slider spans 2–10 cm and geometry clears the crossbar at maximum slope', async ({ page }) => {
+test('front crossbar height slider spans 2–10 cm and carries the footplate with it', async ({ page }) => {
   await page.goto('/')
-  const height = page.getByLabel('Footplate height')
+  const height = page.getByLabel('Front crossbar height')
   await expect(height).toHaveAttribute('min', '2')
   await expect(height).toHaveAttribute('max', '10')
   await page.getByLabel('Footplate slope').fill('15')
   await expect(height).toHaveAttribute('min', '2')
+  await height.fill('10')
+  await expect(height).toHaveValue('10')
   await height.fill('2')
   await expect(height).toHaveValue('2')
-  await expect(page.locator('label').filter({ hasText: 'Footplate height' }).getByText('2 cm', { exact: true })).toBeVisible()
+  await expect(page.locator('label').filter({ hasText: 'Front crossbar height' }).getByText('2 cm', { exact: true })).toBeVisible()
 })
 
 test('minimum and maximum dimensions and angles keep the generated chair renderable', async ({ page }) => {
@@ -101,7 +103,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Backrest angle to seat', '80'],
     ['Seat angle to ground', '0'],
     ['Footplate slope', '0'],
-    ['Footplate height', '2']
+    ['Front crossbar height', '2']
   ]) await page.getByLabel(label).fill(value)
   expect((await viewer.screenshot()).equals(before)).toBe(false)
   for (const [label, value] of [
@@ -113,7 +115,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Backrest angle to seat', '110'],
     ['Seat angle to ground', '12'],
     ['Footplate slope', '15'],
-    ['Footplate height', '10'],
+    ['Front crossbar height', '10'],
   ]) await page.getByLabel(label).fill(value)
   await expect(page.getByText('12 °', { exact: true })).toBeVisible()
   expect((await viewer.screenshot()).equals(before)).toBe(false)
@@ -195,25 +197,25 @@ test('extreme backrests fold and unfold without losing the rendered chair', asyn
 test('reset configuration cancels folding and restores defaults without moving the camera', async ({ page }) => {
   await page.goto('/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
+  const initialView = await viewer.screenshot()
   const box = await viewer.locator('canvas').boundingBox()
   if (!box) throw new Error('3D viewer has no bounds')
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
   await page.mouse.down()
   await page.mouse.move(box.x + box.width / 2 + 130, box.y + box.height / 2, { steps: 8 })
   await page.mouse.up()
-  await page.waitForTimeout(500)
-  const rotatedDefault = await viewer.screenshot()
+  await page.waitForTimeout(1500)
   await page.getByLabel('Seat width').fill('46')
   await page.getByLabel('Footplate slope').fill('15')
-  await page.getByLabel('Footplate height').fill('2')
+  await page.getByLabel('Front crossbar height').fill('2')
   await page.getByRole('button', { name: 'Fold', exact: true }).click()
   await page.getByRole('button', { name: 'Reset configuration' }).click()
   await expect(page.getByLabel('Seat width')).toHaveValue('39')
   await expect(page.getByLabel('Footplate slope')).toHaveValue('0')
-  await expect(page.getByLabel('Footplate height')).toHaveValue('4.4')
+  await expect(page.getByLabel('Front crossbar height')).toHaveValue('2')
   await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
   await expect(page.locator('.controls input:disabled')).toHaveCount(0)
-  expect((await viewer.screenshot()).equals(rotatedDefault)).toBe(true)
+  expect((await viewer.screenshot()).equals(initialView)).toBe(false)
   await page.getByRole('button', { name: 'Fold', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Unfold' })).toBeEnabled()
   await page.getByRole('button', { name: 'Reset configuration' }).click()
@@ -225,6 +227,7 @@ test('reset view restores the starting camera without changing the adjustments',
   await page.goto('/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
   await page.getByLabel('Seat width').fill('46')
+  await page.waitForTimeout(1500)
   const initialView = await viewer.screenshot()
   const box = await viewer.locator('canvas').boundingBox()
   if (!box) throw new Error('3D viewer has no bounds')

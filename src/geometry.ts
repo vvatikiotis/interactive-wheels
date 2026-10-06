@@ -7,7 +7,7 @@ export interface WheelchairConfig {
   backrestAngle: number
   seatAngle: number
   footrestSlope: number
-  footrestHeight: number
+  frontCrossbarHeight: number
 }
 
 export type Point = [number, number, number]
@@ -21,7 +21,7 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
   backrestAngle: 85,
   seatAngle: 6,
   footrestSlope: 0,
-  footrestHeight: 4.4,
+  frontCrossbarHeight: 2,
 }
 
 const radians = (degrees: number) => degrees * Math.PI / 180
@@ -56,7 +56,7 @@ export function deriveGeometry(config: WheelchairConfig, foldProgress = 0) {
   const lowerSpacing = width * 0.85
   const upperLeft: Point = [-width / 2, seatForward[1], seatForward[2]]
   const upperRight: Point = [width / 2, seatForward[1], seatForward[2]]
-  const lowerY = 0.02
+  const lowerY = config.frontCrossbarHeight / 100
   const lowerZ = upperLeft[2] + (upperLeft[1] - lowerY) / Math.tan(radians(FRONT_FRAME_ANGLE_DEGREES))
   const lowerLeft: Point = [-lowerSpacing / 2, lowerY, lowerZ]
   const lowerRight: Point = [lowerSpacing / 2, lowerY, lowerZ]
@@ -75,9 +75,9 @@ export function deriveGeometry(config: WheelchairConfig, foldProgress = 0) {
   const footrestThickness = 0.01
   const footrestDepth = 0.12
   const footrestWidth = lowerSpacing - 0.07
-  const footrestMinimumHeight = Math.ceil((frontFrame.crossbar.start[1] + frontFrame.crossbar.radius + footrestThickness / 2 * Math.cos(footrestSlope) + footrestDepth / 2 * Math.sin(footrestSlope)) * 1000) / 10
-  const footrestHeight = Math.max(config.footrestHeight, footrestMinimumHeight)
-  const footrestCenter: Point = [0, footrestHeight / 100 + footrestDepth / 2 * Math.sin(footrestSlope) + footrestThickness / 2 * Math.cos(footrestSlope), frontFrame.lowerLeft[2] - 0.04]
+  const footrestClearance = frontFrame.crossbar.radius + 0.01
+  const footrestMinimumHeight = (frontFrame.crossbar.start[1] + footrestClearance) * 100
+  const footrestCenter: Point = [0, frontFrame.crossbar.start[1] + footrestClearance + footrestDepth / 2 * Math.sin(footrestSlope) + footrestThickness / 2 * Math.cos(footrestSlope), frontFrame.lowerLeft[2] - 0.04]
   const footrest = {
     angle: footrestSlope,
     thickness: footrestThickness,

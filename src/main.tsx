@@ -38,7 +38,7 @@ function App() {
     { key: 'backrestAngle', label: 'Backrest angle to seat', min: 80, max: 110, unit: '°' },
     { key: 'seatAngle', label: 'Seat angle to ground', min: 0, max: 12, unit: '°' },
     { key: 'footrestSlope', label: 'Footplate slope', min: 0, max: 15, unit: '°' },
-    { key: 'footrestHeight', label: 'Footplate height', min: 2, max: 10, unit: 'cm' },
+    { key: 'frontCrossbarHeight', label: 'Front crossbar height', min: 2, max: 10, unit: 'cm' },
   ]
 
   return <>
@@ -76,7 +76,7 @@ function App() {
           const formatted = control.key === 'rearAxlePosition' && value > 0 ? `+${value}` : value
           return <div className="control" key={control.key}>
             <label htmlFor={control.key}>{control.label} <output>{formatted} {control.unit}</output></label>
-            <input id={control.key} aria-label={control.label} type="range" min={control.min} max={control.max} step={control.key === 'footrestHeight' ? 0.1 : 1} value={value} disabled={foldPhase !== 'unfolded'}
+            <input id={control.key} aria-label={control.label} type="range" min={control.min} max={control.max} step={control.key === 'frontCrossbarHeight' ? 0.1 : 1} value={value} disabled={foldPhase !== 'unfolded'}
               onChange={event => setConfiguration(current => ({ ...current, [control.key]: Number(event.target.value) }))} />
             {control.key === 'rearAxlePosition' && <div className="range-labels"><span>Backward</span><span>Forward</span></div>}
           </div>

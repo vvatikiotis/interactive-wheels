@@ -76,12 +76,79 @@ function Wheel({ center, radius, tire, camber = 0, spokes = 10, side = 0, hasPus
   </group>
 }
 
+function WireframeCylinder({ from, to, topRadius, bottomRadius, depthScale = 0.65, radialSegments = 16, heightSegments = 6 }: { from: Point; to: Point; topRadius: number; bottomRadius: number; depthScale?: number; radialSegments?: number; heightSegments?: number }) {
+  const start = new Vector3(...from)
+  const end = new Vector3(...to)
+  const direction = end.clone().sub(start)
+  const orientation = new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), direction.clone().normalize())
+  return <mesh position={start.add(end).multiplyScalar(0.5)} quaternion={orientation} scale={[1, 1, depthScale]}>
+    <cylinderGeometry args={[topRadius, bottomRadius, direction.length(), radialSegments, heightSegments, true]} />
+    <meshBasicMaterial color="#da9b70" wireframe />
+  </mesh>
+}
+
+function WireframeLink({ from, to, radius }: { from: Point; to: Point; radius: number }) {
+  return <WireframeCylinder from={from} to={to} topRadius={radius * 0.8} bottomRadius={radius} />
+}
+
+function WireframeJoint({ center, radius, scale = [1, 1, 1] }: { center: Point; radius: number; scale?: [number, number, number] }) {
+  return <mesh position={center} scale={scale}>
+    <sphereGeometry args={[radius, 16, 12]} />
+    <meshBasicMaterial color="#da9b70" wireframe />
+  </mesh>
+}
+
+function WireframeHand({ center, side }: { center: Point; side: number }) {
+  return <group>
+    <WireframeJoint center={center} radius={0.018} scale={[0.75, 1.2, 0.65]} />
+    {[-1.5, -0.5, 0.5, 1.5].map((spread, index) => {
+      const start: Point = [center[0], center[1] - 0.012, center[2] + spread * 0.004]
+      const end: Point = [center[0] + side * 0.004, center[1] - 0.043 + (index === 0 || index === 3 ? 0.006 : 0), center[2] + spread * 0.006]
+      return <WireframeLink key={spread} from={start} to={end} radius={0.004} />
+    })}
+    <WireframeLink from={[center[0], center[1], center[2] - side * 0.012]} to={[center[0] + side * 0.008, center[1] - 0.025, center[2] - side * 0.02]} radius={0.005} />
+  </group>
+}
+
+function WireframeFoot({ center, side }: { center: Point; side: number }) {
+  return <group>
+    <WireframeJoint center={center} radius={0.026} scale={[0.8, 0.65, 1.6]} />
+    {[-1.5, -0.5, 0.5, 1.5].map((spread, index) => {
+      const start: Point = [center[0] + spread * 0.006, center[1], center[2] + 0.025]
+      const end: Point = [start[0] + side * (index === 3 ? -0.002 : 0.002), center[1] - 0.006, center[2] + 0.05]
+      return <WireframeLink key={spread} from={start} to={end} radius={0.004} />
+    })}
+  </group>
+}
+
 function Mannequin({ chair }: { chair: ReturnType<typeof deriveGeometry> }) {
   const figure = deriveMannequin(chair)
+  const hipCenter = new Vector3(...figure.hipCenter)
+  const shoulderCenter = new Vector3(...figure.shoulderCenter)
+  const waistCenter = hipCenter.clone().lerp(shoulderCenter, 0.32).toArray() as Point
+  const chestCenter = hipCenter.clone().lerp(shoulderCenter, 0.76).toArray() as Point
+  const neckTop: Point = [0, figure.head.center[1] - figure.head.radius, figure.head.center[2]]
   return <group name="mannequin">
-    {figure.segments.map(([from, to], index) => <Tube key={index} from={from} to={to} radius={0.003} color="#da9b70" />)}
+    <WireframeCylinder from={figure.hipCenter} to={waistCenter} topRadius={chair.seat.width * 0.405} bottomRadius={chair.seat.width * 0.43} depthScale={0.55} radialSegments={19} heightSegments={7} />
+    <WireframeCylinder from={waistCenter} to={chestCenter} topRadius={chair.seat.width * 0.42} bottomRadius={chair.seat.width * 0.405} depthScale={0.52} radialSegments={19} heightSegments={7} />
+    <WireframeCylinder from={chestCenter} to={figure.shoulderCenter} topRadius={chair.seat.width * 0.45} bottomRadius={chair.seat.width * 0.42} depthScale={0.62} radialSegments={19} heightSegments={7} />
+    <WireframeLink from={figure.shoulderCenter} to={neckTop} radius={0.045} />
+    {figure.arms.map(([shoulder, elbow, hand], index) => <group key={`arm-${index}`}>
+      <WireframeLink from={shoulder} to={elbow} radius={0.035} />
+      <WireframeLink from={elbow} to={hand} radius={0.025} />
+      <WireframeJoint center={elbow} radius={0.035} />
+      <WireframeHand center={hand} side={index === 0 ? -1 : 1} />
+    </group>)}
+    {figure.hips.map((hip, index) => <group key={`leg-${index}`}>
+      <WireframeLink from={hip} to={figure.knees[index]} radius={0.055} />
+      <WireframeLink from={figure.knees[index]} to={figure.ankles[index]} radius={0.035} />
+      <WireframeLink from={figure.ankles[index]} to={figure.toes[index]} radius={0.025} />
+      <WireframeJoint center={figure.knees[index]} radius={0.045} />
+      <WireframeJoint center={figure.ankles[index]} radius={0.03} />
+      <WireframeFoot center={figure.toes[index]} side={index === 0 ? -1 : 1} />
+    </group>)}
     <mesh position={figure.head.center}>
-      <sphereGeometry args={[figure.head.radius, 14, 10]} />
+      <sphereGeometry args={[figure.head.radius, 19, 15]} />
       <meshBasicMaterial color="#da9b70" wireframe />
     </mesh>
   </group>

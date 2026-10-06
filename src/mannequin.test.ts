@@ -18,6 +18,8 @@ describe('seated mannequin', () => {
       expect(figure.hips[0][0]).toBeGreaterThan(-chair.seat.width / 2)
       expect(figure.hips[1][0]).toBeLessThan(chair.seat.width / 2)
       close(figure.hips[1][0] - figure.hips[0][0], chair.seat.width * 0.95)
+      close(figure.thighs[1][0] - figure.thighs[0][0], chair.seat.width * 0.6)
+      expect(Math.abs(figure.thighs[0][0])).toBeLessThan(Math.abs(figure.hips[0][0]))
       close(figure.shoulders[1][0] - figure.shoulders[0][0], chair.seat.width)
       expect(figure.shoulders[1][0] - figure.shoulders[0][0]).toBeGreaterThan(figure.hips[1][0] - figure.hips[0][0])
       expect(figure.hips[0][1]).toBeGreaterThan(chair.seat.rear[1])

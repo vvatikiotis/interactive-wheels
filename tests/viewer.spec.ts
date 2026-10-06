@@ -126,6 +126,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
 test('mannequin can be shown, hidden, and returns after unfolding', async ({ page }) => {
   await page.goto('/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
+  await page.waitForTimeout(500)
   const hidden = await viewer.screenshot()
   await page.getByRole('button', { name: 'Show mannequin' }).click()
   const visible = await viewer.screenshot()

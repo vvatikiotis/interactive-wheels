@@ -4,6 +4,12 @@ import { deriveMannequin } from './mannequin'
 
 const close = (actual: number, expected: number) => expect(actual).toBeCloseTo(expected, 5)
 const distance = (from: number[], to: number[]) => Math.hypot(...from.map((value, axis) => value - to[axis]))
+const alignment = (from: number[], joint: number[], to: number[]) => {
+  const first = joint.map((value, axis) => value - from[axis])
+  const second = to.map((value, axis) => value - joint[axis])
+  const dot = first.reduce((sum, value, axis) => sum + value * second[axis], 0)
+  return dot / (distance(from, joint) * distance(joint, to))
+}
 
 describe('seated mannequin', () => {
   it('keeps its waist slightly narrower than the seat and feet above the footplate as settings change', () => {
@@ -24,6 +30,10 @@ describe('seated mannequin', () => {
       expect(figure.shoulders[1][0] - figure.shoulders[0][0]).toBeGreaterThan(figure.hips[1][0] - figure.hips[0][0])
       expect(figure.hips[0][1]).toBeGreaterThan(chair.seat.rear[1])
       expect(figure.knees[0][2]).toBeGreaterThan(figure.hips[0][2])
+      for (const [index, side] of [-1, 1].entries()) {
+        expect(side * (figure.knees[index][0] - figure.ankles[index][0])).toBeGreaterThan(0)
+        expect(side * (figure.toes[index][0] - figure.ankles[index][0])).toBeGreaterThan(0)
+      }
       expect(figure.toes[0][1]).toBeGreaterThan(chair.footrest.center[1])
       expect(figure.toes[0][2]).toBeGreaterThan(chair.footrest.center[2])
       expect(figure.head.center[1]).toBeGreaterThan(figure.shoulders[0][1])
@@ -36,11 +46,21 @@ describe('seated mannequin', () => {
         expect(arm[0][1]).toBeGreaterThan(arm[1][1])
         expect(arm[1][1]).toBeGreaterThan(arm[2][1])
         close(arm[2][0] - arm[0][0], side * 0.1)
-        close(arm[2][1] - arm[0][1], -0.45)
+        close(arm[2][1] - arm[0][1], -0.42)
         close(arm[2][2], arm[0][2])
         close(distance(arm[0], arm[1]), 0.2465)
         close(distance(arm[1], arm[2]), 0.221)
       }
+    }
+  })
+
+  it('keeps visible bends at the elbows and knees in the seated pose', () => {
+    const figure = deriveMannequin(deriveGeometry(DEFAULT_CONFIG))
+    for (const [shoulder, elbow, hand] of figure.arms) {
+      expect(alignment(shoulder, elbow, hand)).toBeLessThan(0.9)
+    }
+    for (const [index] of [-1, 1].entries()) {
+      expect(alignment(figure.thighs[index], figure.knees[index], figure.ankles[index])).toBeLessThan(0.5)
     }
   })
 
@@ -57,6 +77,9 @@ describe('seated mannequin', () => {
       for (const [shoulder, elbow, hand] of figure.arms) {
         close(distance(shoulder, elbow), 0.2465)
         close(distance(elbow, hand), 0.221)
+      }
+      for (const [index] of [-1, 1].entries()) {
+        expect(alignment(figure.thighs[index], figure.knees[index], figure.ankles[index])).toBeLessThan(0.5)
       }
     }
     const axleAtRear = deriveMannequin(deriveGeometry({ ...DEFAULT_CONFIG, rearAxlePosition: 0 }))

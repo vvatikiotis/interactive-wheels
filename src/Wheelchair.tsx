@@ -142,6 +142,59 @@ function WireframeLink({ from, to, radius }: { from: Point; to: Point; radius: n
   return <WireframeCylinder from={from} to={to} topRadius={radius * 0.8} bottomRadius={radius} />
 }
 
+function WireframeLimb({ from, to, proximalRadius, fullestRadius, distalRadius, depthScale = 0.72 }: { from: Point; to: Point; proximalRadius: number; fullestRadius: number; distalRadius: number; depthScale?: number }) {
+  const geometry = useMemo(() => {
+    const start = new Vector3(...from)
+    const direction = new Vector3(...to).sub(start)
+    const axis = direction.clone().normalize()
+    const widthAxis = new Vector3(1, 0, 0).addScaledVector(axis, -axis.x).normalize()
+    const depthAxis = widthAxis.clone().cross(axis).normalize()
+    const profile = [
+      { along: 0, radius: proximalRadius * 0.8 },
+      { along: 0.18, radius: proximalRadius },
+      { along: 0.4, radius: fullestRadius },
+      { along: 0.68, radius: fullestRadius * 0.94 },
+      { along: 0.88, radius: distalRadius },
+      { along: 1, radius: distalRadius * 0.8 },
+    ]
+    const subdivisions = 3
+    const rings = profile.slice(0, -1).flatMap((section, index) => Array.from({ length: subdivisions }, (_, step) => {
+      const next = profile[index + 1]
+      const amount = step / subdivisions
+      return { along: section.along + (next.along - section.along) * amount, radius: section.radius + (next.radius - section.radius) * amount }
+    })).concat(profile.at(-1)!)
+    const radialSegments = 16
+    const vertices: number[] = []
+    const indices: number[] = []
+    rings.forEach(ring => {
+      const center = start.clone().addScaledVector(direction, ring.along)
+      for (let segment = 0; segment <= radialSegments; segment++) {
+        const angle = segment / radialSegments * Math.PI * 2
+        const point = center.clone()
+          .addScaledVector(widthAxis, Math.cos(angle) * ring.radius)
+          .addScaledVector(depthAxis, Math.sin(angle) * ring.radius * depthScale)
+        vertices.push(point.x, point.y, point.z)
+      }
+    })
+    for (let ring = 0; ring < rings.length - 1; ring++) {
+      for (let segment = 0; segment < radialSegments; segment++) {
+        const current = ring * (radialSegments + 1) + segment
+        const next = current + radialSegments + 1
+        indices.push(current, next, current + 1, current + 1, next, next + 1)
+      }
+    }
+    const result = new BufferGeometry()
+    result.setAttribute('position', new Float32BufferAttribute(vertices, 3))
+    result.setIndex(indices)
+    result.computeVertexNormals()
+    return result
+  }, [from[0], from[1], from[2], to[0], to[1], to[2], proximalRadius, fullestRadius, distalRadius, depthScale])
+
+  return <mesh geometry={geometry}>
+    <meshBasicMaterial color="#da9b70" wireframe />
+  </mesh>
+}
+
 function WireframeJoint({ center, radius, scale = [1, 1, 1] }: { center: Point; radius: number; scale?: [number, number, number] }) {
   return <mesh position={center} scale={scale}>
     <sphereGeometry args={[radius, 20, 15]} />
@@ -149,73 +202,147 @@ function WireframeJoint({ center, radius, scale = [1, 1, 1] }: { center: Point; 
   </mesh>
 }
 
+function WireframeTorso({ hipCenter, shoulderCenter, seatWidth }: { hipCenter: Point; shoulderCenter: Point; seatWidth: number }) {
+  const geometry = useMemo(() => {
+    // Broad pelvis, narrower waist, then expanding ribcage and shoulder lines.
+    const profile = [
+      { along: 0, halfWidth: 0.3, halfDepth: 0.19 },
+      { along: 0.14, halfWidth: 0.36, halfDepth: 0.24 },
+      { along: 0.3, halfWidth: 0.33, halfDepth: 0.22 },
+      { along: 0.44, halfWidth: 0.27, halfDepth: 0.18 },
+      { along: 0.58, halfWidth: 0.3, halfDepth: 0.19 },
+      { along: 0.74, halfWidth: 0.36, halfDepth: 0.22 },
+      { along: 0.9, halfWidth: 0.41, halfDepth: 0.24 },
+      { along: 1, halfWidth: 0.4, halfDepth: 0.21 },
+    ]
+    const subdivisions = 4
+    const rings = profile.slice(0, -1).flatMap((section, index) => Array.from({ length: subdivisions }, (_, step) => {
+      const next = profile[index + 1]
+      const amount = step / subdivisions
+      return {
+        along: section.along + (next.along - section.along) * amount,
+        halfWidth: section.halfWidth + (next.halfWidth - section.halfWidth) * amount,
+        halfDepth: section.halfDepth + (next.halfDepth - section.halfDepth) * amount,
+      }
+    })).concat(profile.at(-1)!)
+    const radialSegments = 32
+    const axis = new Vector3(...shoulderCenter).sub(new Vector3(...hipCenter)).normalize()
+    const depthAxis = new Vector3(0, -axis.z, axis.y)
+    const origin = new Vector3(...hipCenter)
+    const along = new Vector3(...shoulderCenter).sub(origin)
+    const vertices: number[] = []
+    const indices: number[] = []
+    rings.forEach(ring => {
+      const center = origin.clone().addScaledVector(along, ring.along)
+      for (let segment = 0; segment <= radialSegments; segment++) {
+        const angle = segment / radialSegments * Math.PI * 2
+        const point = center.clone()
+          .add(new Vector3(Math.cos(angle) * seatWidth * ring.halfWidth, 0, 0))
+          .addScaledVector(depthAxis, Math.sin(angle) * seatWidth * ring.halfDepth)
+        vertices.push(point.x, point.y, point.z)
+      }
+    })
+    for (let ring = 0; ring < rings.length - 1; ring++) {
+      for (let segment = 0; segment < radialSegments; segment++) {
+        const current = ring * (radialSegments + 1) + segment
+        const next = current + radialSegments + 1
+        indices.push(current, next, current + 1, current + 1, next, next + 1)
+      }
+    }
+    const result = new BufferGeometry()
+    result.setAttribute('position', new Float32BufferAttribute(vertices, 3))
+    result.setIndex(indices)
+    result.computeVertexNormals()
+    return result
+  }, [hipCenter[0], hipCenter[1], hipCenter[2], shoulderCenter[0], shoulderCenter[1], shoulderCenter[2], seatWidth])
+
+  return <mesh geometry={geometry}>
+    <meshBasicMaterial color="#da9b70" wireframe />
+  </mesh>
+}
+
 function WireframeElbow({ center, side }: { center: Point; side: number }) {
   return <group>
-    <WireframeJoint center={center} radius={0.035} scale={[0.85, 1.1, 1]} />
-    <WireframeJoint center={[center[0] + side * 0.018, center[1] - 0.005, center[2]]} radius={0.018} scale={[0.65, 1, 0.75]} />
+    <WireframeJoint center={center} radius={0.027} scale={[0.85, 1.05, 0.95]} />
+    <WireframeJoint center={[center[0] + side * 0.011, center[1] - 0.005, center[2]]} radius={0.01} scale={[0.65, 1, 0.75]} />
   </group>
 }
 
 function WireframeKnee({ center }: { center: Point }) {
   return <group>
-    <WireframeJoint center={center} radius={0.054} scale={[1, 1.1, 1.05]} />
-    <WireframeJoint center={[center[0], center[1], center[2] + 0.035]} radius={0.027} scale={[1.15, 0.9, 0.55]} />
+    <WireframeJoint center={center} radius={0.043} scale={[1, 1.05, 1]} />
+    <WireframeJoint center={[center[0], center[1], center[2] + 0.029]} radius={0.016} scale={[1.1, 0.85, 0.45]} />
   </group>
 }
 
 function WireframeHand({ center, side }: { center: Point; side: number }) {
   return <group>
-    <WireframeJoint center={center} radius={0.018} scale={[0.75, 1.2, 0.65]} />
+    <WireframeJoint center={center} radius={0.016} scale={[0.8, 1.1, 0.8]} />
     {[-1.5, -0.5, 0.5, 1.5].map((spread, index) => {
       const start: Point = [center[0], center[1] - 0.012, center[2] + spread * 0.004]
-      const end: Point = [center[0] + side * 0.004, center[1] - 0.043 + (index === 0 || index === 3 ? 0.006 : 0), center[2] + spread * 0.006]
-      return <WireframeLink key={spread} from={start} to={end} radius={0.004} />
+      const knuckle: Point = [center[0] + side * 0.002, center[1] - 0.025, center[2] + spread * 0.006]
+      const length = [0.027, 0.034, 0.036, 0.03][index]
+      const tip: Point = [knuckle[0] + side * 0.002, center[1] - 0.012 - length, knuckle[2] + spread * 0.002]
+      return <group key={spread}>
+        <WireframeLink from={start} to={knuckle} radius={0.004} />
+        <WireframeJoint center={knuckle} radius={0.0032} />
+        <WireframeLink from={knuckle} to={tip} radius={0.0035} />
+      </group>
     })}
-    <WireframeLink from={[center[0], center[1], center[2] - side * 0.012]} to={[center[0] + side * 0.008, center[1] - 0.025, center[2] - side * 0.02]} radius={0.005} />
+    <WireframeLink from={[center[0], center[1], center[2] - side * 0.012]} to={[center[0] + side * 0.009, center[1] - 0.014, center[2] - side * 0.02]} radius={0.0055} />
+    <WireframeLink from={[center[0] + side * 0.009, center[1] - 0.014, center[2] - side * 0.02]} to={[center[0] + side * 0.014, center[1] - 0.027, center[2] - side * 0.023]} radius={0.004} />
   </group>
 }
 
 function WireframeFoot({ center, side }: { center: Point; side: number }) {
+  const toes = [
+    { spread: 0.025, length: 0.045 },
+    { spread: 0.012, length: 0.05 },
+    { spread: 0, length: 0.046 },
+    { spread: -0.012, length: 0.04 },
+    { spread: -0.024, length: 0.033 },
+  ]
   return <group>
-    <WireframeJoint center={center} radius={0.0312} scale={[0.8, 0.65, 1.6]} />
-    {[-1.5, -0.5, 0.5, 1.5].map((spread, index) => {
-      const start: Point = [center[0] + spread * 0.006, center[1], center[2] + 0.025]
-      const end: Point = [start[0] + side * (index === 3 ? -0.002 : 0.002), center[1] - 0.006, center[2] + 0.05]
-      return <WireframeLink key={spread} from={start} to={end} radius={0.0048} />
+    <WireframeJoint center={[center[0], center[1], center[2] - 0.012]} radius={0.033} scale={[0.9, 0.7, 1.45]} />
+    {toes.map(({ spread, length }) => {
+      const start: Point = [center[0] - side * spread, center[1] - 0.002, center[2] + 0.025]
+      const tip: Point = [start[0] - side * spread * 0.12, center[1] - 0.006, center[2] + length]
+      const middle: Point = [start[0] + (tip[0] - start[0]) * 0.55, center[1] - 0.004, center[2] + length * 0.55]
+      return <group key={spread}>
+        <WireframeLink from={start} to={middle} radius={0.0045} />
+        <WireframeJoint center={middle} radius={0.0032} />
+        <WireframeLink from={middle} to={tip} radius={0.0035} />
+      </group>
     })}
   </group>
 }
 
 function Mannequin({ chair }: { chair: ReturnType<typeof deriveGeometry> }) {
   const figure = deriveMannequin(chair)
-  const hipCenter = new Vector3(...figure.hipCenter)
-  const shoulderCenter = new Vector3(...figure.shoulderCenter)
-  const waistCenter = hipCenter.clone().lerp(shoulderCenter, 0.32).toArray() as Point
-  const chestCenter = hipCenter.clone().lerp(shoulderCenter, 0.76).toArray() as Point
   const neckTop: Point = [0, figure.head.center[1] - figure.head.radius, figure.head.center[2]]
   return <group name="mannequin">
-    <WireframeCylinder from={figure.hipCenter} to={waistCenter} topRadius={chair.seat.width * 0.405} bottomRadius={chair.seat.width * 0.43} depthScale={0.55} radialSegments={24} heightSegments={9} />
-    <WireframeCylinder from={waistCenter} to={chestCenter} topRadius={chair.seat.width * 0.42} bottomRadius={chair.seat.width * 0.405} depthScale={0.52} radialSegments={24} heightSegments={9} />
-    <WireframeCylinder from={chestCenter} to={figure.shoulderCenter} topRadius={chair.seat.width * 0.45} bottomRadius={chair.seat.width * 0.42} depthScale={0.62} radialSegments={24} heightSegments={9} />
-    <WireframeLink from={figure.shoulderCenter} to={neckTop} radius={0.045} />
+    <WireframeTorso hipCenter={figure.hipCenter} shoulderCenter={figure.shoulderCenter} seatWidth={chair.seat.width} />
+    {figure.shoulders.map((shoulder, index) => <WireframeJoint key={`shoulder-${index}`} center={shoulder} radius={0.041} scale={[1.2, 0.95, 0.85]} />)}
+    {figure.thighs.map((thigh, index) => <WireframeJoint key={`hip-${index}`} center={[thigh[0], thigh[1] + 0.025, thigh[2]]} radius={0.05} scale={[1, 0.75, 0.8]} />)}
+    <WireframeLimb from={figure.shoulderCenter} to={neckTop} proximalRadius={0.04} fullestRadius={0.043} distalRadius={0.03} depthScale={0.82} />
     {figure.arms.map(([shoulder, elbow, hand], index) => <group key={`arm-${index}`}>
-      <WireframeLink from={shoulder} to={elbow} radius={0.035} />
-      <WireframeLink from={elbow} to={hand} radius={0.025} />
+      <WireframeLimb from={shoulder} to={elbow} proximalRadius={0.035} fullestRadius={0.041} distalRadius={0.027} />
+      <WireframeLimb from={elbow} to={hand} proximalRadius={0.027} fullestRadius={0.031} distalRadius={0.018} />
       <WireframeElbow center={elbow} side={index === 0 ? -1 : 1} />
       <WireframeHand center={hand} side={index === 0 ? -1 : 1} />
     </group>)}
     {figure.thighs.map((thigh, index) => <group key={`leg-${index}`}>
-      <WireframeLink from={thigh} to={figure.knees[index]} radius={0.066} />
-      <WireframeLink from={figure.knees[index]} to={figure.ankles[index]} radius={0.042} />
+      <WireframeLimb from={thigh} to={figure.knees[index]} proximalRadius={0.066} fullestRadius={0.078} distalRadius={0.054} depthScale={0.78} />
+      <WireframeLimb from={figure.knees[index]} to={figure.ankles[index]} proximalRadius={0.042} fullestRadius={0.05} distalRadius={0.032} depthScale={0.78} />
       <WireframeLink from={figure.ankles[index]} to={figure.toes[index]} radius={0.03} />
       <WireframeKnee center={figure.knees[index]} />
-      <WireframeJoint center={figure.ankles[index]} radius={0.036} />
+      <WireframeJoint center={figure.ankles[index]} radius={0.027} />
       <WireframeFoot center={figure.toes[index]} side={index === 0 ? -1 : 1} />
     </group>)}
-    <mesh position={figure.head.center}>
-      <sphereGeometry args={[figure.head.radius, 19, 15]} />
-      <meshBasicMaterial color="#da9b70" wireframe />
-    </mesh>
+    <WireframeJoint center={figure.head.center} radius={figure.head.radius} scale={[0.86, 1, 0.9]} />
+    <WireframeJoint center={[0, figure.head.center[1] - 0.04, figure.head.center[2] + 0.012]} radius={0.036} scale={[0.9, 0.72, 0.8]} />
+    <WireframeJoint center={[0, figure.head.center[1] - 0.005, figure.head.center[2] + 0.06]} radius={0.013} scale={[0.8, 1.2, 0.85]} />
+    {[-1, 1].map(side => <WireframeJoint key={`ear-${side}`} center={[side * 0.058, figure.head.center[1], figure.head.center[2]]} radius={0.014} scale={[0.55, 1, 0.8]} />)}
   </group>
 }
 

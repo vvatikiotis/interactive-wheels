@@ -21,7 +21,7 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
   backrestAngle: 85,
   seatAngle: 6,
   footrestSlope: 0,
-  footrestHeight: 9,
+  footrestHeight: 4.4,
 }
 
 const radians = (degrees: number) => degrees * Math.PI / 180
@@ -56,7 +56,7 @@ export function deriveGeometry(config: WheelchairConfig, foldProgress = 0) {
   const lowerSpacing = width * 0.85
   const upperLeft: Point = [-width / 2, seatForward[1], seatForward[2]]
   const upperRight: Point = [width / 2, seatForward[1], seatForward[2]]
-  const lowerY = 0.065
+  const lowerY = 0.02
   const lowerZ = upperLeft[2] + (upperLeft[1] - lowerY) / Math.tan(radians(FRONT_FRAME_ANGLE_DEGREES))
   const lowerLeft: Point = [-lowerSpacing / 2, lowerY, lowerZ]
   const lowerRight: Point = [lowerSpacing / 2, lowerY, lowerZ]

@@ -6,7 +6,7 @@ const close = (actual: number, expected: number) => expect(actual).toBeCloseTo(e
 
 describe('seated mannequin', () => {
   it('keeps its hips over the seat and feet above the footplate as settings change', () => {
-    for (const config of [DEFAULT_CONFIG, { ...DEFAULT_CONFIG, seatWidth: 33, seatDepth: 46, seatAngle: 12, footrestSlope: 15, footrestHeight: 1 }, { ...DEFAULT_CONFIG, footrestHeight: 10 }]) {
+    for (const config of [DEFAULT_CONFIG, { ...DEFAULT_CONFIG, seatWidth: 33, seatDepth: 46, seatAngle: 12, footrestSlope: 15, frontCrossbarHeight: 2 }, { ...DEFAULT_CONFIG, frontCrossbarHeight: 10 }]) {
       const chair = deriveGeometry(config)
       const figure = deriveMannequin(chair)
       expect(figure.hips[0][0]).toBeGreaterThan(-chair.seat.width / 2)

@@ -6,7 +6,7 @@ A browser-based visual configurator for a rigid-frame wheelchair. The chair shou
 
 ## Current controls
 
-Sliders update the generated chair immediately, in 1 cm or 1° steps, except footplate height, which uses 0.1 cm steps. Measurements are displayed beside each slider.
+Sliders update the generated chair immediately, in 1 cm or 1° steps, except front crossbar height, which uses 0.1 cm steps. Measurements are displayed beside each slider.
 
 | Adjustment | Range | Default | Meaning |
 |---|---:|---:|---|
@@ -18,13 +18,13 @@ Sliders update the generated chair immediately, in 1 cm or 1° steps, except foo
 | Backrest angle to seat | 80–110° | 85° | 90° is perpendicular to the seat; larger values lean backward |
 | Seat angle to ground | 0–12° | 6° | Positive lowers the rear while front height remains fixed |
 | Footplate slope | 0–15° | 0° | Positive raises the front edge relative to the ground |
-| Footplate height | 2–10 cm (0.1 cm steps) | 4.4 cm | Slider value beneath the lowest edge (minimum 2 cm); geometry may raise the plate to clear the front crossbar |
+| Front crossbar height | 2–10 cm (0.1 cm steps) | 2 cm | Height of the crossbar centreline above ground; the lower front frame tube ends and attached footplate move with it |
 
 ## Chair geometry
 
 - The front seat height is 50 cm. The seat surface spans the rear 90% of the measured depth. Backrest supports start at the rear corners of this surface. Two downward-bent crossbars sit beneath it, 25% and 70% of the surface depth from its front edge.
-- Front frame tubes descend at 70° to the ground in side view. Their lower spacing is 85% of their seat-width-derived upper spacing. Both front legs end 2 cm above ground, joined by a transverse rod at those lower endpoints.
-- The 10 mm thick footplate fits between the front tubes. Its centre is 4 cm behind the fixed transverse rod. Two supports connect the rod to the plate underside as its height changes. The whole footplate stays above the top of the front crossbar, including its tube radius and the plate thickness. Selecting a height below the required clearance (2.9 cm when level; up to 4.4 cm at maximum slope) leaves the displayed slider value unchanged, but geometry raises the rendered plate to preserve clearance. Sloping it raises the front edge while preserving its lowest-edge height; width and depth do not change.
+- Front frame tubes descend at 70° to the ground in side view. Their lower spacing is 85% of their seat-width-derived upper spacing. Both front legs end at the selected front crossbar height, joined by a transverse rod at those lower endpoints. The front frame tube upper points remain fixed, so tube length changes with crossbar height; tube angle remains 70° above ground.
+- The 10 mm thick footplate fits between the front tubes. Its centre is 4 cm behind the transverse rod. Two supports connect the rod to the plate underside. The footplate moves with the crossbar and stays 1 cm above the crossbar tube’s top at its lowest edge. Sloping it raises the front edge while preserving its lowest-edge height; width and depth do not change.
 - Each caster-fork stem connects one quarter of the way up its front tube. An inverted-U fork straddles the caster, with its legs joining opposite ends of the axle perpendicular to the wheel. Each caster wheel has a 40 mm tyre centreline radius and a 10.4 mm tyre tube radius (100.8 mm overall diameter); the wheel centre adjusts to keep the tyre grounded. The fork top clears the tyre by at least 8 mm at its centreline, leaving room for the fork tube. The wheel face is perforated rather than spoked or solid.
 - The rear wheels and their transverse axle tube move together as rear axle position changes. Supports join the rear seat corners and seat-side midpoints to the axle attachments. Rear-wheel camber tilts the wheels independently of the axle tube.
 
@@ -34,7 +34,7 @@ The model derives positions from shared configuration geometry and uses generate
 
 The desktop viewer starts in a three-quarter view. Drag to orbit and scroll to zoom; the camera stays above the ground and zoom is limited. The scene has a light background, a contrasting ground plane with a 20 cm reference grid, and a shadow to make ground contact and orientation visible. Mobile and touch controls are outside the present scope.
 
-Fold / Unfold animates the backrest forward toward the seat over about 0.4 seconds, independently of the configured backrest angle. All nine sliders are disabled while folding, folded, or unfolding; orbit and zoom remain available. Unfolding restores the configured angle. Show mannequin / Hide mannequin toggles a seated wireframe figure that follows the seat, backrest angle, and footplate. It is hidden during folding and while folded, and returns on unfolding if selected; its toggle is disabled until unfolded. It is a scale cue, not a fit assessment. Reset configuration restores all nine defaults, including the 4.4 cm default footplate height and immediately unfolds, canceling any animation without moving the camera or changing the mannequin toggle. Reset view restores the starting camera without changing the configuration.
+Fold / Unfold animates the backrest forward toward the seat over about 0.4 seconds, independently of the configured backrest angle. All nine sliders are disabled while folding, folded, or unfolding; orbit and zoom remain available. Unfolding restores the configured angle. Show mannequin / Hide mannequin toggles a seated wireframe figure that follows the seat, backrest angle, and footplate. It is hidden during folding and while folded, and returns on unfolding if selected; its toggle is disabled until unfolded. It is a scale cue, not a fit assessment. Reset configuration restores all nine defaults, including the 2 cm default front crossbar height and immediately unfolds, canceling any animation without moving the camera or changing the mannequin toggle. Reset view restores the starting camera without changing the configuration.
 
 ## Not implemented
 

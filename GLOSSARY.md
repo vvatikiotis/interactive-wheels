@@ -40,6 +40,9 @@ Two left-to-right bars beneath the seating surface that bend downward at their c
 **Front frame tubes**:
 The two tubes descending from the front of the seat toward the casters and tapering inward toward their lower ends.
 
+**Front frame crossbar**:
+Left-to-right bar that joins the lower ends of the two front frame tubes.
+
 **Footplate**:
 Surface supporting the user's feet between the lower front frame tubes.
 _Avoid_: Footrest platform when referring only to the plate

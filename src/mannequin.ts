@@ -11,6 +11,7 @@ export function deriveMannequin({ seat, backrest, footrest }: Chair) {
   ]
   const head = { center: [0, shoulderCenter[1] + 0.11, shoulderCenter[2]] as Point, radius: 0.07 }
   const hips = ([-1, 1] as const).map(side => [side * seat.width * 0.475, hipCenter[1], hipCenter[2]] as Point)
+  const thighs = ([-1, 1] as const).map(side => [side * seat.width * 0.3, hipCenter[1], hipCenter[2]] as Point)
   const shoulders = ([-1, 1] as const).map(side => [side * seat.width * 0.5, shoulderCenter[1], shoulderCenter[2]] as Point)
   const knees = ([-1, 1] as const).map(side => [side * Math.min(seat.width * 0.22, 0.09), seat.front[1] + 0.075, seat.front[2] + 0.04] as Point)
   const ankles = knees.map(knee => [knee[0], footrest.center[1] + 0.065, footrest.center[2] - 0.025] as Point)
@@ -32,5 +33,5 @@ export function deriveMannequin({ seat, backrest, footrest }: Chair) {
     ]
     return [shoulder, elbow, hand] as [Point, Point, Point]
   })
-  return { head, hipCenter, shoulderCenter, hips, shoulders, arms, knees, ankles, toes }
+  return { head, hipCenter, shoulderCenter, hips, thighs, shoulders, arms, knees, ankles, toes }
 }

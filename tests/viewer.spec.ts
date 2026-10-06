@@ -49,7 +49,7 @@ test('shows a small centered credit at the bottom of the page', async ({ page })
   expect(box.y + box.height).toBeLessThanOrEqual(900)
 })
 
-test('all nine adjustment sliders update their displayed measurements', async ({ page }) => {
+test('all ten adjustment sliders update their displayed measurements', async ({ page }) => {
   await page.goto('/')
   const cases = [
     ['Seat width', '46', '46 cm'],
@@ -58,6 +58,7 @@ test('all nine adjustment sliders update their displayed measurements', async ({
     ['Rear axle position', '12', '+12 cm'],
     ['Backrest height', '20', '20 cm'],
     ['Backrest angle to seat', '85', '85 °'],
+    ['Backrest curvature', '6', '6 cm'],
     ['Seat angle to ground', '12', '12 °'],
     ['Footplate slope', '10', '10 °'],
     ['Front crossbar height', '2', '2 cm'],
@@ -69,10 +70,25 @@ test('all nine adjustment sliders update their displayed measurements', async ({
   }
   await expect(page.getByLabel('Rear-wheel camber')).toHaveAttribute('min', '-4')
   await expect(page.getByLabel('Backrest height')).toHaveAttribute('min', '10')
+  await expect(page.getByLabel('Backrest curvature')).toHaveAttribute('min', '0')
+  await expect(page.getByLabel('Backrest curvature')).toHaveAttribute('max', '10')
   await expect(page.getByLabel('Footplate slope')).toHaveAttribute('min', '0')
   await expect(page.getByLabel('Footplate slope')).toHaveAttribute('max', '15')
   await expect(page.getByLabel('Front crossbar height')).toHaveAttribute('min', '2')
   await expect(page.getByLabel('Front crossbar height')).toHaveAttribute('max', '10')
+})
+
+test('backrest curvature curves the fabric and moves the mannequin into its cradle', async ({ page }) => {
+  await page.goto('/')
+  const curvature = page.getByLabel('Backrest curvature')
+  await expect(curvature).toHaveValue('0')
+  await page.getByRole('button', { name: 'Show mannequin' }).click()
+  const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
+  await page.waitForTimeout(500)
+  const flat = await viewer.screenshot()
+  await curvature.fill('10')
+  await expect(curvature).toHaveValue('10')
+  expect((await viewer.screenshot()).equals(flat)).toBe(false)
 })
 
 test('front crossbar height slider spans 2–10 cm and carries the footplate with it', async ({ page }) => {
@@ -102,6 +118,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Rear axle position', '0'],
     ['Backrest height', '10'],
     ['Backrest angle to seat', '80'],
+    ['Backrest curvature', '0'],
     ['Seat angle to ground', '0'],
     ['Footplate slope', '0'],
     ['Front crossbar height', '2']
@@ -114,6 +131,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Rear axle position', '12'],
     ['Backrest height', '45'],
     ['Backrest angle to seat', '110'],
+    ['Backrest curvature', '10'],
     ['Seat angle to ground', '12'],
     ['Footplate slope', '15'],
     ['Front crossbar height', '10'],
@@ -126,7 +144,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
 test('mannequin can be shown, hidden, and returns after unfolding', async ({ page }) => {
   await page.goto('/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
-  await page.waitForTimeout(500)
+  await page.waitForTimeout(1200)
   const hidden = await viewer.screenshot()
   await page.getByRole('button', { name: 'Show mannequin' }).click()
   const visible = await viewer.screenshot()
@@ -150,7 +168,7 @@ test('backrest folds and unfolds while adjustments are disabled', async ({ page 
   const before = await viewer.screenshot()
   await page.getByRole('button', { name: 'Fold', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Folding…' })).toBeDisabled()
-  await expect(page.locator('.controls input:disabled')).toHaveCount(9)
+  await expect(page.locator('.controls input:disabled')).toHaveCount(10)
   await expect(page.getByRole('button', { name: 'Unfold' })).toBeEnabled()
   const folded = await viewer.screenshot()
   expect(folded.equals(before)).toBe(false)
@@ -162,7 +180,7 @@ test('backrest folds and unfolds while adjustments are disabled', async ({ page 
   await page.mouse.up()
   expect((await viewer.screenshot()).equals(folded)).toBe(false)
   await page.getByRole('button', { name: 'Unfold' }).click()
-  await expect(page.locator('.controls input:disabled')).toHaveCount(9)
+  await expect(page.locator('.controls input:disabled')).toHaveCount(10)
   await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
   await expect(page.locator('.controls input:disabled')).toHaveCount(0)
   await expect(page.getByText('100 °', { exact: true })).toBeVisible()
@@ -209,11 +227,13 @@ test('reset configuration cancels folding and restores defaults without moving t
   await page.waitForTimeout(1500)
   await page.getByLabel('Seat width').fill('46')
   await page.getByLabel('Footplate slope').fill('15')
+  await page.getByLabel('Backrest curvature').fill('10')
   await page.getByLabel('Front crossbar height').fill('2')
   await page.getByRole('button', { name: 'Fold', exact: true }).click()
   await page.getByRole('button', { name: 'Reset configuration' }).click()
   await expect(page.getByLabel('Seat width')).toHaveValue('39')
   await expect(page.getByLabel('Footplate slope')).toHaveValue('0')
+  await expect(page.getByLabel('Backrest curvature')).toHaveValue('0')
   await expect(page.getByLabel('Front crossbar height')).toHaveValue('5')
   await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
   await expect(page.locator('.controls input:disabled')).toHaveCount(0)

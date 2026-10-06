@@ -21,6 +21,9 @@ _Avoid_: Backrest angle when referring to seat tilt
 Angle of the backrest relative to the seat, measured from the seat's forward direction. At 90° the backrest is perpendicular; larger values lean backward.
 _Avoid_: Recline angle without a reference
 
+**Backrest curvature**:
+Side-to-side inward depth of the backrest fabric at its centre, relative to its edges. Greater curvature cradles the seated person's torso.
+
 **Backrest height**:
 Distance along the backrest from its junction with the seat to its top, not vertical height above the ground.
 

@@ -13,11 +13,11 @@ p { margin: .2rem 0; }
 .note { max-width: 16rem; color: #a6adc8; text-align: right; }
 .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 1rem; margin: 0 clamp(1rem, 5vw, 5rem) .5rem; }
 .viewport { min-width: 0; height: max(560px, calc(100vh - 230px)); border-radius: 18px; overflow: hidden; border: 1px solid #313244; background: #edf2f3; }
-.controls { align-self: start; background: #181825; border: 1px solid #313244; border-radius: 14px; padding: 1.2rem; }
+.controls { align-self: start; background: #181825; border: 1px solid #313244; border-radius: 14px; padding: .85rem; }
 .controls h2 { margin: 0 0 .8rem; font-size: 1.15rem; }
 .controls label { display: flex; justify-content: space-between; gap: .5rem; font-weight: 650; }
 .controls output { white-space: nowrap; color: #89b4fa; }
-.controls input { width: 100%; margin: .45rem 0 .1rem; accent-color: #89b4fa; }
+.controls input { width: 100%; margin: .15rem 0 0; accent-color: #89b4fa; }
 .range-labels { display: flex; justify-content: space-between; color: #a6adc8; font-size: .85rem; }
 .controls button { padding: .65rem; border: 1px solid #45475a; border-radius: 8px; background: #313244; color: #cdd6f4; font: inherit; cursor: pointer; transition: background-color .15s, border-color .15s; }
 .controls button:hover:not(:disabled) { background: #45475a; border-color: #585b70; }

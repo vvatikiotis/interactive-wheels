@@ -5,6 +5,7 @@ export interface WheelchairConfig {
   rearAxlePosition: number
   backrestHeight: number
   backrestAngle: number
+  backrestCurvature: number
   seatAngle: number
   footrestSlope: number
   frontCrossbarHeight: number
@@ -19,6 +20,7 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
   rearAxlePosition: 8,
   backrestHeight: 20,
   backrestAngle: 85,
+  backrestCurvature: 0,
   seatAngle: 6,
   footrestSlope: 0,
   frontCrossbarHeight: 5,
@@ -142,7 +144,7 @@ export function deriveGeometry(config: WheelchairConfig, foldProgress = 0) {
     seat: { front, rear, seatForward, seatRear, surfaceCenter, surfaceFront, surfaceDepth, width, depth, tilt },
     frontFrame,
     footrest,
-    backrest: { base: rear, top: backTop, supports: backrestSupports, height: config.backrestHeight / 100, angle: backAngle },
+    backrest: { base: rear, top: backTop, supports: backrestSupports, height: config.backrestHeight / 100, angle: backAngle, curvature: config.backrestCurvature / 100 },
     rearWheels,
     axleTube,
     rearFrameConnections,

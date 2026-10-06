@@ -18,7 +18,7 @@ Sliders update the generated chair immediately, in 1 cm or 1° steps, except fro
 | Backrest angle to seat | 80–110° | 85° | 90° is perpendicular to the seat; larger values lean backward |
 | Seat angle to ground | 0–12° | 6° | Positive lowers the rear while front height remains fixed |
 | Footplate slope | 0–15° | 0° | Positive raises the front edge relative to the ground |
-| Front crossbar height | 2–10 cm (0.1 cm steps) | 2 cm | Height of the crossbar centreline above ground; the lower front frame tube ends and attached footplate move with it |
+| Front crossbar height | 2–10 cm (0.1 cm steps) | 5 cm | Height of the crossbar centreline above ground; the lower front frame tube ends and attached footplate move with it |
 
 ## Chair geometry
 
@@ -34,7 +34,7 @@ The model derives positions from shared configuration geometry and uses generate
 
 The desktop viewer starts in a three-quarter view. Drag to orbit and scroll to zoom; the camera stays above the ground and zoom is limited. The scene has a light background, a contrasting ground plane with a 20 cm reference grid, and a shadow to make ground contact and orientation visible. Mobile and touch controls are outside the present scope.
 
-Fold / Unfold animates the backrest forward toward the seat over about 0.4 seconds, independently of the configured backrest angle. All nine sliders are disabled while folding, folded, or unfolding; orbit and zoom remain available. Unfolding restores the configured angle. Show mannequin / Hide mannequin toggles a seated wireframe figure that follows the seat, backrest angle, and footplate. It is hidden during folding and while folded, and returns on unfolding if selected; its toggle is disabled until unfolded. It is a scale cue, not a fit assessment. Reset configuration restores all nine defaults, including the 2 cm default front crossbar height and immediately unfolds, canceling any animation without moving the camera or changing the mannequin toggle. Reset view restores the starting camera without changing the configuration.
+Fold / Unfold animates the backrest forward toward the seat over about 0.4 seconds, independently of the configured backrest angle. All nine sliders are disabled while folding, folded, or unfolding; orbit and zoom remain available. Unfolding restores the configured angle. Show mannequin / Hide mannequin toggles a seated wireframe figure that follows the seat, backrest angle, and footplate. It is hidden during folding and while folded, and returns on unfolding if selected; its toggle is disabled until unfolded. It is a scale cue, not a fit assessment. Reset configuration restores all nine defaults, including the 5 cm default front crossbar height and immediately unfolds, canceling any animation without moving the camera or changing the mannequin toggle. Reset view restores the starting camera without changing the configuration.
 
 ## Not implemented
 

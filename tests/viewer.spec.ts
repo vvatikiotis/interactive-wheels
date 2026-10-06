@@ -78,6 +78,7 @@ test('all nine adjustment sliders update their displayed measurements', async ({
 test('front crossbar height slider spans 2–10 cm and carries the footplate with it', async ({ page }) => {
   await page.goto('/')
   const height = page.getByLabel('Front crossbar height')
+  await expect(height).toHaveValue('5')
   await expect(height).toHaveAttribute('min', '2')
   await expect(height).toHaveAttribute('max', '10')
   await page.getByLabel('Footplate slope').fill('15')
@@ -212,7 +213,7 @@ test('reset configuration cancels folding and restores defaults without moving t
   await page.getByRole('button', { name: 'Reset configuration' }).click()
   await expect(page.getByLabel('Seat width')).toHaveValue('39')
   await expect(page.getByLabel('Footplate slope')).toHaveValue('0')
-  await expect(page.getByLabel('Front crossbar height')).toHaveValue('2')
+  await expect(page.getByLabel('Front crossbar height')).toHaveValue('5')
   await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
   await expect(page.locator('.controls input:disabled')).toHaveCount(0)
   expect((await viewer.screenshot()).equals(initialView)).toBe(false)

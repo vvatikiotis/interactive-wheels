@@ -21,7 +21,7 @@ export const DEFAULT_CONFIG: WheelchairConfig = {
   backrestAngle: 85,
   seatAngle: 6,
   footrestSlope: 0,
-  frontCrossbarHeight: 2,
+  frontCrossbarHeight: 5,
 }
 
 const radians = (degrees: number) => degrees * Math.PI / 180

@@ -1,6 +1,6 @@
 # Interactive wheelchair prototype
 
-A browser-based rigid-frame wheelchair configurator with nine sliders, a folding backrest, an optional wireframe mannequin, separate configuration and camera resets, and a generated 3D view. Drag to rotate; scroll to zoom. It is a visual prototype, not a clinical or engineering validation tool.
+A browser-based rigid-frame wheelchair configurator with ten sliders, a folding backrest, an optional articulated wireframe mannequin, separate configuration and camera resets, and a generated 3D view. Drag to rotate; scroll to zoom. It is a visual prototype, not a clinical or engineering validation tool.
 
 **Live demo:** https://vvatikiotis.github.io/interactive-wheels/
 
@@ -24,4 +24,4 @@ npm run build
 npm run test:browser
 ```
 
-Browser tests launch Google Chrome from the standard macOS application path. See [prototype scope](docs/prototype-scope.md) for current behavior and [implementation plan](docs/implementation-plan.md) for remaining work.
+Browser tests launch Google Chrome from the standard macOS application path. See [prototype scope](docs/prototype-scope.md) for current behavior and limitations.

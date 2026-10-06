@@ -46,9 +46,9 @@ describe('seated mannequin', () => {
     const ranges: [keyof WheelchairConfig, number, number][] = [
       ['seatWidth', 33, 46], ['seatDepth', 36, 46], ['wheelCamber', -4, 6],
       ['rearAxlePosition', 0, 12], ['backrestHeight', 10, 45], ['backrestAngle', 80, 110],
-      ['seatAngle', 0, 12], ['footrestSlope', 0, 15], ['frontCrossbarHeight', 2, 10],
+      ['backrestCurvature', 0, 10], ['seatAngle', 0, 12], ['footrestSlope', 0, 15], ['frontCrossbarHeight', 2, 10],
     ]
-    for (let combination = 0; combination < 512; combination++) {
+    for (let combination = 0; combination < 1024; combination++) {
       const config = { ...DEFAULT_CONFIG }
       ranges.forEach(([key, low, high], index) => { config[key] = combination & (1 << index) ? high : low })
       const figure = deriveMannequin(deriveGeometry(config))
@@ -62,6 +62,16 @@ describe('seated mannequin', () => {
     for (const [index, arm] of axleAtRear.arms.entries()) {
       arm.forEach((point, pointIndex) => point.forEach((coordinate, axis) => close(coordinate, axleForward.arms[index][pointIndex][axis])))
     }
+  })
+
+  it('moves the mannequin upper body into the backrest cradle as curvature increases', () => {
+    const flatChair = deriveGeometry({ ...DEFAULT_CONFIG, backrestCurvature: 0 })
+    const curvedChair = deriveGeometry({ ...DEFAULT_CONFIG, backrestCurvature: 10 })
+    const flat = deriveMannequin(flatChair)
+    const curved = deriveMannequin(curvedChair)
+    expect(curved.shoulderCenter[2]).toBeLessThan(flat.shoulderCenter[2])
+    close(curved.shoulderCenter[1] - flat.shoulderCenter[1], 0.1 * Math.cos(flatChair.backrest.angle))
+    close(curved.shoulderCenter[2] - flat.shoulderCenter[2], -0.1 * Math.sin(flatChair.backrest.angle))
   })
 
   it('leans with the configured backrest without changing the chair', () => {

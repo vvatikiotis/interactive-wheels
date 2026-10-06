@@ -6,8 +6,8 @@ export function deriveMannequin({ seat, backrest, footrest }: Chair) {
   const hipCenter: Point = [0, seat.rear[1] + 0.025, seat.rear[2] + 0.07]
   const shoulderCenter: Point = [
     0,
-    hipCenter[1] + 0.31 * Math.sin(backrest.angle),
-    hipCenter[2] + 0.31 * Math.cos(backrest.angle),
+    hipCenter[1] + 0.31 * Math.sin(backrest.angle) + backrest.curvature * Math.cos(backrest.angle),
+    hipCenter[2] + 0.31 * Math.cos(backrest.angle) - backrest.curvature * Math.sin(backrest.angle),
   ]
   const head = { center: [0, shoulderCenter[1] + 0.11, shoulderCenter[2]] as Point, radius: 0.07 }
   const hips = ([-1, 1] as const).map(side => [side * seat.width * 0.475, hipCenter[1], hipCenter[2]] as Point)

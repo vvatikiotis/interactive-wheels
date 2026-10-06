@@ -36,6 +36,7 @@ function App() {
     { key: 'rearAxlePosition', label: 'Rear axle position', min: 0, max: 12, unit: 'cm' },
     { key: 'backrestHeight', label: 'Backrest height', min: 10, max: 45, unit: 'cm' },
     { key: 'backrestAngle', label: 'Backrest angle to seat', min: 80, max: 110, unit: '°' },
+    { key: 'backrestCurvature', label: 'Backrest curvature', min: 0, max: 10, unit: 'cm' },
     { key: 'seatAngle', label: 'Seat angle to ground', min: 0, max: 12, unit: '°' },
     { key: 'footrestSlope', label: 'Footplate slope', min: 0, max: 15, unit: '°' },
     { key: 'frontCrossbarHeight', label: 'Front crossbar height', min: 2, max: 10, unit: 'cm' },

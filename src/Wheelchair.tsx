@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { CylinderGeometry, Path, QuadraticBezierCurve3, Quaternion, Shape, ShapeGeometry, TubeGeometry, Vector3 } from 'three'
+import { BufferGeometry, CylinderGeometry, Float32BufferAttribute, Path, QuadraticBezierCurve3, Quaternion, Shape, ShapeGeometry, TubeGeometry, Vector3 } from 'three'
 import { DEFAULT_CONFIG, deriveGeometry, WHEEL, type Point } from './geometry'
 import { deriveMannequin } from './mannequin'
 
@@ -25,6 +25,57 @@ function BentTube({ from, control, to, radius }: { from: Point; control: Point; 
   }, [from[0], from[1], from[2], control[0], control[1], control[2], to[0], to[1], to[2], radius])
   return <mesh geometry={geometry} castShadow>
     <meshStandardMaterial color={metal} metalness={0.65} roughness={0.35} />
+  </mesh>
+}
+
+function BackrestFabric({ backrest, width }: { backrest: ReturnType<typeof deriveGeometry>['backrest']; width: number }) {
+  const geometry = useMemo(() => {
+    const widthSegments = 20
+    const heightSegments = 8
+    const columns = widthSegments + 1
+    const rows = heightSegments + 1
+    const surfaceSize = columns * rows
+    const positions: number[] = []
+    const indices: number[] = []
+    for (let surface = 0; surface < 2; surface++) {
+      for (let row = 0; row <= heightSegments; row++) {
+        const y = (row / heightSegments - 0.5) * backrest.height
+        for (let column = 0; column <= widthSegments; column++) {
+          const x = (column / widthSegments - 0.5) * width
+          const normalizedX = 2 * x / width
+          const curve = -backrest.curvature * (1 - normalizedX * normalizedX)
+          positions.push(x, y, curve + (surface === 0 ? 0.0075 : -0.0075))
+        }
+      }
+      const offset = surface * surfaceSize
+      for (let row = 0; row < heightSegments; row++) for (let column = 0; column < widthSegments; column++) {
+        const a = offset + row * columns + column
+        const b = a + 1
+        const c = a + columns
+        const d = c + 1
+        indices.push(...(surface === 0 ? [a, c, b, b, c, d] : [a, b, c, b, d, c]))
+      }
+    }
+    const addEdge = (front: number, back: number, nextFront: number, nextBack: number) => indices.push(front, nextFront, back, back, nextFront, nextBack)
+    for (let row = 0; row < heightSegments; row++) {
+      addEdge(row * columns, surfaceSize + row * columns, (row + 1) * columns, surfaceSize + (row + 1) * columns)
+      const right = row * columns + widthSegments
+      addEdge(right, surfaceSize + right, right + columns, surfaceSize + right + columns)
+    }
+    for (let column = 0; column < widthSegments; column++) {
+      addEdge(column, surfaceSize + column, column + 1, surfaceSize + column + 1)
+      const top = heightSegments * columns + column
+      addEdge(top, surfaceSize + top, top + 1, surfaceSize + top + 1)
+    }
+    const result = new BufferGeometry()
+    result.setAttribute('position', new Float32BufferAttribute(positions, 3))
+    result.setIndex(indices)
+    result.computeVertexNormals()
+    return result
+  }, [backrest.curvature, backrest.height, width])
+  const center = new Vector3(...backrest.base).add(new Vector3(...backrest.top)).multiplyScalar(0.5)
+  return <mesh geometry={geometry} position={center} rotation={[Math.PI / 2 - backrest.angle, 0, 0]} castShadow receiveShadow>
+    <meshStandardMaterial color={fabric} roughness={0.85} side={2} />
   </mesh>
 }
 
@@ -167,10 +218,7 @@ export function Wheelchair({ configuration, foldProgress = 0, showMannequin = fa
       <boxGeometry args={[seat.width, 0.018, seat.surfaceDepth]} />
       <meshStandardMaterial color={fabric} roughness={0.85} />
     </mesh>
-    <mesh position={[0, (backrest.base[1] + backrest.top[1]) / 2, (backrest.base[2] + backrest.top[2]) / 2]} rotation={[Math.PI / 2 - backrest.angle, 0, 0]} castShadow>
-      <boxGeometry args={[seat.width, backrest.height, 0.015]} />
-      <meshStandardMaterial color={fabric} roughness={0.85} side={2} />
-    </mesh>
+    <BackrestFabric backrest={backrest} width={seat.width} />
     {([-1, 1] as const).map((side, index) => {
       const points = sidePoints(side)
       const wheel = rearWheels[index]
@@ -201,7 +249,6 @@ export function Wheelchair({ configuration, foldProgress = 0, showMannequin = fa
       <meshStandardMaterial color="#516978" roughness={0.72} />
     </mesh>
     <Tube from={axleTube.start} to={axleTube.end} radius={0.012} />
-    <Tube from={backrest.supports[0].top} to={backrest.supports[1].top} radius={0.009} />
     {showMannequin && <Mannequin chair={chair} />}
   </group>
 }

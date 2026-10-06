@@ -67,6 +67,11 @@ describe('configured wheelchair', () => {
     close(chair.backrest.top[2] - chair.backrest.base[2], 0)
   })
 
+  it('converts backrest curvature from slider centimetres to model metres', () => {
+    close(deriveGeometry({ ...DEFAULT_CONFIG, backrestCurvature: 0 }).backrest.curvature, 0)
+    close(deriveGeometry({ ...DEFAULT_CONFIG, backrestCurvature: 10 }).backrest.curvature, 0.1)
+  })
+
   it('folds the backrest toward the seat without changing its configured angle', () => {
     const config = { ...DEFAULT_CONFIG, backrestAngle: 100 }
     const open = deriveGeometry(config)
@@ -97,9 +102,9 @@ describe('configured wheelchair', () => {
     const ranges: [keyof WheelchairConfig, number, number][] = [
       ['seatWidth', 33, 46], ['seatDepth', 36, 46], ['wheelCamber', -4, 6],
       ['rearAxlePosition', 0, 12], ['backrestHeight', 10, 45],
-      ['backrestAngle', 80, 110], ['seatAngle', 0, 12], ['footrestSlope', 0, 15], ['frontCrossbarHeight', 2, 10],
+      ['backrestAngle', 80, 110], ['backrestCurvature', 0, 10], ['seatAngle', 0, 12], ['footrestSlope', 0, 15], ['frontCrossbarHeight', 2, 10],
     ]
-    for (let combination = 0; combination < 512; combination++) {
+    for (let combination = 0; combination < 1024; combination++) {
       const config = { ...DEFAULT_CONFIG }
       ranges.forEach(([key, low, high], index) => { config[key] = combination & (1 << index) ? high : low })
       for (let step = 0; step <= 10; step++) {

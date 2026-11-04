@@ -6,6 +6,8 @@ A browser-based visual configurator for a rigid-frame wheelchair. The chair shou
 
 ## Current controls
 
+The UI groups adjustments into Seat, Backrest, Wheels, and Footplate/frame. Concise keyboard-operable help disclosures explain each setting without adding always-visible control prose. The viewer states that it is a visual prototype, not a fit or safety assessment; mannequin help identifies it only as a visual scale cue.
+
 Sliders update the generated chair immediately, in 1 cm or 1° steps, except front crossbar height, which uses 0.1 cm steps. Measurements are displayed beside each slider.
 
 | Adjustment | Range | Default | Meaning |

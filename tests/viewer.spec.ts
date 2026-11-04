@@ -49,6 +49,56 @@ test('shows a small centered credit at the bottom of the page', async ({ page })
   expect(box.y + box.height).toBeLessThanOrEqual(900)
 })
 
+test('disclaimer, grouped controls, and keyboard-operable help are available', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByText('Visual wheelchair geometry only—not a fit or safety assessment.')).toBeVisible()
+  await expect(page.getByRole('group', { name: 'Seat' })).toBeVisible()
+  await expect(page.getByRole('group', { name: 'Backrest' })).toBeVisible()
+  await expect(page.getByRole('group', { name: 'Wheels' })).toBeVisible()
+  await expect(page.getByRole('group', { name: 'Footplate/frame' })).toBeVisible()
+  await expect(page.getByRole('group', { name: 'Seat' }).getByRole('slider', { name: 'Seat angle to ground' })).toBeVisible()
+  await expect(page.getByRole('group', { name: 'Footplate/frame' }).getByRole('slider', { name: 'Seat angle to ground' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Show mannequin' })).toHaveAttribute('aria-describedby', 'mannequin-note')
+  const panel = page.getByRole('complementary', { name: 'Wheelchair adjustments' })
+  await expect(panel.getByRole('button', { name: 'Reset configuration' })).toBeInViewport()
+  const help = page.getByRole('group', { name: 'Wheels' }).locator('summary[aria-label="Help for Rear-wheel camber"]')
+  await help.focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByText('Positive brings wheel tops inward.')).toBeVisible()
+  await expect(page.getByRole('slider', { name: 'Rear-wheel camber' })).toHaveAttribute('aria-describedby', 'wheelCamber-help')
+})
+
+test('all help popovers stay within desktop and narrow-desktop viewports', async ({ page }) => {
+  for (const width of [1280, 900, 851]) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/')
+    const triggers = page.locator('.control-help summary')
+    const count = await triggers.count()
+    for (let index = 0; index < count; index++) {
+      const trigger = triggers.nth(index)
+      await trigger.click()
+      const popup = trigger.locator('xpath=..').locator('span')
+      await expect(popup).toBeVisible()
+      const bounds = await popup.boundingBox()
+      if (!bounds) throw new Error('Help popup has no bounds')
+      expect(bounds.x).toBeGreaterThanOrEqual(0)
+      expect(bounds.x + bounds.width).toBeLessThanOrEqual(width)
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
+      if (width === 1280 && index === 2) await page.screenshot({ path: 'tmp/ui-open-help.png' })
+      await trigger.click()
+    }
+  }
+})
+
+test('mannequin limitation is available through visible keyboard-accessible help', async ({ page }) => {
+  await page.goto('/')
+  const trigger = page.locator('summary[aria-label="Help for mannequin limitations"]')
+  await trigger.focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByText('Visual scale cue only; not anatomical or fit model.')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Show mannequin' })).toHaveAttribute('aria-describedby', 'mannequin-note')
+})
+
 test('all ten adjustment sliders update their displayed measurements', async ({ page }) => {
   await page.goto('/')
   const cases = [
@@ -64,23 +114,23 @@ test('all ten adjustment sliders update their displayed measurements', async ({ 
     ['Front crossbar height', '2', '2 cm'],
   ]
   for (const [label, value, displayed] of cases) {
-    const slider = page.getByLabel(label)
+    const slider = page.getByRole('slider', { name: label })
     await slider.fill(value)
     await expect(page.locator('label').filter({ hasText: label }).getByText(displayed, { exact: true })).toBeVisible()
   }
-  await expect(page.getByLabel('Rear-wheel camber')).toHaveAttribute('min', '-4')
-  await expect(page.getByLabel('Backrest height')).toHaveAttribute('min', '10')
-  await expect(page.getByLabel('Backrest curvature')).toHaveAttribute('min', '0')
-  await expect(page.getByLabel('Backrest curvature')).toHaveAttribute('max', '10')
-  await expect(page.getByLabel('Footplate slope')).toHaveAttribute('min', '0')
-  await expect(page.getByLabel('Footplate slope')).toHaveAttribute('max', '15')
-  await expect(page.getByLabel('Front crossbar height')).toHaveAttribute('min', '2')
-  await expect(page.getByLabel('Front crossbar height')).toHaveAttribute('max', '10')
+  await expect(page.getByRole('slider', { name: 'Rear-wheel camber' })).toHaveAttribute('min', '-4')
+  await expect(page.getByRole('slider', { name: 'Backrest height' })).toHaveAttribute('min', '10')
+  await expect(page.getByRole('slider', { name: 'Backrest curvature' })).toHaveAttribute('min', '0')
+  await expect(page.getByRole('slider', { name: 'Backrest curvature' })).toHaveAttribute('max', '10')
+  await expect(page.getByRole('slider', { name: 'Footplate slope' })).toHaveAttribute('min', '0')
+  await expect(page.getByRole('slider', { name: 'Footplate slope' })).toHaveAttribute('max', '15')
+  await expect(page.getByRole('slider', { name: 'Front crossbar height' })).toHaveAttribute('min', '2')
+  await expect(page.getByRole('slider', { name: 'Front crossbar height' })).toHaveAttribute('max', '10')
 })
 
 test('backrest curvature curves the fabric and moves the mannequin into its cradle', async ({ page }) => {
   await page.goto('/')
-  const curvature = page.getByLabel('Backrest curvature')
+  const curvature = page.getByRole('slider', { name: 'Backrest curvature' })
   await expect(curvature).toHaveValue('0')
   await page.getByRole('button', { name: 'Show mannequin' }).click()
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
@@ -93,11 +143,11 @@ test('backrest curvature curves the fabric and moves the mannequin into its crad
 
 test('front crossbar height slider spans 2–10 cm and carries the footplate with it', async ({ page }) => {
   await page.goto('/')
-  const height = page.getByLabel('Front crossbar height')
+  const height = page.getByRole('slider', { name: 'Front crossbar height' })
   await expect(height).toHaveValue('5')
   await expect(height).toHaveAttribute('min', '2')
   await expect(height).toHaveAttribute('max', '10')
-  await page.getByLabel('Footplate slope').fill('15')
+  await page.getByRole('slider', { name: 'Footplate slope' }).fill('15')
   await expect(height).toHaveAttribute('min', '2')
   await height.fill('10')
   await expect(height).toHaveValue('10')
@@ -122,7 +172,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Seat angle to ground', '0'],
     ['Footplate slope', '0'],
     ['Front crossbar height', '2']
-  ]) await page.getByLabel(label).fill(value)
+  ]) await page.getByRole('slider', { name: label }).fill(value)
   expect((await viewer.screenshot()).equals(before)).toBe(false)
   for (const [label, value] of [
     ['Seat width', '46'],
@@ -135,7 +185,7 @@ test('minimum and maximum dimensions and angles keep the generated chair rendera
     ['Seat angle to ground', '12'],
     ['Footplate slope', '15'],
     ['Front crossbar height', '10'],
-  ]) await page.getByLabel(label).fill(value)
+  ]) await page.getByRole('slider', { name: label }).fill(value)
   await expect(page.getByText('12 °', { exact: true })).toBeVisible()
   expect((await viewer.screenshot()).equals(before)).toBe(false)
   await expect(viewer.locator('canvas')).toBeVisible()
@@ -164,7 +214,7 @@ test('mannequin can be shown, hidden, and returns after unfolding', async ({ pag
 test('backrest folds and unfolds while adjustments are disabled', async ({ page }) => {
   await page.goto('/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
-  await page.getByLabel('Backrest angle to seat').fill('100')
+  await page.getByRole('slider', { name: 'Backrest angle to seat' }).fill('100')
   const before = await viewer.screenshot()
   await page.getByRole('button', { name: 'Fold', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Folding…' })).toBeDisabled()
@@ -195,13 +245,13 @@ test('extreme backrests fold and unfold without losing the rendered chair', asyn
     { width: '46', depth: '46', camber: '-4', axle: '12', angle: '80', seatAngle: '0' },
   ]) {
     await page.goto('/')
-    await page.getByLabel('Seat width').fill(settings.width)
-    await page.getByLabel('Seat depth').fill(settings.depth)
-    await page.getByLabel('Rear-wheel camber').fill(settings.camber)
-    await page.getByLabel('Rear axle position').fill(settings.axle)
-    await page.getByLabel('Backrest height').fill('45')
-    await page.getByLabel('Backrest angle to seat').fill(settings.angle)
-    await page.getByLabel('Seat angle to ground').fill(settings.seatAngle)
+    await page.getByRole('slider', { name: 'Seat width' }).fill(settings.width)
+    await page.getByRole('slider', { name: 'Seat depth' }).fill(settings.depth)
+    await page.getByRole('slider', { name: 'Rear-wheel camber' }).fill(settings.camber)
+    await page.getByRole('slider', { name: 'Rear axle position' }).fill(settings.axle)
+    await page.getByRole('slider', { name: 'Backrest height' }).fill('45')
+    await page.getByRole('slider', { name: 'Backrest angle to seat' }).fill(settings.angle)
+    await page.getByRole('slider', { name: 'Seat angle to ground' }).fill(settings.seatAngle)
     const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
     const open = await viewer.screenshot()
     await page.getByRole('button', { name: 'Fold', exact: true }).click()
@@ -225,16 +275,16 @@ test('reset configuration cancels folding and restores defaults without moving t
   await page.mouse.move(box.x + box.width / 2 + 130, box.y + box.height / 2, { steps: 8 })
   await page.mouse.up()
   await page.waitForTimeout(1500)
-  await page.getByLabel('Seat width').fill('46')
-  await page.getByLabel('Footplate slope').fill('15')
-  await page.getByLabel('Backrest curvature').fill('10')
-  await page.getByLabel('Front crossbar height').fill('2')
+  await page.getByRole('slider', { name: 'Seat width' }).fill('46')
+  await page.getByRole('slider', { name: 'Footplate slope' }).fill('15')
+  await page.getByRole('slider', { name: 'Backrest curvature' }).fill('10')
+  await page.getByRole('slider', { name: 'Front crossbar height' }).fill('2')
   await page.getByRole('button', { name: 'Fold', exact: true }).click()
   await page.getByRole('button', { name: 'Reset configuration' }).click()
-  await expect(page.getByLabel('Seat width')).toHaveValue('39')
-  await expect(page.getByLabel('Footplate slope')).toHaveValue('0')
-  await expect(page.getByLabel('Backrest curvature')).toHaveValue('0')
-  await expect(page.getByLabel('Front crossbar height')).toHaveValue('5')
+  await expect(page.getByRole('slider', { name: 'Seat width' })).toHaveValue('39')
+  await expect(page.getByRole('slider', { name: 'Footplate slope' })).toHaveValue('0')
+  await expect(page.getByRole('slider', { name: 'Backrest curvature' })).toHaveValue('0')
+  await expect(page.getByRole('slider', { name: 'Front crossbar height' })).toHaveValue('5')
   await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
   await expect(page.locator('.controls input:disabled')).toHaveCount(0)
   expect((await viewer.screenshot()).equals(initialView)).toBe(false)
@@ -248,7 +298,7 @@ test('reset configuration cancels folding and restores defaults without moving t
 test('reset view restores the starting camera without changing the adjustments', async ({ page }) => {
   await page.goto('/')
   const viewer = page.getByRole('region', { name: '3D wheelchair viewer' })
-  await page.getByLabel('Seat width').fill('46')
+  await page.getByRole('slider', { name: 'Seat width' }).fill('46')
   await page.waitForTimeout(1500)
   const initialView = await viewer.screenshot()
   const box = await viewer.locator('canvas').boundingBox()
@@ -260,7 +310,7 @@ test('reset view restores the starting camera without changing the adjustments',
   await page.waitForTimeout(500)
   expect((await viewer.screenshot()).equals(initialView)).toBe(false)
   await page.getByRole('button', { name: 'Reset view' }).click()
-  await expect(page.getByLabel('Seat width')).toHaveValue('46')
+  await expect(page.getByRole('slider', { name: 'Seat width' })).toHaveValue('46')
   await expect.poll(async () => (await viewer.screenshot()).equals(initialView)).toBe(true)
 })
 
@@ -270,7 +320,7 @@ test('rear axle slider moves both rear wheels and the axle tube', async ({ page 
   await expect(viewer.locator('canvas')).toBeVisible()
   await expect(page.getByText('+8 cm')).toBeVisible()
   const before = await viewer.screenshot()
-  const slider = page.getByLabel('Rear axle position')
+  const slider = page.getByRole('slider', { name: 'Rear axle position' })
   await slider.fill('12')
   await expect(page.getByText('+12 cm')).toBeVisible()
   const after = await viewer.screenshot()

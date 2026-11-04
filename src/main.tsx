@@ -29,6 +29,20 @@ function App() {
     frame = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(frame)
   }, [foldPhase])
+  const helpText: Record<keyof WheelchairConfig, string> = {
+    seatWidth: 'Seating surface width, excluding tubing.', seatDepth: 'Full front-to-back measurement; front 10% is uncovered.',
+    wheelCamber: 'Positive brings wheel tops inward.', rearAxlePosition: 'Position is forward from the seat’s rear edge; zero aligns wheel centres beneath it.',
+    backrestHeight: 'Measured along the backrest.', backrestAngle: '90° is perpendicular to the seat; larger values lean backward.',
+    backrestCurvature: 'Inward depth at fabric centre; higher values wrap the sides around the torso.',
+    seatAngle: 'Positive lowers the rear while front height remains fixed.', footrestSlope: 'Positive raises the front edge relative to the ground.',
+    frontCrossbarHeight: 'Crossbar centreline height above ground; lower front frame tube ends and attached footplate move with it.',
+  }
+  const controlGroups: { name: string; keys: (keyof WheelchairConfig)[] }[] = [
+    { name: 'Seat', keys: ['seatWidth', 'seatDepth', 'seatAngle'] },
+    { name: 'Backrest', keys: ['backrestHeight', 'backrestAngle', 'backrestCurvature'] },
+    { name: 'Wheels', keys: ['wheelCamber', 'rearAxlePosition'] },
+    { name: 'Footplate/frame', keys: ['footrestSlope', 'frontCrossbarHeight'] },
+  ]
   const controls: { key: keyof WheelchairConfig; label: string; min: number; max: number; unit: string }[] = [
     { key: 'seatWidth', label: 'Seat width', min: 33, max: 46, unit: 'cm' },
     { key: 'seatDepth', label: 'Seat depth', min: 36, max: 46, unit: 'cm' },
@@ -72,24 +86,35 @@ function App() {
       </section>
       <aside className="controls" aria-label="Wheelchair adjustments">
         <h2>Adjustments</h2>
-        {controls.map(control => {
+        <p className="purpose">Visual wheelchair geometry only—not a fit or safety assessment.</p>
+        {controlGroups.map(group => <fieldset className="control-group" key={group.name}>
+          <legend>{group.name}</legend>
+          {group.keys.map(key => {
+            const control = controls.find(item => item.key === key)!
           const value = configuration[control.key]
           const formatted = control.key === 'rearAxlePosition' && value > 0 ? `+${value}` : value
           return <div className="control" key={control.key}>
-            <label htmlFor={control.key}>{control.label} <output>{formatted} {control.unit}</output></label>
-            <input id={control.key} aria-label={control.label} type="range" min={control.min} max={control.max} step={control.key === 'frontCrossbarHeight' ? 0.1 : 1} value={value} disabled={foldPhase !== 'unfolded'}
+            <div className="control-label">
+              <label htmlFor={control.key}>{control.label} <output>{formatted} {control.unit}</output></label>
+              <details className="control-help"><summary aria-label={`Help for ${control.label}`} title={`More information about ${control.label}`}>?</summary><span id={`${control.key}-help`}>{helpText[control.key]}</span></details>
+            </div>
+            <input id={control.key} aria-label={control.label} aria-describedby={`${control.key}-help`} type="range" min={control.min} max={control.max} step={control.key === 'frontCrossbarHeight' ? 0.1 : 1} value={value} disabled={foldPhase !== 'unfolded'}
               onChange={event => setConfiguration(current => ({ ...current, [control.key]: Number(event.target.value) }))} />
             {control.key === 'rearAxlePosition' && <div className="range-labels"><span>Backward</span><span>Forward</span></div>}
           </div>
-        })}
+          })}
+        </fieldset>)}
         <button className="fold-button" type="button" disabled={foldPhase === 'folding' || foldPhase === 'unfolding'}
           onClick={() => setFoldPhase(foldPhase === 'folded' ? 'unfolding' : 'folding')}>
           {foldPhase === 'folding' ? 'Folding…' : foldPhase === 'unfolding' ? 'Unfolding…' : foldPhase === 'folded' ? 'Unfold' : 'Fold'}
         </button>
-        <button className="mannequin-button" type="button" aria-pressed={showMannequin} disabled={foldPhase !== 'unfolded'}
-          onClick={() => setShowMannequin(visible => !visible)}>
-          {showMannequin ? 'Hide mannequin' : 'Show mannequin'}
-        </button>
+        <div className="mannequin-row">
+          <button className="mannequin-button" type="button" aria-describedby="mannequin-note" aria-pressed={showMannequin} disabled={foldPhase !== 'unfolded'}
+            onClick={() => setShowMannequin(visible => !visible)}>
+            {showMannequin ? 'Hide mannequin' : 'Show mannequin'}
+          </button>
+          <details className="control-help mannequin-help"><summary aria-label="Help for mannequin limitations" title="Mannequin limitations">?</summary><span id="mannequin-note">Visual scale cue only; not anatomical or fit model.</span></details>
+        </div>
         <div className="reset-actions">
           <button type="button" onClick={() => {
             setFoldPhase('unfolded')
